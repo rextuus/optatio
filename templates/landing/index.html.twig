@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event Dashboard{% endblock %}
+
+{% block body %}
+    {% for event in events %}
+        {{ component('EventComponent', { event: event, user: user, a: 'Test' }) }}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,48 @@
+<div class="event-card">
+    {% if this.event.openToJoin %}
+        <button class="" id="contributeButton{{ event.id }}" {{ this.disabled }}>
+            Join
+        </button>
+    {% endif %}
+</div>
+
+
+<script>
+    document.getElementById("contributeButton{{ event.id }}").addEventListener('click', function () {
+        // Get the button element
+        var button = this;
+
+        // Disable the button
+        button.disabled = true;
+
+        // Create a new XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Configure it: GET-request for the specified Symfony route
+        xhr.open('GET', '{{ path('app_event_contribute', {'event': event.id}) }}', true);
+
+        // Setup callback for when the request completes
+        xhr.onload = function () {
+            // Enable the button regardless of success or failure
+            button.disabled = true;
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Request was successful, handle the response
+                console.log(xhr.responseText);
+            } else {
+                // Request failed
+                console.error('Request failed with status ' + xhr.status);
+            }
+        };
+
+        // Handle network errors
+        xhr.onerror = function () {
+            // Enable the button in case of a network error
+            button.disabled = false;
+            console.error('Network error');
+        };
+
+        // Send the request
+        xhr.send();
+    });
+</script>
