@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Twig\Components;
+
+use App\Content\Event\EventManager;
+use App\Entity\SecretSantaEvent;
+use App\Entity\User;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\DefaultActionTrait;
+
+#[AsLiveComponent()]
+final class SecretSantaComponent
+{
+    use DefaultActionTrait;
+
+    public SecretSantaEvent $event;
+    public User $user;
+
+    public function isUserParticipantFirstRound(): bool
+    {
+        return in_array($this->user, $this->event->getFirstRound()->getParticipants()->toArray());
+    }
+
+    public function isUserParticipantSecondRound(): bool
+    {
+        return in_array($this->user, $this->event->getSecondRound()->getParticipants()->toArray());
+    }
+
+    public function disabled(): string
+    {
+        if ($this->isUserParticipantFirstRound() && $this->isUserParticipantSecondRound()){
+            return 'disabled';
+        }
+        return '';
+    }
+
+    public function canEdit(): bool
+    {
+        return in_array(EventManager::getEventOwnerRole($this->event->getFirstRound()), $this->user->getRoles());
+    }
+}

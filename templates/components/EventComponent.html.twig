@@ -1,30 +1,42 @@
 <div class="event-card">
+    {{ event.name }}
     {% if this.event.openToJoin %}
-        <button class="" id="contributeButton{{ event.id }}" {{ this.disabled }}>
-            Join
+        <button class="" id="joinButton{{ event.id }}" data-target="{{ this.isUserParticipant() }}">
+            {% if this.isUserParticipant() %}
+                Verlassen
+            {% else %}
+                Teilnehmen
+            {% endif %}
+        </button>
+    {% endif %}
+    {% if this.canEdit %}
+        <button class="" id="contributeButton{{ event.id }}">
+            Edit
         </button>
     {% endif %}
 </div>
 
 
 <script>
-    document.getElementById("contributeButton{{ event.id }}").addEventListener('click', function () {
+    document.getElementById("joinButton{{ event.id }}").addEventListener('click', function () {
         // Get the button element
-        var button = this;
-
-        // Disable the button
-        button.disabled = true;
+        let button = this;
 
         // Create a new XMLHttpRequest object
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
 
         // Configure it: GET-request for the specified Symfony route
-        xhr.open('GET', '{{ path('app_event_contribute', {'event': event.id}) }}', true);
+        let target = button.dataset.target;
+        if (target) {
+            xhr.open('GET', '{{ path('app_event_exit', {'event': event.id}) }}', true);
+        } else {
+            xhr.open('GET', '{{ path('app_event_join', {'event': event.id}) }}', true);
+        }
 
         // Setup callback for when the request completes
         xhr.onload = function () {
             // Enable the button regardless of success or failure
-            button.disabled = true;
+            // button.disabled = true;
 
             if (xhr.status >= 200 && xhr.status < 300) {
                 // Request was successful, handle the response

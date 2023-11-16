@@ -3,8 +3,11 @@
 namespace App\Content\DesireList;
 
 use App\Entity\DesireList;
+use App\Entity\Event;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<DesireList>
@@ -52,4 +55,19 @@ class DesireListRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    /**
+     * @return DesireList[]
+     */
+    public function findByUserAndEvent(User $user, Event $event): array
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb->join('d.events', 'e');
+        $qb->where('e.id = :eventId')
+            ->setParameter('eventId', $event->getId());
+        $qb->andWhere($qb->expr()->eq('d.owner', ':owner'))
+            ->setParameter('owner', $user);
+
+        return $qb->getQuery()->getResult();
+    }
 }

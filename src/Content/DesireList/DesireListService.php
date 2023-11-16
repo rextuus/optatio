@@ -5,6 +5,8 @@ namespace App\Content\DesireList;
 
 use App\Content\DesireList\Data\DesireListData;
 use App\Entity\DesireList;
+use App\Entity\Event;
+use App\Entity\User;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -36,5 +38,13 @@ class DesireListService
     public function findBy(array $conditions): array
     {
         return $this->repository->findBy($conditions);
+    }
+
+    /**
+     * @return DesireList[]
+     */
+    public function findByUserAndEvent(User $user, Event $event): array
+    {
+        return $this->repository->findByUserAndEvent($user, $event);
     }
 }

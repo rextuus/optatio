@@ -6,6 +6,7 @@ use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Event;
 use App\Entity\Reservation;
+use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -56,6 +57,7 @@ class AdminController extends AbstractDashboardController
             MenuItem::linkToCrud('Desire', 'fa fa-heart', Desire::class),
             MenuItem::linkToCrud('Reservation', 'fa fa-hand-pointer-o', Reservation::class),
             MenuItem::linkToCrud('Event', 'fa fa-hand-pointer-o', Event::class),
+            MenuItem::linkToCrud('SecretSantaEvent', 'fa fa-hand-pointer-o', SecretSantaEvent::class),
         ];
     }
 }

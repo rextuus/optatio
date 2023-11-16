@@ -37,9 +37,17 @@ class Event
     #[ORM\Column(type: Types::ARRAY)]
     private array $accessRoles = [];
 
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Secret::class)]
+    private Collection $secrets;
+
+    #[ORM\ManyToMany(targetEntity: DesireList::class, mappedBy: 'events')]
+    private Collection $desireLists;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->secrets = new ArrayCollection();
+        $this->desireLists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,6 +134,63 @@ class Event
     public function setAccessRoles(array $accessRoles): static
     {
         $this->accessRoles = $accessRoles;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Secret>
+     */
+    public function getSecrets(): Collection
+    {
+        return $this->secrets;
+    }
+
+    public function addSecret(Secret $secret): static
+    {
+        if (!$this->secrets->contains($secret)) {
+            $this->secrets->add($secret);
+            $secret->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSecret(Secret $secret): static
+    {
+        if ($this->secrets->removeElement($secret)) {
+            // set the owning side to null (unless already changed)
+            if ($secret->getEvent() === $this) {
+                $secret->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DesireList>
+     */
+    public function getDesireLists(): Collection
+    {
+        return $this->desireLists;
+    }
+
+    public function addDesireList(DesireList $desireList): static
+    {
+        if (!$this->desireLists->contains($desireList)) {
+            $this->desireLists->add($desireList);
+            $desireList->addEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDesireList(DesireList $desireList): static
+    {
+        if ($this->desireLists->removeElement($desireList)) {
+            $desireList->removeEvent($this);
+        }
 
         return $this;
     }

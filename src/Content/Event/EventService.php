@@ -41,26 +41,12 @@ class EventService
         return $this->repository->findBy($conditions);
     }
 
-    public function initEvent(EventCreateData $createData, User $user): void
+    /**
+     * @return Event[]
+     */
+    public function findEventsWithoutSecretSantaRounds(): array
     {
-        $data = new EventData();
-        $data->setName($createData->getName());
-        $data->setCreator($user);
-        $data->setOpenToJoin($createData->getEventType()->shouldBeOpen());
-        $data->setEventType($createData->getEventType());
-
-        $event = $this->createByData($data);
-        $data = (new EventData())->initFromEntity($event);
-        $data->setAccessRoles(
-            [
-                'ROLE_USER',
-                'ROLE_EVENT_' . $event->getId() . '_OWNER',
-                'ROLE_EVENT_' . $event->getId() . '_PARTICIPANT'
-            ]
-        );
-
-        $this->factory->mapData($data, $event);
-        $this->repository->save($event);
+        return $this->repository->findEventsWithoutSecretSantaRounds();
     }
 
     public function findEventsForUser(User $user)
@@ -68,11 +54,7 @@ class EventService
         return $this->repository->findEventsForUser($user);
     }
 
-    public function addParticipant(Event $event, User $participant): void
-    {
-        if (!in_array($participant, $event->getParticipants()->toArray())){
-            $event->addParticipant($participant);
-            $this->repository->save($event);
-        }
+    public function save(Event $event){
+        $this->repository->save($event);
     }
 }

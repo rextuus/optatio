@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wichtelrunde erstellen{% endblock %}
+
+{% block body %}
+    <div class="ss-container">
+        <div class="ss-header"></div>
+        <div>{{ event.name }}</div>
+{#        {{ component('EventComponent', { event: event.firstRound, user: user, hasEditButton: false }) }}#}
+{#        {{ component('EventComponent', { event: event.secondRound, user: user, hasEditButton: false }) }}#}
+                {{ component('SecretSantaPickComponent', { secret: secret}) }}
+
+    </div>
+
+
+
+{% endblock %}

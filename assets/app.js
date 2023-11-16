@@ -12,3 +12,4 @@ import './styles/banner.scss';
 import './styles/navi.scss';
 import './styles/footer.scss';
 import './styles/event.scss';
+import './styles/secret_santa.scss';

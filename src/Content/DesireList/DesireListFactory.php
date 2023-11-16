@@ -23,8 +23,14 @@ class DesireListFactory
     {
         $desireList->setOwner($data->getOwner());
         $desireList->setAccessRoles($data->getAccessRoles());
+        $desireList->setName($data->getName());
+        $desireList->setDescription($data->getDescription());
         foreach ($data->getDesires() as $desire){
             $desireList->addDesire($desire);
+        }
+
+        foreach ($data->getEvents() as $event){
+            $desireList->addEvent($event);
         }
 
         return $desireList;

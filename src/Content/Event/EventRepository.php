@@ -59,4 +59,13 @@ class EventRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findEventsWithoutSecretSantaRounds()
+    {
+        $qb = $this->createQueryBuilder('e');
+        $qb->where($qb->expr()->neq('e.eventType', ':type'));
+        $qb->setParameter('type', EventType::SECRET_SANTA);
+
+        return $qb->getQuery()->getResult();
+    }
 }

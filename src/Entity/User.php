@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -56,6 +57,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: SecretSantaEvent::class)]
+    private Collection $secretSantaEvents;
+
+    #[ORM\OneToMany(mappedBy: 'exclusionCreator', targetEntity: Exclusion::class)]
+    private Collection $exclusions;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?UserAccessRoles $userAccessRoles = null;
+
+    #[ORM\OneToMany(mappedBy: 'provider', targetEntity: Secret::class)]
+    private Collection $providingSecrets;
+
+    #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Secret::class)]
+    private Collection $receivingSecrets;
+
     public function __construct()
     {
         $this->desires = new ArrayCollection();
@@ -64,11 +80,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->desireLists = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->createdEvents = new ArrayCollection();
+        $this->secretSantaEvents = new ArrayCollection();
+        $this->exclusions = new ArrayCollection();
+        $this->providingSecrets = new ArrayCollection();
+        $this->receivingSecrets = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -322,5 +349,142 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullName(): string
     {
         return $this->getFirstName().' '.$this->getLastName();
+    }
+
+    /**
+     * @return Collection<int, SecretSantaEvent>
+     */
+    public function getSecretSantaEvents(): Collection
+    {
+        return $this->secretSantaEvents;
+    }
+
+    public function addSecretSantaEvent(SecretSantaEvent $secretSantaEvent): static
+    {
+        if (!$this->secretSantaEvents->contains($secretSantaEvent)) {
+            $this->secretSantaEvents->add($secretSantaEvent);
+            $secretSantaEvent->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSecretSantaEvent(SecretSantaEvent $secretSantaEvent): static
+    {
+        if ($this->secretSantaEvents->removeElement($secretSantaEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($secretSantaEvent->getCreator() === $this) {
+                $secretSantaEvent->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Exclusion>
+     */
+    public function getExclusions(): Collection
+    {
+        return $this->exclusions;
+    }
+
+    public function addExclusion(Exclusion $exclusion): static
+    {
+        if (!$this->exclusions->contains($exclusion)) {
+            $this->exclusions->add($exclusion);
+            $exclusion->setExclusionCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExclusion(Exclusion $exclusion): static
+    {
+        if ($this->exclusions->removeElement($exclusion)) {
+            // set the owning side to null (unless already changed)
+            if ($exclusion->getExclusionCreator() === $this) {
+                $exclusion->setExclusionCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserAccessRoles(): ?UserAccessRoles
+    {
+        return $this->userAccessRoles;
+    }
+
+    public function setUserAccessRoles(UserAccessRoles $userAccessRoles): static
+    {
+        // set the owning side of the relation if necessary
+        if ($userAccessRoles->getUser() !== $this) {
+            $userAccessRoles->setUser($this);
+        }
+
+        $this->userAccessRoles = $userAccessRoles;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Secret>
+     */
+    public function getProvidingSecrets(): Collection
+    {
+        return $this->providingSecrets;
+    }
+
+    public function addProvidingSecret(Secret $providingSecret): static
+    {
+        if (!$this->providingSecrets->contains($providingSecret)) {
+            $this->providingSecrets->add($providingSecret);
+            $providingSecret->setProvider($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProvidingSecret(Secret $providingSecret): static
+    {
+        if ($this->providingSecrets->removeElement($providingSecret)) {
+            // set the owning side to null (unless already changed)
+            if ($providingSecret->getProvider() === $this) {
+                $providingSecret->setProvider(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Secret>
+     */
+    public function getReceivingSecrets(): Collection
+    {
+        return $this->receivingSecrets;
+    }
+
+    public function addReceivingSecret(Secret $receivingSecret): static
+    {
+        if (!$this->receivingSecrets->contains($receivingSecret)) {
+            $this->receivingSecrets->add($receivingSecret);
+            $receivingSecret->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivingSecret(Secret $receivingSecret): static
+    {
+        if ($this->receivingSecrets->removeElement($receivingSecret)) {
+            // set the owning side to null (unless already changed)
+            if ($receivingSecret->getReceiver() === $this) {
+                $receivingSecret->setReceiver(null);
+            }
+        }
+
+        return $this;
     }
 }
