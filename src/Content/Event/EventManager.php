@@ -77,7 +77,6 @@ class EventManager
 
         // TODO give use role
         $this->userService->addEventRoleToUser($event, $participant);
-
     }
 
 

@@ -17,6 +17,7 @@ use App\Entity\Event;
 use App\Entity\Secret;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -91,6 +92,19 @@ class SecretSantaService
     public function performSecondRoundPick(SecretSantaEvent $event, User $participant): Secret
     {
         return $this->pickSecretByEventAndUser($event, $event->getSecondRound(), $participant, SecretSantaState::RUNNING);
+    }
+
+    public function userHasAlreadyPickedSecretForEvent(Event $event, UserInterface $participant): bool
+    {
+        $secrets = $this->secretService->findBy(['event' => $event, 'provider' => $participant]);
+
+        if (count($secrets) !== 1) {
+            throw new \Exception('Secret for event and user is not unique!');
+        }
+
+        $secret = $secrets[0];
+
+        return $secret->isRetrieved();
     }
 
     private function pickSecretByEventAndUser(

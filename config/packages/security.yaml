@@ -14,13 +14,19 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            entry_point: 'form_login'
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\LoginFormAuthenticator
+            form_login:
+                login_path: app_login
+                enable_csrf: true
+                success_handler: App\Security\CustomAuthenticationSuccessHandler
+
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                #           where to redirect after logout
+                target: app_home
 
             remember_me:
                 secret: '%kernel.secret%'

@@ -4,11 +4,22 @@
 
 {% block body %}
     <div class="ss-container">
+        <div class="page-header">
+            <div class="page-header-text">
+                {{ event.name }}
+            </div>
+            <div class="page-header-image">
+                <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            </div>
+        </div>
         <div class="ss-header"></div>
-        <div>{{ event.name }}</div>
+
+        <div class="simple-text-box font-size-1-2">{{ stateText }}</div>
+
+
 {#        {{ component('EventComponent', { event: event.firstRound, user: user, hasEditButton: false }) }}#}
 {#        {{ component('EventComponent', { event: event.secondRound, user: user, hasEditButton: false }) }}#}
-                {{ component('SecretSantaPickComponent', { secret: secret}) }}
+        {{ component('SecretSantaPickComponent', { secret: secret}) }}
 
     </div>
 

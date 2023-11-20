@@ -3,29 +3,66 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <div class="tab-nav">
+        <button class="tab-button active" data-tab="tab-1" data-name="Login"
+                data-image="{{ asset('assets/img/login.svg') }}"></button>
+        <button class="tab-button link" data-tab="tab-2" data-name="Registrieren" data-link="{{ path('app_register') }}"
+                data-image="{{ asset('assets/img/registration.svg') }}"></button>
+    </div>
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+    <div class="page-header">
+        <div class="page-header-text">
+            Login
         </div>
-    {% endif %}
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/login.svg') }}" alt="Tile image">
+        </div>
+    </div>
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
 
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
+    <div class="content-body">
+        <div id="tab-1" class="tab active">
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+
+            <div class="simple-text-box font-size-1-2">Willkommen zurück {{ last_username }}</div>
+
+            {% if error %}
+                <div class="form-errors">Invalide Username Passwort Kombination</div>
+            {% endif %}
+
+            <div class="form-area">
+                <form action="{{ path('app_login') }}" method="post">
+                    <div class="form-input-field">
+                        <label class="hidden" for="username">Email:</label>
+                        <div class="image-form-row">
+                            <div class="image-form-row-image">
+                                <img src="{{ asset('assets/img/person.svg') }}" alt="Tile image">
+                            </div>
+                            <input class="form-style" type="text" id="username" name="_username"
+                                   value="{{ last_username }}" placeholder="Username">
+                        </div>
+                    </div>
+
+                    <div class="form-input-field">
+                        <label class="hidden" for="password">Password:</label>
+                        <div class="image-form-row">
+                            <div class="image-form-row-image">
+                                <img src="{{ asset('assets/img/password.svg') }}" alt="Tile image">
+                            </div>
+                            <input class="form-style" type="password" id="password" name="_password"
+                                   placeholder="Passwort">
+                        </div>
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+
+                    <button class="btn" type="submit">login</button>
+                </form>
+            </div>
+            <div class="has-mb-m has-mt-l">
+{#                <a class="default-button decline undecorated-link-text" href="{{ path('app_forgot_password_request') }}">Passwort vergessen?</a>#}
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

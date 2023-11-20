@@ -1,7 +1,6 @@
 @import "variables";
 body{
     background: black;
-    //min-height: 100vh;
     margin: 0;
     align-content: center;
     display: flex;
@@ -11,7 +10,7 @@ body{
 
 .body-container{
     background: $color-body-main;
-    color: #d7e6cf;
+    color: $color-font-default;
     font-family: arial, verdana, sans-serif;
 
     display: flex;
@@ -28,4 +27,29 @@ body{
         overflow-x: hidden;
     }
 
+}
+
+.content-body{
+    height: 100%;
+    margin-right: $default-size-m;
+    margin-left: $default-size-m;
+    overflow: auto;
+}
+
+.has-default-border{
+    border: $size-default-border solid $color-default-border;
+    border-radius: $default-border-radius;
+}
+
+.simple-text-box{
+    max-width: 100%;
+    padding: 15px;
+    font-size: 1.5em;
+    margin: 0px auto $default-size-xl;
+    border: 1px solid $color-body-diff;
+    background-color: $color-body-diff;
+    border-radius: 8px;
+    &.is-warning{
+        background-color: #0ea5e9;
+    }
 }

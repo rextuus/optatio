@@ -8,6 +8,7 @@ use App\Content\Event\EventManager;
 use App\Content\Event\EventService;
 use App\Content\Event\EventType;
 use App\Entity\Event;
+use App\Entity\User;
 use App\Form\EventCreateType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/event')]
-#[IsGranted('ROLE_USER')]
+//#[IsGranted('ROLE_USER')]
 class EventController extends AbstractController
 {
 
@@ -43,7 +44,7 @@ class EventController extends AbstractController
             return $this->redirect($this->generateUrl('app_home', []));
         }
 
-        return $this->render('event/index.html.twig', [
+        return $this->render('event/create.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -52,11 +53,17 @@ class EventController extends AbstractController
     #[Route('/join/{event}', name: 'app_event_join')]
     public function contribute(Event $event): Response
     {
-        $this->getUser();
+        $user = $this->getUser();
 
-        $this->eventManager->addParticipant($event, $this->getUser());
+        $this->eventManager->addParticipant($event, $user);
+        $user = $this->getUser();
 
-        return new JsonResponse([true]);
+        $roles = [];
+        if ($user instanceof User){
+            $roles[] = $user->getUserAccessRoles()->getRoles();
+        }
+
+        return new JsonResponse($roles);
     }
 
     #[Route('/exit/{event}', name: 'app_event_exit')]
@@ -69,14 +76,11 @@ class EventController extends AbstractController
         return new JsonResponse([true]);
     }
 
-    #[Route('/manage/{event}', name: 'app_event_manage')]
+    #[Route('/detail/{event}', name: 'app_event_detail')]
     public function manage(Event $event): Response
     {
-        $data = new EventCreateData();
-        $form = $this->createForm(EventCreateType::class, $data);
-
-        return $this->render('event/index.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('event/detail.html.twig', [
+            'event' => $event,
         ]);
     }
 }

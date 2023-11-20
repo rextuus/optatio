@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace App\Content\User;
 
+use App\Content\User\Data\UserRegistrationData;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Entity\UserAccessRoles;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -17,7 +16,11 @@ class UserService
 {
 
 
-    public function __construct(private UserRepository $repository, private UserAccessRolesRepository $roleRepository, private TokenStorageInterface $tokenStorage)
+    public function __construct(
+        private UserRepository $repository,
+        private UserFactory $userFactory,
+        private UserAccessRolesRepository $roleRepository,
+    )
     {
     }
 
@@ -30,30 +33,21 @@ class UserService
         $this->repository->save($user);
     }
 
-    public function addEventRoleToUser(Event $event, User $user): void
+    public function addEventRoleToUser(Event $event, User $participant): void
     {
-        $eventRoles = ['ROLE_EVENT_' . $event->getId() . '_PARTICIPANT'];
-        $user->setRoles(array_merge($user->getRoles(), $eventRoles));
+        $roles = $participant->getUserAccessRoles();
 
-        $token = new UsernamePasswordToken($user, 'main');
-        $this->tokenStorage->setToken($token);
+        $roles->addRole('ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
 
-        $this->repository->save($user);
+        $this->roleRepository->save($roles);
     }
 
     public function removeEventRoleToUser(Event $event, User $participant): void
     {
-        $currentlyRoles = $participant->getRoles();
-        $key = array_search('ROLE_EVENT_' . $event->getId() . '_PARTICIPANT', $currentlyRoles);
-        if ($key !== false) {
-            unset($currentlyRoles[$key]);
-        }
+        $roles = $participant->getUserAccessRoles();
+        $roles->removeRole('ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
 
-        $participant->setRoles($currentlyRoles);
-        $token = new UsernamePasswordToken($participant, 'main');
-        $this->tokenStorage->setToken($token);
-
-        $this->repository->save($participant);
+        $this->roleRepository->save($roles);
     }
 
     public function initAccessRolesForUser(User $user): void
@@ -77,5 +71,14 @@ class UserService
     public function getUser(int $userId): User
     {
         return $this->repository->find($userId);
+    }
+
+    public function storeNewUserByData(UserRegistrationData $userRegistrationData)
+    {
+        $user = $this->userFactory->createByData($userRegistrationData);
+
+        $this->repository->save($user, true);
+
+        return $user;
     }
 }

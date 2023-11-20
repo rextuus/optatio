@@ -1,22 +1,125 @@
+@import "variables";
+
+$color-event-background: $color-form-field-background;
+$color-event-header-background: $color-form-field-font-disabled;
+$color-ss-event-background: #7c0505;
+$color-ss-event-header-background: #7c0505;
+$color-event-default-border: $color-header-main;
+$color-event-header-font: $color-header-main;
+
 .event-card {
-    border: #0a0800 solid 4px;
-    background-color: #ccaa1f;
-    padding: 5px;
+    position: relative; /* Add this line for positioning */
+    background-color: $color-event-background;
+    .toggle-indicator {
+        position: absolute;
+        top: 25px;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid #000; /* Change color as needed */
+        transform: rotate(0deg); /* Triangle pointing downwards by default */
+
+        &.expanded {
+            transform: rotate(180deg); /* Triangle pointing upwards when expanded */
+        }
+    }
+
+
+    border: 1px solid $color-header-main;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+
+    .event-header {
+        padding: 10px;
+        background-color: $color-event-header-background;
+        cursor: pointer;
+        border-radius: 4px;
+
+        .event-name {
+            margin: 0;
+        }
+
+        .button-row{
+            display: flex;
+            justify-content: flex-end;
+            .join-button {
+                padding: 8px 16px;
+                border: none;
+                background-color: #23303f;
+                color: #fff;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .event-details {
+        padding: 10px;
+        display: none;
+
+        p {
+            margin: 5px 0;
+        }
+    }
+
+    &.expanded {
+        .event-details {
+            display: block;
+        }
+    }
+
+    .ss-header{
+        background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
+        background-repeat: repeat-x; /* Repeat the image horizontally */
+        background-size: auto 15px; /* Set the height of the repeated image */
+        width: 100%;
+        height: 15px;
+        margin-bottom: $default-size-m;
+    }
+
+    .event-banner{
+        //background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
+        //background-repeat: repeat-x; /* Repeat the image horizontally */
+        //background-size: auto 15px; /* Set the height of the repeated image */
+        background-color: $color-event-background;
+        width: 100%;
+        height: 15px;
+        margin-bottom: $default-size-xxs;
+    }
 }
 
 .ss-event-card {
-    border: #0a0800 solid 4px;
-    background-color: #133413;
-    padding: 5px;
-}
+    @extend .event-card;
+    background-color: $color-ss-event-background;
 
-.ss-container {
-    background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
-    background-repeat: repeat-x; /* Repeat the image horizontally */
-    background-size: auto 30px; /* Set the height of the repeated image */
+    .event-banner{
+        background-color: $color-ss-event-background;
+        background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
+        background-repeat: repeat-x; /* Repeat the image horizontally */
+        background-size: auto 15px; /* Set the height of the repeated image */
 
-    .ss-header{
-        width: 100%;
-        height: 30px;
     }
 }
+
+
+
+//.ss-container {
+//    .event-banner{
+//        background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
+//        background-repeat: repeat-x; /* Repeat the image horizontally */
+//        background-size: auto 30px; /* Set the height of the repeated image */
+//        width: 100%;
+//        height: 30px;
+//        margin-bottom: $default-size-m;
+//    }
+//    .simple-text-box{
+//        background-color: $color-ss-event-background;
+//    }
+//}
+
+
+
+

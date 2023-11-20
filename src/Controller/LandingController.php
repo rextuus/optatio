@@ -19,7 +19,7 @@ class LandingController extends AbstractController
         $events = $eventService->findEventsWithoutSecretSantaRounds();
         $secretSantaEvents = $secretSantaEventService->findBy([]);
 
-        return $this->render('landing/index.html.twig', [
+        return $this->render('landing/home.html.twig', [
             'user' => $this->getUser(),
             'events' => $events,
             'secretSantaEvents' => $secretSantaEvents,

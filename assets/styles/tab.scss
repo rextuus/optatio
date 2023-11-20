@@ -1,0 +1,40 @@
+@import "variables";
+
+/* Style the tab navigation */
+.tab-nav {
+    display: flex;
+    //border-bottom: 1px solid $color-header-main;
+}
+
+.tab-button {
+    flex: 1;
+    background-color: $color-navi-tab-button-inactive;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 16px;
+
+    border-top: 1px;
+    border-bottom: 1px;
+    border-left: none;
+    border-right: none;
+}
+
+.tab-button.active {
+    background-color: $color-navi-tab-button-active;
+    font-weight: bold;
+    color: $color-navi-tab-button-active-font;
+
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+}

@@ -1,0 +1,36 @@
+<div{{ attributes }}>
+    <div class="desire-card">
+        <div class="desire-banner"></div>
+        <div class="toggle-indicator"></div>
+
+        <div class="desire-header">
+
+            <div class="card-toggle" onclick="toggleEventDetails(event)">
+                <h3 class="desire-name">{{ this.desire.name }}</h3>
+            </div>
+
+{#            <div class="button-row">#}
+{#                #}
+{#            </div>#}
+
+        </div>
+        <div class="desire-details">
+            <p><strong>Erstellt:</strong> missing</p>
+            <p><strong>Erstellt:</strong> missing</p>
+            <p><strong>Erstellt:</strong> missing</p>
+            <p><strong>Erstellt:</strong> missing</p>
+        </div>
+        </div>
+
+</div>
+
+
+<script>
+    function toggleEventDetails(event) {
+        const eventCard = event.currentTarget.parentElement.parentElement;
+        if (!event.target.matches('.join-button')) {
+            eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
+            eventCard.classList.toggle('expanded');
+        }
+    }
+</script>

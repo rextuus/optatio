@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
+use App\Content\User\Data\UserRegistrationData;
 use App\Content\User\UserRepository;
-use App\Entity\User;
+use App\Content\User\UserService;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -27,29 +26,22 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserService $userService): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $userRegistrationData = new UserRegistrationData();
+        $form = $this->createForm(RegistrationFormType::class, $userRegistrationData);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $userService->storeNewUserByData($userRegistrationData);
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $userRegistrationData,
                 (new TemplatedEmail())
                     ->from(new Address('debes@wh-company.de', 'WH-Company'))
-                    ->to($user->getEmail())
+                    ->to($userRegistrationData->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );

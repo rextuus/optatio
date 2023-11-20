@@ -1,0 +1,33 @@
+@import "variables";
+
+.page-header{
+    background: $color-header-main;
+    font-weight: bold;
+    font-size: 1.9em;
+
+    display: flex;
+    justify-content: flex-start;
+
+    padding: 15px;
+    margin-bottom: $default-size-l;
+}
+
+.page-header-text{
+    margin-right: $default-size-s;
+    display: inline-block;
+    color: $color-page-header-default;
+}
+
+.page-header-image{
+    margin-left: auto;
+    display: inline-block;
+    fill: #ffffff;
+    margin-right: $default-size-xl;
+}
+
+.page-header-image img{
+    width: $size-page-header-image;
+    height: $size-page-header-image;
+    fill: #ffffff;
+}
+

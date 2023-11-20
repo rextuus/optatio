@@ -3,23 +3,80 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+    <div class="tab-nav">
+        <button class="tab-button link" data-tab="tab-1" data-name="Login" data-link="{{ path('app_login') }}"
+                data-image="{{ asset('assets/img/login.svg') }}"></button>
+        <button class="tab-button active" data-tab="tab-2" data-name="Registrieren"
+                data-image="{{ asset('assets/img/registration.svg') }}"></button>
+    </div>
 
-    <h1>Register</h1>
+    <div class="page-header">
+        <div class="page-header-text">
+            Registrieren
+        </div>
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+        </div>
+    </div>
 
-    {{ form_errors(registrationForm) }}
+    <div class="content-body">
+        <div id="tab-1" class="tab"></div>
+        <div id="tab-2" class="tab active">
+            <div class="empty-list-info font-size-1-2">Eine gute Entscheidung dabei zu sein</div>
+            <div class="form-area">
+                {{ form_start(registrationForm, {'method': 'POST'}) }}
+                <div class="my-custom-class-for-errors">
+                    {{ form_errors(registrationForm) }}
+                </div>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.firstName) }}
-        {{ form_row(registrationForm.lastName) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+                <div class="form-input-field">
+                    <label class="hidden" for="registration_form_email"></label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image">
+                            <img src="{{ asset ('assets/img/email.svg') }}" alt="Tile image">
+                        </div>
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-style', 'placeholder':'Email', 'id': 'email'}}) }}
+                    </div>
+                </div>
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                <div class="form-input-field">
+                    <label class="hidden" for="registration_form_password_first">Passwort</label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image force-left">
+                            <img src="{{ asset('assets/img/password.svg') }}" alt="Tile image">
+                        </div>
+{#                        {{ form_widget(registrationForm.password, {'attr': {'class': 'form-style double-form-style', 'id': 'password'}}) }}#}
+                        <div class="form-register-password-container">
+                            {{ form_row(registrationForm.password.first, {'attr': {'class': 'form-style', 'placeholder':'Passwort', 'id': 'Passwort'}}) }}
+                            {{ form_row(registrationForm.password.second, {'attr': {'class': 'form-style', 'placeholder':'Passwort wiederholen', 'id': 'Passwort'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-input-field">
+                    <label class="hidden" for="registration_form_firstName"></label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image">
+                            <img src="{{ asset ('assets/img/name.svg') }}" alt="Tile image">
+                        </div>
+                        {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-style', 'placeholder':'Vorname', 'id': 'firstName'}}) }}
+                    </div>
+                </div>
+                <div class="form-input-field">
+                    <label class="hidden" for="registration_form_lastName"></label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image">
+                            <img src="{{ asset ('assets/img/name.svg') }}" alt="Tile image">
+                        </div>
+                        {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-style', 'placeholder':'Nachname', 'id': 'lastName'}}) }}
+                    </div>
+                </div>
+                {{ form_row(registrationForm._token) }}
+
+                <div class="form-submit-field">
+                    {{ form_widget(registrationForm.submit, {'attr': {'class': 'btn'}}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

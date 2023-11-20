@@ -1,60 +1,52 @@
-<div class="event-card">
-    {{ event.name }}
-    {% if this.event.openToJoin %}
-        <button class="" id="joinButton{{ event.id }}" data-target="{{ this.isUserParticipant() }}">
-            {% if this.isUserParticipant() %}
-                Verlassen
-            {% else %}
-                Teilnehmen
-            {% endif %}
-        </button>
-    {% endif %}
-    {% if this.canEdit %}
-        <button class="" id="contributeButton{{ event.id }}">
-            Edit
-        </button>
-    {% endif %}
+<div{{ attributes }}>
+    <div class="event-card">
+        <div class="event-banner"></div>
+        <div class="toggle-indicator"></div>
+        <div class="event-header">
+
+            <div class="card-toggle" onclick="toggleEventDetails(event)">
+                <h3 class="event-name">{{ event.name }}</h3>
+            </div>
+
+            <div class="button-row">
+
+                {% if this.event.openToJoin %}
+                    <div class="event-card-button">
+                        <a href="{{ path('app_secret_santa_detail', {'event': event.id}) }}">
+                            <button class="join-button">
+                                Teilnehmen
+                            </button>
+                        </a>
+                    </div>
+                {% endif %}
+
+
+                {% if this.canEdit %}
+                    <div class="event-card-button">
+                        <a href="{{ path('app_event_join', {'event': event.firstRound.id}) }}">
+                            <button class="" id="contributeButton{{ event.id }}">
+                                Edit
+                            </button>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="event-details">
+            <p><strong>Erstellt:</strong> missing</p>
+            <p><strong>State:</strong> {{ event.openToJoin }}</p>
+            <p><strong>Creator:</strong> {{ event.creator.firstName }}</p>
+        </div>
+    </div>
 </div>
 
 
 <script>
-    document.getElementById("joinButton{{ event.id }}").addEventListener('click', function () {
-        // Get the button element
-        let button = this;
-
-        // Create a new XMLHttpRequest object
-        let xhr = new XMLHttpRequest();
-
-        // Configure it: GET-request for the specified Symfony route
-        let target = button.dataset.target;
-        if (target) {
-            xhr.open('GET', '{{ path('app_event_exit', {'event': event.id}) }}', true);
-        } else {
-            xhr.open('GET', '{{ path('app_event_join', {'event': event.id}) }}', true);
+    function toggleEventDetails(event) {
+        const eventCard = event.currentTarget.parentElement.parentElement;
+        if (!event.target.matches('.join-button')) {
+            eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
+            eventCard.classList.toggle('expanded');
         }
-
-        // Setup callback for when the request completes
-        xhr.onload = function () {
-            // Enable the button regardless of success or failure
-            // button.disabled = true;
-
-            if (xhr.status >= 200 && xhr.status < 300) {
-                // Request was successful, handle the response
-                console.log(xhr.responseText);
-            } else {
-                // Request failed
-                console.error('Request failed with status ' + xhr.status);
-            }
-        };
-
-        // Handle network errors
-        xhr.onerror = function () {
-            // Enable the button in case of a network error
-            button.disabled = false;
-            console.error('Network error');
-        };
-
-        // Send the request
-        xhr.send();
-    });
+    }
 </script>

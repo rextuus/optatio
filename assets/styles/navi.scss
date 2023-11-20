@@ -2,7 +2,7 @@
 
 /* Main menu positionning */
 .top-navi{
-    height: 90px;
+    height: $size-navi-height;
     margin-left: 0;
     margin-right: 0;
     /*margin-bottom: 10px;*/
@@ -14,9 +14,7 @@
     background: $color-navi-main;
     transform-origin: 0 0;
     transition: all .275s .1s;
-    /*background: linear-gradient(to bottom right, #89bbbe 0%, #89bbbe calc(50% - 11%), #02516c calc(50% - 10%), #02516c 100%);*/
-/*    02516c*/
-/*    02516c*/
+
     border-bottom: $color-navi-secondary solid 4px;
     display: flex;
     align-items: center;
@@ -30,7 +28,7 @@
 
 .navi-favicon{
     border: 1px solid black;
-    margin-right: 20px;
+    margin-right: $default-size-xl;
 
     img {
         width: $navi-favicon-size;
@@ -49,7 +47,7 @@
     left: 0;
     bottom: 0;
     text-align: center;
-    background: $color-balance-positive;
+    background: $color-navi-collapses-background;
     opacity: 0;
     z-index: -1;
     visibility: hidden;
@@ -74,7 +72,7 @@
     bottom: 0;
     left: 0;
     right: -15px;
-    background: $color-balance-positive;
+    background: $color-navi-collapses-background;
     transform-origin: 0 0;
     transform: skew(-14deg) translateX(-120%);
     transition: all .275s .1s;
@@ -145,11 +143,11 @@
 
 /* Burger Style: @see: https://codepen.io/CreativeJuiz/full/oMZNXy */
 .header-container {
-    display: flex; /* Added */
-    justify-content: space-between; /* Added */
-    align-items: center; /* Added */
-    height: 90px; /* Added */
-    margin-bottom: 10px; /* Added */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: $size-navi-height;
+    margin-bottom: 10px;
     min-width: 100%;
 }
 
@@ -231,7 +229,7 @@
     display: inline-block;
 }
 .home-button {
-    margin-left: $default-m-lr-m;
+    margin-left: $default-size-m;
     //width: calc(25% - 20px);
     ///* calculate the width to be half of the screen width and subtract some padding */
     //height: calc(25% - 20px);
@@ -251,10 +249,9 @@
 }
 
 .account-landing-header{
-    color: #0a0800;
-    margin-top: $default-m-b-s;
-    margin-left: $default-m-lr-m;
-    margin-bottom: $default-m-b-s;
+    margin-top: $default-size-l;
+    margin-left: $default-size-m;
+    margin-bottom: $default-size-l;
 }
 
 .login-button-container{
@@ -266,15 +263,15 @@
     cursor: pointer;
 
     .login-text{
-        margin: $default-m-b-xs;
-        margin-left: $default-m-b-s;
+        margin: $default-size-s;
+        margin-left: $default-size-l;
         color: black;
     }
 }
 .login-button {
     margin-top: 20px;
 
-    margin-left: $default-m-lr-m;
+    margin-left: $default-size-m;
 
     display: flex;
     flex-direction: column;
