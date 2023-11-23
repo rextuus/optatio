@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Content\Desire\DesireRepository;
 use App\Content\Desire\DesireState;
-use App\Service\Evaluation\BetOn;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,9 +26,6 @@ class Desire
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
-    #[ORM\Column]
-    private ?int $priority = null;
-
     #[ORM\Column(type: "string", enumType: DesireState::class)]
     private DesireState $state;
 
@@ -45,11 +41,21 @@ class Desire
     #[ORM\ManyToMany(targetEntity: DesireList::class, mappedBy: 'desires')]
     private Collection $desireLists;
 
+    #[ORM\Column]
+    private ?bool $listed = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
+
+    #[ORM\OneToMany(mappedBy: 'desire', targetEntity: Priority::class)]
+    private Collection $priorities;
+
     public function __construct()
     {
         $this->reservers = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->desireLists = new ArrayCollection();
+        $this->priorities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,7 +92,7 @@ class Desire
         return $this->url;
     }
 
-    public function setUrl(string $url): static
+    public function setUrl(?string $url): static
     {
         $this->url = $url;
 
@@ -197,6 +203,60 @@ class Desire
     {
         if ($this->desireLists->removeElement($desireList)) {
             $desireList->removeDesire($this);
+        }
+
+        return $this;
+    }
+
+    public function isListed(): ?bool
+    {
+        return $this->listed;
+    }
+
+    public function setListed(bool $listed): static
+    {
+        $this->listed = $listed;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Priority>
+     */
+    public function getPriorities(): Collection
+    {
+        return $this->priorities;
+    }
+
+    public function addPriority(Priority $priority): static
+    {
+        if (!$this->priorities->contains($priority)) {
+            $this->priorities->add($priority);
+            $priority->setDesire($this);
+        }
+
+        return $this;
+    }
+
+    public function removePriority(Priority $priority): static
+    {
+        if ($this->priorities->removeElement($priority)) {
+            // set the owning side to null (unless already changed)
+            if ($priority->getDesire() === $this) {
+                $priority->setDesire(null);
+            }
         }
 
         return $this;

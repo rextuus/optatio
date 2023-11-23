@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Content\DesireList\Data;
 
+use App\Entity\AccessRole;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Event;
@@ -22,6 +23,9 @@ class DesireListData
      */
     private array $desires;
 
+    /**
+     * @var AccessRole[]
+     */
     private array $accessRoles = [];
 
     /**
@@ -31,6 +35,17 @@ class DesireListData
 
     private string $name;
     private string $description;
+
+    public function getAccessRoles(): array
+    {
+        return $this->accessRoles;
+    }
+
+    public function setAccessRoles(array $accessRoles): DesireListData
+    {
+        $this->accessRoles = $accessRoles;
+        return $this;
+    }
 
     public function getOwner(): User
     {
@@ -51,17 +66,6 @@ class DesireListData
     public function setDesires(array $desires): DesireListData
     {
         $this->desires = $desires;
-        return $this;
-    }
-
-    public function getAccessRoles(): array
-    {
-        return $this->accessRoles;
-    }
-
-    public function setAccessRoles(array $accessRoles): DesireListData
-    {
-        $this->accessRoles = $accessRoles;
         return $this;
     }
 
@@ -102,7 +106,6 @@ class DesireListData
     {
         $this->setDesires($desireList->getDesires()->toArray());
         $this->setOwner($desireList->getOwner());
-        $this->setAccessRoles($desireList->getAccessRoles());
         $this->setEvents($desireList->getEvents()->toArray());
         $this->setName($desireList->getName());
         $this->setDescription($desireList->getDescription());

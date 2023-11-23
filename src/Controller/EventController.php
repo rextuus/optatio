@@ -7,6 +7,7 @@ use App\Content\Event\Data\EventData;
 use App\Content\Event\EventManager;
 use App\Content\Event\EventService;
 use App\Content\Event\EventType;
+use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Form\EventCreateType;
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/event')]
-//#[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_USER')]
 class EventController extends AbstractController
 {
 
@@ -27,8 +28,21 @@ class EventController extends AbstractController
     {
     }
 
-    #[Route('/create', name: 'app_event_list')]
-    public function index(Request $request): Response
+    #[Route('/', name: 'app_event_list')]
+    public function list(EventService $eventService, SecretSantaEventService $secretSantaEventService): Response
+    {
+        $events = $eventService->findEventsWithoutSecretSantaRounds();
+        $secretSantaEvents = $secretSantaEventService->findBy([]);
+
+        return $this->render('landing/home.html.twig', [
+            'user' => $this->getUser(),
+            'events' => $events,
+            'secretSantaEvents' => $secretSantaEvents,
+        ]);
+    }
+
+    #[Route('/create', name: 'app_event_create')]
+    public function create(Request $request): Response
     {
         $data = new EventCreateData();
         $form = $this->createForm(EventCreateType::class, $data);

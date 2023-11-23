@@ -4,6 +4,6 @@ namespace App\Content\Reservation;
 
 enum ReservationState: string
 {
-    case PENDING = 'pending';
+    case RESOLVED = 'resolved';
     case RESERVED = 'reserved';
 }

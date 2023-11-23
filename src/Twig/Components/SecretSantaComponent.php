@@ -34,6 +34,14 @@ final class SecretSantaComponent
         return '';
     }
 
+    public function isAlreadyParticipant(): bool
+    {
+        if ($this->isUserParticipantFirstRound() || $this->isUserParticipantSecondRound()){
+            return true;
+        }
+        return false;
+    }
+
     public function canEdit(): bool
     {
         return in_array(EventManager::getEventOwnerRole($this->event->getFirstRound()), $this->user->getRoles());

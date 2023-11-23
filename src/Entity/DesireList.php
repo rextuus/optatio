@@ -3,13 +3,14 @@
 namespace App\Entity;
 
 use App\Content\DesireList\DesireListRepository;
+use App\Content\User\HasAccessRoleInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DesireListRepository::class)]
-class DesireList
+class DesireList implements HasAccessRoleInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,9 +24,6 @@ class DesireList
     #[ORM\ManyToMany(targetEntity: Desire::class, inversedBy: 'desireLists')]
     private Collection $desires;
 
-    #[ORM\Column(type: Types::ARRAY)]
-    private array $accessRoles = [];
-
     #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'desireLists')]
     private Collection $events;
 
@@ -35,10 +33,18 @@ class DesireList
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
+    #[ORM\OneToMany(mappedBy: 'desireList', targetEntity: Priority::class)]
+    private Collection $priorities;
+
+    #[ORM\ManyToMany(targetEntity: AccessRole::class, mappedBy: 'desireLists')]
+    private Collection $accessRoles;
+
     public function __construct()
     {
         $this->desires = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->priorities = new ArrayCollection();
+        $this->accessRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,17 +88,6 @@ class DesireList
         return $this;
     }
 
-    public function getAccessRoles(): array
-    {
-        return $this->accessRoles;
-    }
-
-    public function setAccessRoles(array $accessRoles): static
-    {
-        $this->accessRoles = $accessRoles;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Event>
@@ -138,6 +133,64 @@ class DesireList
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Priority>
+     */
+    public function getPriorities(): Collection
+    {
+        return $this->priorities;
+    }
+
+    public function addPriority(Priority $priority): static
+    {
+        if (!$this->priorities->contains($priority)) {
+            $this->priorities->add($priority);
+            $priority->setDesireList($this);
+        }
+
+        return $this;
+    }
+
+    public function removePriority(Priority $priority): static
+    {
+        if ($this->priorities->removeElement($priority)) {
+            // set the owning side to null (unless already changed)
+            if ($priority->getDesireList() === $this) {
+                $priority->setDesireList(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AccessRole>
+     */
+    public function getAccessRoles(): Collection
+    {
+        return $this->accessRoles;
+    }
+
+    public function addAccessRole(AccessRole $accessRole): static
+    {
+        if (!$this->accessRoles->contains($accessRole)) {
+            $this->accessRoles->add($accessRole);
+            $accessRole->addDesireList($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccessRole(AccessRole $accessRole): static
+    {
+        if ($this->accessRoles->removeElement($accessRole)) {
+            $accessRole->removeDesireList($this);
+
+        }
 
         return $this;
     }

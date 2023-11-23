@@ -22,7 +22,6 @@ class DesireListFactory
     public function mapData(DesireListData $data, DesireList $desireList): DesireList
     {
         $desireList->setOwner($data->getOwner());
-        $desireList->setAccessRoles($data->getAccessRoles());
         $desireList->setName($data->getName());
         $desireList->setDescription($data->getDescription());
         foreach ($data->getDesires() as $desire){

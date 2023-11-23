@@ -22,12 +22,13 @@ class DesireFactory
     public function mapData(DesireData $data, Desire $desire): Desire
     {
         $desire->setName($data->getName());
+        $desire->setDescription($data->getDescription());
         $desire->setState($data->getState());
         $desire->setUrl($data->getUrl());
-        $desire->setPriority($data->getPriority());
         $desire->setOwner($data->getOwner());
         $desire->setExactly($data->isExactly());
         $desire->setExclusive($data->isExclusive());
+        $desire->setListed($data->isListed());
 
         return $desire;
     }

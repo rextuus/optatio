@@ -20,7 +20,7 @@ class UserAccessRoles
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     private Collection $roles;
 
     public function __construct()

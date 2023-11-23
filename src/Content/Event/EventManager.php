@@ -3,14 +3,17 @@ declare(strict_types=1);
 
 namespace App\Content\Event;
 
+use App\Content\Desire\DesireManager;
 use App\Content\Event\Data\EventCreateData;
 use App\Content\Event\Data\EventData;
-use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaCreateData;
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventCreateData;
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
 use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
 use App\Content\SecretSanta\SecretSantaState;
 use App\Content\User\UserService;
 use App\Entity\Event;
+use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -25,6 +28,7 @@ class EventManager
 
     public function __construct(
         private EventService $eventService,
+        private DesireManager $desireManager,
         private UserService $userService,
         private SecretSantaEventService $secretSantaEventService,
     )
@@ -75,7 +79,6 @@ class EventManager
             $this->eventService->save($event);
         }
 
-        // TODO give use role
         $this->userService->addEventRoleToUser($event, $participant);
     }
 
@@ -92,16 +95,16 @@ class EventManager
         $this->userService->removeEventRoleToUser($event, $participant);
     }
 
-    public function initSecretSantaEvent(SecretSantaCreateData $data, User $creator)
+    public function initSecretSantaEvent(SecretSantaEventCreateData $data, User $creator): SecretSantaEvent
     {
         // init events
         $eventData = new EventCreateData();
-        $eventData->setName($data->getNameFirst());
+        $eventData->setName($data->getFirstRoundName());
         $eventData->setEventType(EventType::SECRET_SANTA);
         $eventFirst = $this->initEvent($eventData, $creator);
 
         $eventData = new EventCreateData();
-        $eventData->setName($data->getNameSecond());
+        $eventData->setName($data->getSecondRoundName());
         $eventData->setEventType(EventType::SECRET_SANTA);
         $eventSecond = $this->initEvent($eventData, $creator);
 
@@ -113,6 +116,30 @@ class EventManager
         $createData->setFirstRound($eventFirst);
         $createData->setSecondRound($eventSecond);
 
-        $this->secretSantaEventService->createByData($createData);
+        return $this->secretSantaEventService->createByData($createData);
+    }
+
+    public function addParticipantToSecretSantaEvent(User $participant, SecretSantaEvent $event, SecretSantaEventJoinData $data): void
+    {
+        $events = [];
+        if ($data->isFirstRound()){
+            $this->addParticipant($event->getFirstRound(), $participant);
+            $events[] = $event->getFirstRound();
+        }
+        if ($data->isSecondRound()){
+            $this->addParticipant($event->getSecondRound(), $participant);
+            $events[] = $event->getSecondRound();
+        }
+
+        // create default desire list so that each user of the two ss events can see
+        $eventRoles = array_map(
+            function (Event $event){
+                return 'ROLE_EVENT_'.$event->getId().'_PARTICIPANT';
+            },
+            [$event->getFirstRound(), $event->getSecondRound()]
+        );
+        $this->desireManager->initDesireListsForEvent($participant, $event, $events, $eventRoles);
+
+//        $this->userService->addRolesToUser($participant, $eventRoles);
     }
 }

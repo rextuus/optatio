@@ -28,6 +28,14 @@ class ReservationRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
+
+    public function delete(Reservation $reservation, bool $flush = true): void
+    {
+        $this->_em->remove($reservation);
+        if($flush){
+            $this->_em->flush();
+        }
+    }
 //    /**
 //     * @return Reservation[] Returns an array of Reservation objects
 //     */

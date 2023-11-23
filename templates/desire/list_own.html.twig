@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wunschliste{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-text">
+            {{ list.name }}
+        </div>
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+        </div>
+    </div>
+
+    <div class="content-body">
+        <div class="desire-create-button">
+        <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
+            <button class="desire-navi-button">
+                Neuer Wunsch
+            </button>
+        </a>
+        </div>
+        {% for desire in desires %}
+            {% if  loop.index  == 1 %}
+            {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: true, disableDown: false}) }}
+            {% elseif loop.index == desires|length  %}
+                {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: false, disableDown: true}) }}
+            {% else %}
+                {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: false, disableDown: false}) }}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

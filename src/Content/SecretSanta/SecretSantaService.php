@@ -10,6 +10,7 @@ use App\Content\SecretSanta\Calculation\SecretCalculator;
 use App\Content\SecretSanta\Secret\Data\SecretData;
 use App\Content\SecretSanta\Secret\SecretService;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
 use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
 use App\Content\User\UserService;
 use App\Entity\DesireList;
@@ -57,12 +58,12 @@ class SecretSantaService
                 $this->secretService->createByData($secretData);
             }
 
-            // desireList round1
+            // desireLists round1
             foreach ($event->getFirstRound()->getParticipants() as $participant) {
                 $this->storeDesireListForUserAndEvent($event, $event->getFirstRound(), $participant);
             }
 
-            // desireList round2
+            // desireLists round2
             foreach ($event->getSecondRound()->getParticipants() as $participant) {
                 $desireLists = $this->desireListService->findByUserAndEvent($participant, $event->getFirstRound());
                 if (count($desireLists) > 0) {
@@ -163,5 +164,12 @@ class SecretSantaService
         $desireListData->setDesires([]);
 
         return $this->desireListService->createByData($desireListData);
+    }
+
+    public function addParticipant(User $getUser, SecretSantaEventJoinData $data)
+    {
+        if ($data->isFirstRound()){
+
+        }
     }
 }

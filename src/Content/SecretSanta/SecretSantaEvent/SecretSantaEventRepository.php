@@ -2,6 +2,7 @@
 
 namespace App\Content\SecretSanta\SecretSantaEvent;
 
+use App\Entity\Event;
 use App\Entity\SecretSantaEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,4 +54,13 @@ class SecretSantaEventRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findByFirstOrSecondRound(Event $event): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where($qb->expr()->eq('s.firstRound', ':event'));
+        $qb->orWhere($qb->expr()->eq('s.secondRound', ':event'));
+        $qb->setParameter(':event', $event);
+
+        return $qb->getQuery()->getResult();
+    }
 }

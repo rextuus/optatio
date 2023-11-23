@@ -1,0 +1,71 @@
+App\Entity\User:
+  user{1..5}:
+    firstName: '<firstName()>'
+    password: '<password()>'
+    lastName: '<lastName()>'
+    email: '<email()>'
+
+App\Entity\Reservation:
+  open_reservation_for_multiple_reserved_desire:
+    owner: '@user2'
+    state: 'reserved'
+  open_reservation2_for_multiple_reserved_desire:
+    owner: '@user3'
+    state: 'reserved'
+  resolved_reservation_for_multiple_reserved_desire:
+    owner: '@user4'
+    state: 'resolved'
+  resolved_reservation2_for_multiple_reserved_desire:
+    owner: '@user5'
+    state: 'resolved'
+  open_reservation_for_multiple_reserved_desire2:
+    owner: '@user2'
+    state: 'reserved'
+  open_reservation2_for_multiple_reserved_desire2:
+    owner: '@user3'
+    state: 'reserved'
+
+App\Entity\Desire:
+  desire_of_user_1_free:
+    owner: '@user1'
+    name: 'Desire of user1'
+    description: true
+    state: 'free'
+    exclusive: true
+    exactly: false
+    listed: true
+  exclusive_desire_of_user_1_free:
+    owner: '@user1'
+    name: 'Desire of user1'
+    description: true
+    state: 'free'
+    exclusive: false
+    exactly: false
+    listed: true
+  hidden_desire_of_user_1_free:
+    owner: '@user1'
+    name: 'Desire of user1'
+    description: true
+    state: 'free'
+    exclusive: true
+    exactly: false
+    listed: false
+  multiple_reserved_desire_of_user_1_free:
+    owner: '@user1'
+    name: 'Desire of user1'
+    description: true
+    state: 'multiple_reserved_or_resolved'
+    exclusive: false
+    exactly: false
+    listed: true
+    reservations: ['@open_reservation_for_multiple_reserved_desire', '@open_reservation2_for_multiple_reserved_desire', '@resolved_reservation_for_multiple_reserved_desire', '@resolved_reservation2_for_multiple_reserved_desire']
+  multiple_reserved_desire_of_user_1_free2:
+    owner: '@user1'
+    name: 'Desire of user1'
+    description: true
+    state: 'multiple_reserved'
+    exclusive: false
+    exactly: false
+    listed: true
+    reservations: [ '@open_reservation_for_multiple_reserved_desire2', '@open_reservation2_for_multiple_reserved_desire2' ]
+

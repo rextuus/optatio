@@ -21,8 +21,10 @@ class ReservationFactory
     
     public function mapData(ReservationData $data, Reservation $reservation): Reservation
     {
-        $reservation->setExample($data->getExample());
-    
+        $reservation->setDesire($data->getDesire());
+        $reservation->setOwner($data->getOwner());
+        $reservation->setState($data->getState());
+
         return $reservation;
     }
     

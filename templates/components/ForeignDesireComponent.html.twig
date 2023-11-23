@@ -1,0 +1,51 @@
+<div{{ attributes }}>
+    <div class="desire-card">
+        <div class="desire-banner"></div>
+        <div class="toggle-indicator"></div>
+
+        <div class="desire-header">
+
+            <div class="card-toggle" onclick="toggleEventDetails(event)">
+                <div class="desire-name">{{ this.desire.name }}</div>
+            </div>
+
+            <div class="info-button-row">
+                <div class="info-row">
+                    <div class="info-tale {{ this.isActive() }}">
+                        <img src="{{ asset('assets/img/eye.svg') }}" alt="Tile image">
+                    </div>
+                    <div class="info-tale {{ this.isExclusive() }}">
+                        <img src="{{ asset('assets/img/multiple.svg') }}" alt="Tile image">
+                    </div>
+                    <div class="info-tale {{ this.isExactly() }}">
+                        <img src="{{ asset('assets/img/exactly.svg') }}" alt="Tile image">
+                    </div>
+                </div>
+                <div class="button-row">
+                    <div class="desire-card-button">
+                        <a href="{{ path('app_secret_santa_detail', {'event': 1}) }}">
+                            <button class="join-button">
+                                Bearbeiten
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="desire-details">
+            {{ this.desire.description }}
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    function toggleEventDetails(event) {
+        const eventCard = event.currentTarget.parentElement.parentElement;
+        if (!event.target.matches('.join-button')) {
+            eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
+            eventCard.classList.toggle('expanded');
+        }
+    }
+</script>

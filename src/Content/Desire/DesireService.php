@@ -5,6 +5,7 @@ namespace App\Content\Desire;
 
 use App\Content\Desire\Data\DesireData;
 use App\Entity\Desire;
+use App\Entity\DesireList;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -35,6 +36,14 @@ class DesireService
      */
     public function findBy(array $conditions): array
     {
-        return $this->repository->findBy($conditions);
+        return $this->repository->findBy($conditions, ['priority' => 'DESC']);
+    }
+
+    /**
+     * @return Desire[]
+     */
+    public function findByListOrderedByPriority(DesireList $list): array
+    {
+        return $this->repository->findByListOrderByPriority($list);
     }
 }

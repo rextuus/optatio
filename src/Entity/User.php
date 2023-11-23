@@ -63,14 +63,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'exclusionCreator', targetEntity: Exclusion::class)]
     private Collection $exclusions;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?UserAccessRoles $userAccessRoles = null;
-
     #[ORM\OneToMany(mappedBy: 'provider', targetEntity: Secret::class)]
     private Collection $providingSecrets;
 
     #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Secret::class)]
     private Collection $receivingSecrets;
+
+    #[ORM\ManyToMany(targetEntity: AccessRole::class, mappedBy: 'user')]
+    private Collection $accessRoles;
 
     public function __construct()
     {
@@ -84,6 +84,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->exclusions = new ArrayCollection();
         $this->providingSecrets = new ArrayCollection();
         $this->receivingSecrets = new ArrayCollection();
+        $this->accessRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -411,23 +412,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserAccessRoles(): ?UserAccessRoles
-    {
-        return $this->userAccessRoles;
-    }
-
-    public function setUserAccessRoles(UserAccessRoles $userAccessRoles): static
-    {
-        // set the owning side of the relation if necessary
-        if ($userAccessRoles->getUser() !== $this) {
-            $userAccessRoles->setUser($this);
-        }
-
-        $this->userAccessRoles = $userAccessRoles;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Secret>
      */
@@ -483,6 +467,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($receivingSecret->getReceiver() === $this) {
                 $receivingSecret->setReceiver(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AccessRole>
+     */
+    public function getAccessRoles(): Collection
+    {
+        return $this->accessRoles;
+    }
+
+    public function addAccessRole(AccessRole $accessRole): static
+    {
+        if (!$this->accessRoles->contains($accessRole)) {
+            $this->accessRoles->add($accessRole);
+            $accessRole->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccessRole(AccessRole $accessRole): static
+    {
+        if ($this->accessRoles->removeElement($accessRole)) {
+            $accessRole->removeUser($this);
         }
 
         return $this;

@@ -16,6 +16,13 @@
 
         <div class="simple-text-box font-size-1-2">{{ stateText }}</div>
 
+        <div class="ss-link-button">
+            <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}">
+                <button>
+                    Zu deiner Wunschliste
+                </button>
+            </a>
+        </div>
 
 {#        {{ component('EventComponent', { event: event.firstRound, user: user, hasEditButton: false }) }}#}
 {#        {{ component('EventComponent', { event: event.secondRound, user: user, hasEditButton: false }) }}#}

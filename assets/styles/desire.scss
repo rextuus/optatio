@@ -1,89 +1,201 @@
 @import "variables";
 
 $color-desire-background: $color-form-field-background;
-$color-desire-header-background: $color-form-field-font-disabled;
+$color-desire-header-background: $color-form-field-background;
 $color-desire-default-border: $color-header-main;
 $color-desire-header-font: $color-header-main;
-
-.desire-card {
-    position: relative; /* Add this line for positioning */
-    background-color: $color-desire-background;
-    .toggle-indicator {
-        position: absolute;
-        top: 25px;
-        right: 10px;
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-bottom: 8px solid #000; /* Change color as needed */
-        transform: rotate(0deg); /* Triangle pointing downwards by default */
-
-        &.expanded {
-            transform: rotate(180deg); /* Triangle pointing upwards when expanded */
-        }
-    }
+$color-desire-priority-button: $color-form-field-background;
+$color-desire-card-button: #445455;
+$color-desire-create-button: #445455;
+$color-desire-priority-button-disabled: $color-form-field-background;
+$size-img-info-tale: 15px;
 
 
-    border: 1px solid $color-header-main;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    overflow: hidden;
+.desire-create-button {
+  margin-bottom: 5px;
 
-    .desire-header {
-        padding: 10px;
-        background-color: $color-desire-header-background;
-        border-radius: 8px;
-        cursor: pointer;
-        border-radius: 4px;
-        margin-left: 5px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-
-        .desire-name {
-            margin: 0;
-        }
-
-        .button-row{
-            display: flex;
-            justify-content: flex-end;
-            .join-button {
-                padding: 8px 16px;
-                border: none;
-                background-color: #23303f;
-                color: #fff;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-        }
-    }
-
-    .desire-details {
-        background-color: $color-desire-background;
-        padding: 10px;
-        display: none;
-
-        p {
-            margin: 5px 0;
-        }
-    }
-
-    &.expanded {
-        .desire-details {
-            display: block;
-        }
-    }
-
-    .desire-banner{
-        //background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
-        //background-repeat: repeat-x; /* Repeat the image horizontally */
-        //background-size: auto 15px; /* Set the height of the repeated image */
-        background-color: $color-desire-background;
-        width: 100%;
-        height: 15px;
-        margin-bottom: $default-size-xxs;
-    }
+  button {
+    padding: 8px 16px;
+    border: none;
+    background-color: $color-desire-create-button;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 }
 
+.desire-card {
+  position: relative; /* Add this line for positioning */
+  background-color: $color-desire-background;
+
+  .toggle-indicator {
+    position: absolute;
+    top: 25px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #000; /* Change color as needed */
+    transform: rotate(0deg); /* Triangle pointing downwards by default */
+
+    &.expanded {
+      transform: rotate(180deg); /* Triangle pointing upwards when expanded */
+    }
+  }
 
 
+  border: 1px solid $color-header-main;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+
+  .desire-header {
+    padding: 10px;
+    background-color: $color-desire-header-background;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+
+    .desire-name {
+      font-weight: bold;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .info-button-row {
+      display: flex;
+
+      .info-row {
+        display: flex;
+        margin-right: 5px;
+
+        .info-tale {
+          background: $color-desire-header-background;
+          border: 2px solid black;
+          color: black;
+          padding: 5px;
+          border-radius: 8px;
+          max-height: $size-img-info-tale;
+          margin-right: 2px;
+
+          &.active {
+            background: #19541e;
+          }
+
+          img {
+            width: $size-img-info-tale;
+            height: $size-img-info-tale;
+          }
+        }
+      }
+
+      .button-row {
+        margin-left: auto;
+
+        display: flex;
+        justify-content: flex-end;
+
+        .desire-card-button {
+          margin-left: 5px;
+
+          button {
+            padding: 8px 16px;
+            border: none;
+            background-color: $color-desire-card-button;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+        }
+
+        .priority-nav {
+          display: flex;
+          flex-direction: column;
+
+          //border: 1px black solid;
+          height: $size-img-info-tale+6;
+          background-color: $color-desire-priority-button;
+
+          .desire-card-priority-button {
+            background-color: $color-desire-priority-button;
+            height: $size-img-info-tale;
+
+            button {
+              //border: 1px black solid;
+              border: none;
+              background-color: $color-desire-priority-button;
+              color: #fff;
+              border-radius: 4px;
+              cursor: pointer;
+
+              img {
+                width: $size-img-info-tale;
+                height: $size-img-info-tale;
+              }
+            }
+            &.disabled {
+              background-color: $color-desire-priority-button-disabled;
+              button{
+                background-color: $color-desire-priority-button-disabled;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  .desire-details {
+    background-color: $color-desire-background;
+    padding: 10px;
+    display: none;
+
+    .desire-state {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .state-icon {
+        margin-right: 10px;
+        margin-bottom: 2px;
+        border: 1px solid black;
+        color: #ffffff;
+        padding: 2px;
+        /*border-radius: 8px;*/
+        img {
+          width: 25px;
+          height: 25px;
+        }
+      }
+
+      .state-date {
+        color: black;
+      }
+    }
+
+
+    p {
+      margin: 5px 0;
+    }
+  }
+
+  &.expanded {
+    .desire-details {
+      display: block;
+    }
+  }
+
+  .desire-banner {
+    //background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
+    //background-repeat: repeat-x; /* Repeat the image horizontally */
+    //background-size: auto 15px; /* Set the height of the repeated image */
+    background-color: $color-desire-background;
+    width: 100%;
+    height: 15px;
+    margin-bottom: $default-size-xxs;
+  }
+}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Content\SecretSanta\SecretSantaEvent;
 
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
+use App\Entity\Event;
 use App\Entity\SecretSantaEvent;
 
 /**
@@ -36,5 +37,11 @@ class SecretSantaEventService
     public function findBy(array $conditions): array
     {
         return $this->repository->findBy($conditions);
+    }
+
+    public function findByFirstOrSecondRound(Event $event)
+    {
+        return $this->repository->findByFirstOrSecondRound($event);
+
     }
 }

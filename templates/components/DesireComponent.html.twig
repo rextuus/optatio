@@ -6,21 +6,56 @@
         <div class="desire-header">
 
             <div class="card-toggle" onclick="toggleEventDetails(event)">
-                <h3 class="desire-name">{{ this.desire.name }}</h3>
+                <div class="desire-name">{{ this.desire.name }}</div>
             </div>
 
-{#            <div class="button-row">#}
-{#                #}
-{#            </div>#}
+            <div class="info-button-row">
+                <div class="info-row">
+                    <div class="info-tale {{ this.isActive() }}">
+                        <img src="{{ asset('assets/img/eye.svg') }}" alt="Tile image">
+                    </div>
+                    <div class="info-tale {{ this.isExclusive() }}">
+                        <img src="{{ asset('assets/img/multiple.svg') }}" alt="Tile image">
+                    </div>
+                    <div class="info-tale {{ this.isExactly() }}">
+                        <img src="{{ asset('assets/img/exactly.svg') }}" alt="Tile image">
+                    </div>
+                </div>
+                <div class="button-row">
 
+                    <div class="priority-nav">
+                        <div class="desire-card-priority-button {{ this.getDisableUp() }}">
+                            <a href="{{ path('app_desire_decrease_priority', {'desire': this.desire.id, 'desireList': this.desireList.id}) }}">
+                                <button {{ this.getDisableUp() }}>
+                                    <img src="{{ asset('assets/img/up.svg') }}" alt="Tile image">
+                                </button>
+                            </a>
+                        </div>
+                        <div class="desire-card-priority-button {{ this.getDisableDown() }}">
+                            <a href="{{ path('app_desire_increase_priority', {'desire': this.desire.id, 'desireList': this.desireList.id}) }}">
+                                <button {{ this.getDisableDown() }}>
+                                    <img src="{{ asset('assets/img/down.svg') }}" alt="Tile image">
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="desire-card-button">
+                        <a href="{{ path('app_secret_santa_detail', {'event': 1}) }}">
+                            <button class="join-button">
+                                Bearbeiten
+                            </button>
+                        </a>
+                    </div>
+
+
+                </div>
+            </div>
         </div>
         <div class="desire-details">
-            <p><strong>Erstellt:</strong> missing</p>
-            <p><strong>Erstellt:</strong> missing</p>
-            <p><strong>Erstellt:</strong> missing</p>
-            <p><strong>Erstellt:</strong> missing</p>
+            {{ this.desire.description }}
         </div>
-        </div>
+    </div>
 
 </div>
 

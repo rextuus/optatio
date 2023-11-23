@@ -7,6 +7,7 @@ use App\Content\DesireList\Data\DesireListData;
 use App\Entity\DesireList;
 use App\Entity\Event;
 use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -46,5 +47,19 @@ class DesireListService
     public function findByUserAndEvent(User $user, Event $event): array
     {
         return $this->repository->findByUserAndEvent($user, $event);
+    }
+
+    /**
+     * @return DesireList[]
+     */
+    public function findByUserAndEvents(User $user, array $events): array
+    {
+        return $this->repository->findByUserAndEvents($user, $events);
+    }
+
+    public function addDesireToList(\App\Entity\Desire $desire, DesireList $desireList)
+    {
+        $desireList->addDesire($desire);
+        $this->repository->save($desireList);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Content\User;
 
 use App\Content\User\Data\UserRegistrationData;
+use App\Entity\AccessRole;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Entity\UserAccessRoles;
@@ -19,45 +20,47 @@ class UserService
     public function __construct(
         private UserRepository $repository,
         private UserFactory $userFactory,
-        private UserAccessRolesRepository $roleRepository,
+        private AccessRoleRepository $roleRepository,
     )
     {
     }
 
     public function addEventOwnerRoleToUser(Event $event, User $user): void
     {
-        $eventRoles = ['ROLE_EVENT_' . $event->getId() . '_OWNER'];
-        $roles = $user->getUserAccessRoles();
-
-        $user->setRoles(array_merge($user->getRoles(), $eventRoles));
-        $this->repository->save($user);
+        $this->addRole($user, 'ROLE_EVENT_' . $event->getId() . '_OWNER');
     }
 
     public function addEventRoleToUser(Event $event, User $participant): void
     {
-        $roles = $participant->getUserAccessRoles();
-
-        $roles->addRole('ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
-
-        $this->roleRepository->save($roles);
+        $this->addRole($participant, 'ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
     }
 
     public function removeEventRoleToUser(Event $event, User $participant): void
     {
-        $roles = $participant->getUserAccessRoles();
-        $roles->removeRole('ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
-
-        $this->roleRepository->save($roles);
+//        $roles = $participant->getUserAccessRoles();
+//        $roles->removeRole('ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
+//
+//        $this->roleRepository->save($roles);
     }
 
     public function initAccessRolesForUser(User $user): void
     {
-        $accessRoles = new UserAccessRoles();
-        $accessRoles->addRole('test');
-        $accessRoles->setUser($user);
-        $user->setUserAccessRoles($accessRoles);
+        $roleIdent = 'USER_'.$user->getId();
+        $this->addRole($user, $roleIdent);
+    }
 
-        $this->roleRepository->save($accessRoles);
+    public function addRole(User $user, string $roleIdent){
+        $role = $this->roleRepository->findBy(['ident' => $roleIdent]);
+        if (count($role) === 1){
+            $user->addAccessRole($role[0]);
+        }else{
+            $accessRole = new AccessRole();
+            $accessRole->setIdent($roleIdent);
+            $this->roleRepository->save($accessRole);
+            $user->addAccessRole($accessRole);
+        }
+
+        $this->repository->save($user);
     }
 
     /**
@@ -81,4 +84,12 @@ class UserService
 
         return $user;
     }
+
+//    public function addRolesToUser(User $participant, array $eventRoles)
+//    {
+//        foreach ($eventRoles as $role){
+//            $participant->getUserAccessRoles()->addRole($role);
+//        }
+//        $this->repository->save($participant);
+//    }
 }

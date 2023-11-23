@@ -15,11 +15,13 @@ class DesireData
 {
     private User $owner;
     private ?string $name;
-    private ?string $url;
-    private int $priority;
+    private ?string $description;
+    private ?string $url = null;
     private DesireState $state;
-    private bool $exactly;
-    private bool $exclusive;
+    private bool $exactly = false;
+    private bool $exclusive = false;
+    private bool $listed = true;
+
 
     public function getOwner(): User
     {
@@ -43,6 +45,17 @@ class DesireData
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): DesireData
+    {
+        $this->description = $description;
+        return $this;
+    }
+
     public function getUrl(): ?string
     {
         return $this->url;
@@ -51,17 +64,6 @@ class DesireData
     public function setUrl(?string $url): DesireData
     {
         $this->url = $url;
-        return $this;
-    }
-
-    public function getPriority(): int
-    {
-        return $this->priority;
-    }
-
-    public function setPriority(int $priority): DesireData
-    {
-        $this->priority = $priority;
         return $this;
     }
 
@@ -98,6 +100,17 @@ class DesireData
         return $this;
     }
 
+    public function isListed(): bool
+    {
+        return $this->listed;
+    }
+
+    public function setListed(bool $listed): DesireData
+    {
+        $this->listed = $listed;
+        return $this;
+    }
+
     public function initFromEntity(Desire $desire): DesireData
     {
         $this->setOwner($desire->getOwner());
@@ -106,6 +119,8 @@ class DesireData
         $this->setUrl($desire->getUrl());
         $this->setExactly($desire->isExactly());
         $this->setExclusive($desire->isExclusive());
+        $this->setDescription($desire->getDescription());
+        $this->setListed($desire->isListed());
 
         return $this;
     }

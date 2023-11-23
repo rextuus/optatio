@@ -3,6 +3,8 @@
 namespace App\Content\Desire;
 
 use App\Entity\Desire;
+use App\Entity\DesireList;
+use App\Entity\Priority;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -53,4 +55,16 @@ class DesireRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findByListOrderByPriority(DesireList $list)
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb->join('d.desireLists', 'dl');
+        $qb->leftJoin(Priority::class, 'p', 'WITH', 'p.desire = d.id');
+        $qb->where('dl.id = :desireListId')
+            ->setParameter('desireListId', $list->getId());
+        $qb->andWhere($qb->expr()->eq('p.desireList', ':desireListId'));
+        $qb->orderBy('p.value', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

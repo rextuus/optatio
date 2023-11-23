@@ -70,4 +70,25 @@ class DesireListRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @param Event[] $events
+     */
+    public function findByUserAndEvents(User $user, array $events)
+    {
+        $eventIds = array_map(
+          function (Event $event){
+              return $event->getId();
+          },
+            $events
+        );
+        $qb = $this->createQueryBuilder('d');
+        $qb->join('d.events', 'e');
+        $qb->where($qb->expr()->in('e.id',':eventIds'))
+            ->setParameter('eventIds', $eventIds);
+        $qb->andWhere($qb->expr()->eq('d.owner', ':owner'))
+            ->setParameter('owner', $user);
+
+        return $qb->getQuery()->getResult();
+    }
 }

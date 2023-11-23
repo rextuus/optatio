@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wichtelrunde erstellen{% endblock %}
+
+{% block body %}
+    <div class="ss-container">
+        <div class="ss-banner"></div>
+
+        <div class="page-header">
+            <div class="page-header-text">
+                {{ event.name }}
+            </div>
+            <div class="page-header-image">
+                <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            </div>
+        </div>
+        <div class="content-body">
+
+
+            <div class="simple-text-box font-size-1-2"></div>
+
+            <div class="form-area">
+                {{ form_start(form, {'method': 'POST'}) }}
+                <div class="my-custom-class-for-errors">
+                    {{ form_errors(form) }}
+                </div>
+
+                <div class="form-input-info-text">Möchtest du an der Wichtelrunde teilnehmen?</div>
+                <div class="form-input-field">
+                    <label class="hidden" for="secret_santa_event_join_firstRound"></label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image">
+                            <img src="{{ asset('assets/img/icons/transfer/activated.svg') }}" alt="Tile image">
+                        </div>
+                        <div class="toggle-switch-container">
+                            <label class="switch">
+                                <label for="secret_santa_event_join_firstRound" class="switch-toggle-label"></label>
+                                {{ form_widget(form.firstRound, {'attr': {'class': 'toggle-box', 'placeholder': 'Verfügbar', 'id': 'enabled', 'value': 1}}) }}
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-input-info-text">Möchtest du an der Wichtelrunde teilnehmen?</div>
+                <div class="form-input-field">
+                    <label class="hidden" for="secret_santa_event_join_secondRound"></label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image">
+                            <img src="{{ asset('assets/img/icons/transfer/activated.svg') }}" alt="Tile image">
+                        </div>
+                        <div class="toggle-switch-container">
+                            <label class="switch">
+                                <label for="secret_santa_event_join_secondRound" class="switch-toggle-label"></label>
+                                {{ form_widget(form.secondRound, {'attr': {'class': 'toggle-box', 'placeholder': 'Verfügbar', 'id': 'enabled', 'value': 1}}) }}
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_row(form._token) }}
+
+                <div class="form-submit-field">
+                    {{ form_widget(form.submit, {'attr': {'class': 'btn'}}) }}
+                </div>
+            </div>
+
+
+            {#        {{ component('EventComponent', { event: event.firstRound, user: user, hasEditButton: false }) }} #}
+            {#        {{ component('EventComponent', { event: event.secondRound, user: user, hasEditButton: false }) }} #}
+            {#        {{ component('SecretSantaPickComponent', { secret: secret}) }} #}
+
+        </div>
+    </div>
+
+
+
+{% endblock %}

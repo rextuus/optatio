@@ -37,4 +37,9 @@ class ReservationService
     {
         return $this->repository->findBy($conditions);
     }
+
+    public function deleteReservation(Reservation $reservation)
+    {
+        $this->repository->delete($reservation);
+    }
 }
