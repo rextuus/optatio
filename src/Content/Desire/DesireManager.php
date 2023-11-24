@@ -38,19 +38,20 @@ class DesireManager
     {
     }
 
-    public function createNewDesire(DesireData $data){
+    public function createNewDesire(DesireData $data)
+    {
 
     }
 
     public function initPriorityForDesire(Desire $desire): void
     {
-        foreach ($desire->getDesireLists() as $desireList){
+        foreach ($desire->getDesireLists() as $desireList) {
             $highestPriority = $this->priorityService->getHighestPriorityByList($desireList);
             $data = new PriorityData();
             $data->setDesire($desire);
             $data->setDesireList($desireList);
-            $data->setValue($highestPriority+1);
-dd($data);
+            $data->setValue($highestPriority + 1);
+            dd($data);
             $this->priorityService->createByData($data);
         }
     }
@@ -58,7 +59,7 @@ dd($data);
     public function increasePriority(DesireList $desireList, Desire $desire): void
     {
         $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
-        if (count($priorities) !== 1){
+        if (count($priorities) !== 1) {
             throw new Exception('No unique Priority found for desire/desireList combination');
         }
         $priority = $priorities[0];
@@ -71,7 +72,7 @@ dd($data);
     public function decreasePriority(DesireList $desireList, Desire $desire): void
     {
         $priorities = $this->priorityService->findBy(['desireLists' => $desireList, 'desire' => $desire]);
-        if (count($priorities) !== 1){
+        if (count($priorities) !== 1) {
             throw new Exception('No unique Priority found for desire/desireLists combination');
         }
         $priority = $priorities[0];
@@ -84,15 +85,15 @@ dd($data);
     /**
      * @return Desire[]
      */
-    public function findDesiresByListOrderedByPriority(DesireList $list): array
+    public function findDesiresByListOrderedByPriority(DesireList $list, bool $isForeign = false): array
     {
-        return $this->desireService->findByListOrderedByPriority($list);
+        return $this->desireService->findByListOrderedByPriority($list, $isForeign);
     }
 
     public function getDesireListForSecretSantaEvent(User $user, SecretSantaEvent $event): DesireList
     {
         $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound(), $event->getSecondRound()]);
-        if (count($lists) !== 1){
+        if (count($lists) !== 1) {
             throw new Exception('No unique desirelist for ss event found');
         }
         return $lists[0];
@@ -101,20 +102,33 @@ dd($data);
     /**
      * @param Event[] $events
      */
-    public function initDesireListsForEvent(User $participant, SecretSantaEvent $event, array $events, array $eventRoles): void
+    public function initDesireListsForSecretSantaEvent(User $participant, SecretSantaEvent $event, array $events, array $eventRoles): void
     {
+        $eventNames = array_map(
+            function (Event $event){
+                return $event->getName();
+            },
+            $events
+        );
+
+        $description = sprintf(
+            "%s's Wunschliste für %s. Die Liste wird genutzt für die Events:\n %s",
+            $participant->getFirstName(),
+            $event->getName(),
+            implode(' und ', $eventNames)
+        );
+
         $data = new DesireListData();
-        $data->setName('Wunschliste - '.$event->getName());
+        $data->setName('Wunschliste - ' . $event->getName());
         $data->setOwner($participant);
-        $data->setDescription('Wunschliste - '.$event->getName());
+        $data->setDescription($description);
         $data->setEvents($events);
         $data->setDesires([]);
 
-//        $data->setAccessRoles($eventRoles);
-
         $desireList = $this->desireListService->createByData($data);
+        dump('created desire list');
 
-        foreach ($eventRoles as $eventRole){
+        foreach ($eventRoles as $eventRole) {
             $this->accessRoleService->addRoleToEntity($desireList, $eventRole);
         }
 
@@ -122,7 +136,7 @@ dd($data);
 
     public function addReservation(User $user, Desire $desire): Reservation
     {
-        if (!$desire->isListed()){
+        if (!$desire->isListed()) {
             throw new Exception('Cant make a reservation for a non listed desire');
         }
 
@@ -162,18 +176,18 @@ dd($data);
 
     public function removeReservation(User $user, Desire $desire): Reservation
     {
-        if (!$desire->isListed()){
+        if (!$desire->isListed()) {
             throw new Exception('Cant remove a reservation for a non listed desire');
         }
 
         // get reservation
         $reservations = $this->reservationService->findBy(['owner' => $user, 'desire' => $desire]);
-        if (count($reservations) !== 1){
+        if (count($reservations) !== 1) {
             throw new Exception('Non unique reservation found for user desire combination');
         }
         $reservation = $reservations[0];
 
-        if ($reservation->getState() === ReservationState::RESOLVED){
+        if ($reservation->getState() === ReservationState::RESOLVED) {
             throw new Exception('Cant remove an already resolved reservation');
         }
 
@@ -220,22 +234,22 @@ dd($data);
         $reserved = 0;
         $resolved = 0;
 
-        foreach ($reservations->toArray() as $reservation){
-            if ($reservation->getState() === ReservationState::RESERVED){
+        foreach ($reservations->toArray() as $reservation) {
+            if ($reservation->getState() === ReservationState::RESERVED) {
                 $reserved = $reserved + 1;
             }
-            if ($reservation->getState() === ReservationState::RESOLVED){
+            if ($reservation->getState() === ReservationState::RESOLVED) {
                 $resolved = $resolved + 1;
             }
         }
 
         //  should never happen but how knows... only reserved will remain
-        if ($resolved === 1 && $reservationToRemove->getState() === ReservationState::RESOLVED){
+        if ($resolved === 1 && $reservationToRemove->getState() === ReservationState::RESOLVED) {
             return DesireState::MULTIPLE_RESERVED;
         }
 
         // only resolved will remain
-        if ($reserved === 1 && $reservationToRemove->getState() === ReservationState::RESERVED ){
+        if ($reserved === 1 && $reservationToRemove->getState() === ReservationState::RESERVED) {
             return DesireState::MULTIPLE_RESOLVED;
         }
 
@@ -245,18 +259,18 @@ dd($data);
 
     public function resolveReservation(User $user, Desire $desire): void
     {
-        if (!$desire->isListed()){
+        if (!$desire->isListed()) {
             throw new Exception('Cant remove a reservation for a non listed desire');
         }
 
         // get reservation
         $reservations = $this->reservationService->findBy(['owner' => $user, 'desire' => $desire]);
-        if (count($reservations) !== 1){
+        if (count($reservations) !== 1) {
             throw new Exception('Non unique reservation found for user desire combination');
         }
         $reservation = $reservations[0];
 
-        if ($reservation->getState() !== ReservationState::RESERVED){
+        if ($reservation->getState() !== ReservationState::RESERVED) {
             throw new Exception('Cant resolve an already resolved reservation');
         }
 
@@ -286,8 +300,8 @@ dd($data);
         $reservations = $desire->getReservations();
 
         $reservedOnes = 0;
-        foreach ($reservations as $reservation){
-            if($reservation->getState() === ReservationState::RESERVED){
+        foreach ($reservations as $reservation) {
+            if ($reservation->getState() === ReservationState::RESERVED) {
                 $reservedOnes++;
             }
         }

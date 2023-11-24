@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Content\User\HasAccessRoleInterface;
 use App\Content\User\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\HasLifecycleCallbacks]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAccessRoleInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

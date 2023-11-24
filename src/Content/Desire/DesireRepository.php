@@ -55,7 +55,7 @@ class DesireRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function findByListOrderByPriority(DesireList $list)
+    public function findByListOrderByPriority(DesireList $list, bool $isForeign = false)
     {
         $qb = $this->createQueryBuilder('d');
         $qb->join('d.desireLists', 'dl');
@@ -63,6 +63,12 @@ class DesireRepository extends ServiceEntityRepository
         $qb->where('dl.id = :desireListId')
             ->setParameter('desireListId', $list->getId());
         $qb->andWhere($qb->expr()->eq('p.desireList', ':desireListId'));
+        if ($isForeign){
+            $qb->andWhere($qb->expr()->eq('d.listed', ':isForeign'));
+            $qb->setParameter('isForeign', true);
+        }
+
+
         $qb->orderBy('p.value', 'ASC');
 
         return $qb->getQuery()->getResult();

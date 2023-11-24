@@ -45,22 +45,22 @@ class EventManagerTest extends IntegrationTestCase
         // EXECUTION
         $this->eventManager->addParticipantToSecretSantaEvent($user5, $ssEvent, $data);
 
-        dump(
-            $user5->getAccessRoles()->map(
-                function (AccessRole $accessRole) {
-                    return $accessRole->getIdent();
-                })
-        );
+//        dump(
+//            $user5->getAccessRoles()->map(
+//                function (AccessRole $accessRole) {
+//                    return $accessRole->getIdent();
+//                })
+//        );
 
         /** @var DesireListService $desireListService */
         $desireListService = $this->getService(DesireListService::class);
         $lists = $desireListService->findBy(['owner' => $user5]);
         $list = $lists[0];
-        dump(
-            $list->getAccessRoles()->map(
-                function (AccessRole $accessRole) {
-                    return $accessRole->getIdent();
-                })
-        );
+//        dump(
+//            $list->getAccessRoles()->map(
+//                function (AccessRole $accessRole) {
+//                    return $accessRole->getIdent();
+//                })
+//        );
     }
 }

@@ -138,7 +138,16 @@ class EventManager
             },
             [$event->getFirstRound(), $event->getSecondRound()]
         );
-        $this->desireManager->initDesireListsForEvent($participant, $event, $events, $eventRoles);
+
+        $debug = array_map(
+            function (Event $event){
+                return $event->getName();
+            },
+            $events
+        );
+
+        dump('adde '.$participant->getFullName().' to '.implode(', ',$debug));
+        $this->desireManager->initDesireListsForSecretSantaEvent($participant, $event, $events, $eventRoles);
 
 //        $this->userService->addRolesToUser($participant, $eventRoles);
     }

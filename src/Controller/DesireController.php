@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Content\Desire\Data\DesireData;
 use App\Content\Desire\DesireManager;
-use App\Content\DesireList\DesireListService;
-use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
+use App\Entity\AccessRole;
 use App\Entity\Desire;
 use App\Entity\DesireList;
+use App\Entity\User;
 use App\Form\DesireCreateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,9 +21,7 @@ class DesireController extends BaseController
 
 
     public function __construct(
-        private DesireManager $desireManager,
-        private DesireListService $desireListService,
-        private SecretSantaEventService $secretSantaEventService,
+        private readonly DesireManager $desireManager
     )
     {
     }
@@ -31,19 +29,20 @@ class DesireController extends BaseController
     #[Route('/list/{desireList}', name: 'app_desire_list')]
     public function index(DesireList $desireList): Response
     {
-        dump($desireList->getAccessRoles()->toArray());
-        dump($this->getUser()->getAccessRoles()->toArray());
-
+        $check = $this->checkDesireListAccess($this->getLoggedInUser(), $desireList);
+        if ($check){
+            return $check;
+        }
+//dd($desireList->getOwner() === $this->getLoggedInUser());
+        $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList);
         if ($desireList->getOwner() === $this->getLoggedInUser()){
-            $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList);
-
             return $this->render('desire/list_own.html.twig', [
                 'desires' => $desires,
                 'list' => $desireList,
             ]);
         }
 
-        $desires = [];
+        $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList, true);
         return $this->render('desire/list_foreign.html.twig', [
             'desires' => $desires,
             'list' => $desireList,
@@ -100,5 +99,46 @@ class DesireController extends BaseController
         return $this->render('desire/create.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    private function checkDesireListAccess(User $user, DesireList $desireList): ?Response
+    {
+        $desireListIdents = $desireList->getAccessRoles()->map(
+            function (AccessRole $accessRole) {
+                return $accessRole->getIdent();
+            }
+        )->toArray();
+        $userIdents = $user->getAccessRoles()->map(
+            function (AccessRole $accessRole) {
+                return $accessRole->getIdent();
+            }
+        )->toArray();
+
+        $secretIdent = 'secretIdent';
+        $ownerId = -1;
+        foreach ($desireListIdents as $ident){
+            preg_match('~^ROLE_SECRET_FOR_USER_(\d*)?~', $ident, $matches);
+            if ($matches){
+                $secretIdent = $matches[0];
+                $ownerId = $matches[1];
+            }
+        }
+
+        $userId = -2;
+        foreach ($userIdents as $ident){
+            preg_match('~^USER_(\d*)?~', $ident, $matches);
+            if ($matches){
+                $userId = $matches[1];
+            }
+        }
+
+        $userIsOwner = $ownerId === $userId;
+        $userIsSecret = in_array($secretIdent, $userIdents);
+
+        $shared = array_intersect($desireListIdents, $userIdents);
+        if (count($shared) && ($userIsOwner || $userIsSecret) > 0){
+            return null;
+        }
+        return $this->redirect($this->generateUrl('app_home', []));
     }
 }

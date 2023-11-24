@@ -42,8 +42,8 @@ class DesireService
     /**
      * @return Desire[]
      */
-    public function findByListOrderedByPriority(DesireList $list): array
+    public function findByListOrderedByPriority(DesireList $list, bool $isForeign = false): array
     {
-        return $this->repository->findByListOrderByPriority($list);
+        return $this->repository->findByListOrderByPriority($list, $isForeign);
     }
 }

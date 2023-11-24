@@ -5,7 +5,7 @@
 {% block body %}
     <div class="page-header">
         <div class="page-header-text">
-            {{ list.name }}
+            {{ list.name }} von {{ list.owner.firstName }}
         </div>
         <div class="page-header-image">
             <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">

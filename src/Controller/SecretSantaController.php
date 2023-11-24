@@ -7,21 +7,20 @@ use App\Content\Event\EventManager;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
 use App\Content\SecretSanta\SecretSantaService;
 use App\Content\SecretSanta\SecretSantaState;
+use App\Entity\Event;
 use App\Entity\Secret;
 use App\Entity\SecretSantaEvent;
+use App\Entity\User;
 use App\Form\SecretSantaCreateFormType;
 use App\Form\SecretSantaEventJoinType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/secret-santa')]
 #[IsGranted('ROLE_USER')]
-class SecretSantaController extends AbstractController
+class SecretSantaController extends BaseController
 {
-
-
     public function __construct(private SecretSantaService $secretSantaService, private EventManager $eventManager, private DesireManager $desireManager)
     {
     }
@@ -74,12 +73,16 @@ class SecretSantaController extends AbstractController
     #[Route('/detail/{event}', name: 'app_secret_santa_detail')]
     public function detail(SecretSantaEvent $event): Response
     {
+        $participant = $this->getLoggedInUser();
+        $firstRoundActive = $this->checkUserIsParticipantOfEvent($participant, $event->getFirstRound());
+        $secondRoundActive = $this->checkUserIsParticipantOfEvent($participant, $event->getSecondRound());
+
         $stateText = sprintf(
             'Das Event "%s" wurde noch nicht gestartet. Wir informieren dich sobald es los geht. Leg derweil doch schon mal ein paar eigene Wünsche an!',
             $event->getName()
         );
 
-        if ($event->getState() === SecretSantaState::PHASE_1) {
+        if ($event->getState() === SecretSantaState::PHASE_1 && $firstRoundActive) {
             $stateText = sprintf(
                 'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
                 $event->getFirstRound()->getName()
@@ -92,7 +95,7 @@ class SecretSantaController extends AbstractController
             }
         }
 
-        if ($event->getState() === SecretSantaState::PHASE_2) {
+        if ($event->getState() === SecretSantaState::PHASE_2 && $secondRoundActive) {
             $stateText = sprintf(
                 'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
                 $event->getSecondRound()->getName()
@@ -126,5 +129,14 @@ class SecretSantaController extends AbstractController
             'secret' => $secret,
             'stateText' => $stateText,
         ]);
+    }
+
+    private function checkUserIsParticipantOfEvent(User $user, Event $targetEvent): bool
+    {
+        return count($user->getEvents()->filter(
+            function (Event $event) use ($targetEvent) {
+                return $event->getId() === $targetEvent->getId();
+            }
+        ));
     }
 }

@@ -90,6 +90,6 @@ class UserService
 //        foreach ($eventRoles as $role){
 //            $participant->getUserAccessRoles()->addRole($role);
 //        }
-//        $this->repository->save($participant);
+//        $this->accessRoleRepository->save($participant);
 //    }
 }
