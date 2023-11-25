@@ -54,6 +54,7 @@
 .env
 
 ###> phpunit/phpunit ###
+.idea
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
