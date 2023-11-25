@@ -13,6 +13,7 @@ use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 use App\Form\SecretSantaCreateFormType;
 use App\Form\SecretSantaEventJoinType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -70,6 +71,20 @@ class SecretSantaController extends BaseController
         ]);
     }
 
+    #[Route('/pick/first/{event}/{user}', name: 'app_secret_santa_pick_first')]
+    public function pickFirst(SecretSantaEvent $event, User $user): Response
+    {
+        $this->secretSantaService->performFirstRoundPick($event, $user);
+        return new JsonResponse(true);
+    }
+
+    #[Route('/pick/second/{event}/{user}', name: 'app_secret_santa_pick_second')]
+    public function pickSecond(SecretSantaEvent $event, User $user): Response
+    {
+        $this->secretSantaService->performSecondRoundPick($event, $user);
+        return new JsonResponse(true);
+    }
+
     #[Route('/detail/{event}', name: 'app_secret_santa_detail')]
     public function detail(SecretSantaEvent $event): Response
     {
@@ -77,17 +92,23 @@ class SecretSantaController extends BaseController
         $firstRoundActive = $this->checkUserIsParticipantOfEvent($participant, $event->getFirstRound());
         $secondRoundActive = $this->checkUserIsParticipantOfEvent($participant, $event->getSecondRound());
 
+        $showFirstRoundPick = false;
+        $showSecondRoundPick = false;
+        $secrets = $this->secretSantaService->getSecretsForUser($event, $participant);
+
         $stateText = sprintf(
             'Das Event "%s" wurde noch nicht gestartet. Wir informieren dich sobald es los geht. Leg derweil doch schon mal ein paar eigene Wünsche an!',
             $event->getName()
         );
 
         if ($event->getState() === SecretSantaState::PHASE_1 && $firstRoundActive) {
+            $showFirstRoundPick = true;
             $stateText = sprintf(
-                'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
+                'Und los gehts. Ziehe hier deinen Wichtel für <b>%s</b>',
                 $event->getFirstRound()->getName()
             );
-            if ($this->secretSantaService->userHasAlreadyPickedSecretForEvent($event->getFirstRound(), $this->getUser())) {
+            if ($secrets['first']->isRetrieved()) {
+                $showFirstRoundPick = false;
                 $stateText = sprintf(
                     'Du hast deinen Wichtel für %s bereits. Sobald alle anderen gezogen haben, starten wir Runde 2',
                     $event->getFirstRound()->getName()
@@ -95,39 +116,72 @@ class SecretSantaController extends BaseController
             }
         }
 
-        if ($event->getState() === SecretSantaState::PHASE_2 && $secondRoundActive) {
-            $stateText = sprintf(
-                'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
-                $event->getSecondRound()->getName()
-            );
-            if ($this->secretSantaService->userHasAlreadyPickedSecretForEvent($event->getSecondRound(), $this->getUser())) {
+        if ($event->getState() === SecretSantaState::PHASE_2) {
+            if ($firstRoundActive){
                 $stateText = sprintf(
-                    'Du hast deinen Wichtel für %s bereits. Sobald alle anderen gezogen haben, kann gewichtelt werden',
+                    'Du hast deinen Wichtel für "%s" bereits gezogen. Es ist %s. Sobald es weiter geht siehst du hier seine Wunschliste',
+                    $event->getFirstRound()->getName(),
+                    $secrets['first']->getReceiver()->getFirstName(),
+                );
+            }
+
+            if ($secondRoundActive){
+                $showSecondRoundPick = true;
+
+                $stateText = sprintf(
+                    'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
                     $event->getSecondRound()->getName()
                 );
+                if ($secrets['second']->isRetrieved()) {
+                    $showSecondRoundPick = false;
+                    $stateText = sprintf(
+                        'Du hast deinen Wichtel für "%s" bereits gezogen. Es ist %s. Sobald es weiter geht siehst du hier seine Wunschliste',
+                        $event->getSecondRound()->getName(),
+                        $secrets['second']->getReceiver()->getFirstName(),
+                    );
+
+                    if ($firstRoundActive) {
+                        $stateText = sprintf(
+                            'Du hast deine Wichtel für "%s" und "%s" bereits gezogen. Es sind %s und %s. Sobald es weiter geht siehst du hier ihre Wunschlisten',
+                            $event->getFirstRound()->getName(),
+                            $event->getSecondRound()->getName(),
+                            $secrets['first']->getReceiver()->getFirstName(),
+                            $secrets['second']->getReceiver()->getFirstName(),
+                        );
+                    }
+                }
             }
         }
 
+        $firstRoundList = null;
+        $secondRoundList = null;
         if ($event->getState() === SecretSantaState::RUNNING) {
-            $stateText = 'Es wurde gewichtelt was das Zeug hält. Der sorting hat ist leer gezogen. Jetzt heißt es Geschenke kaufen!';
-            if ($this->secretSantaService->userHasAlreadyPickedSecretForEvent($event->getSecondRound(), $this->getUser())) {
-                $stateText = sprintf(
-                    'Du hast deinen Wichtel für %s bereits. Sobald alle anderen gezogen haben, kann gewichtelt werden',
-                    $event->getSecondRound()->getName()
-                );
+            if ($firstRoundActive){
+                $firstRoundList = $this->desireManager->getDesireListForSecretSantaEvent($secrets['first']->getReceiver(), $event);
             }
+            if ($secondRoundActive){
+                $secondRoundList = $this->desireManager->getDesireListForSecretSantaEvent($secrets['second']->getReceiver(), $event);
+            }
+
+            $stateText = 'Es wurde gewichtelt was das Zeug hält. Der sorting hat ist leer gezogen. Jetzt heißt es Geschenke kaufen!';
         }
 
         // TODO need to get the eventdesirelist from current user and the ones of its secrets
         $userDesireList = $this->desireManager->getDesireListForSecretSantaEvent($this->getUser(), $event);
 
+
         $secret = new Secret();
         return $this->render('secret_santa/detail.html.twig', [
             'event' => $event,
             'user' => $this->getUser(),
-            'desireList' => $userDesireList,
+            'ownList' => $userDesireList,
             'secret' => $secret,
             'stateText' => $stateText,
+            'showPick' => $showFirstRoundPick || $showSecondRoundPick,
+            'showFirstRoundPick' => $showFirstRoundPick,
+            'showSecondRoundPick' => $showSecondRoundPick,
+            'firstRoundList' => $firstRoundList,
+            'secondRoundList' => $secondRoundList,
         ]);
     }
 

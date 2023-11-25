@@ -8,6 +8,9 @@ $color-desire-priority-button: $color-form-field-background;
 $color-desire-card-button: #445455;
 $color-desire-create-button: #445455;
 $color-desire-priority-button-disabled: $color-form-field-background;
+$color-desire-banner-default: #19541e;
+$color-desire-banner-reserved: #73660d;
+
 $size-img-info-tale: 15px;
 
 
@@ -30,7 +33,7 @@ $size-img-info-tale: 15px;
 
   .toggle-indicator {
     position: absolute;
-    top: 25px;
+    top: 10px;
     right: 10px;
     width: 0;
     height: 0;
@@ -45,7 +48,7 @@ $size-img-info-tale: 15px;
   }
 
 
-  border: 1px solid $color-header-main;
+  border: 3px solid $color-header-main;
   border-radius: 8px;
   margin-bottom: 10px;
   overflow: hidden;
@@ -89,6 +92,14 @@ $size-img-info-tale: 15px;
             width: $size-img-info-tale;
             height: $size-img-info-tale;
           }
+
+          .counter{
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.0em;
+            width: $size-img-info-tale;
+            height: $size-img-info-tale;
+          }
         }
       }
 
@@ -108,6 +119,26 @@ $size-img-info-tale: 15px;
             color: #fff;
             border-radius: 4px;
             cursor: pointer;
+          }
+        }
+
+        .desire-card-reserve-button {
+          margin-left: 5px;
+
+          button {
+            padding: 8px 16px;
+            border: none;
+            background-color: #1b4b10;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+
+          &.disabled {
+            background-color: #484848;
+            button{
+              background-color: #484848;
+            }
           }
         }
 
@@ -151,8 +182,15 @@ $size-img-info-tale: 15px;
 
   .desire-details {
     background-color: $color-desire-background;
+    color: black;
     padding: 10px;
     display: none;
+    a{
+      text-decoration: none;
+      color: #ff4c4c;
+      font-weight: bold;
+      font-size: 1.3em;
+    }
 
     .desire-state {
       display: flex;
@@ -193,9 +231,17 @@ $size-img-info-tale: 15px;
     //background-image: url('https://res.cloudinary.com/dl4y4cfvs/image/upload/v1699961183/optatio/PngItem_83188_ecwgne.png');
     //background-repeat: repeat-x; /* Repeat the image horizontally */
     //background-size: auto 15px; /* Set the height of the repeated image */
-    background-color: $color-desire-background;
+
+    background-color: $color-desire-banner-default;
+    color: black;
+    font-weight: bold;
     width: 100%;
     height: 15px;
     margin-bottom: $default-size-xxs;
+    padding: 5px;
+
+    &.reserved {
+      background-color: $color-desire-banner-reserved;
+    }
   }
 }

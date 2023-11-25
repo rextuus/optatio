@@ -1,6 +1,6 @@
 <div{{ attributes }}>
     <div class="desire-card">
-        <div class="desire-banner"></div>
+        <div class="desire-banner {{ this.HeaderClass }}">{{ this.headerText }}</div>
         <div class="toggle-indicator"></div>
 
         <div class="desire-header">
@@ -11,9 +11,6 @@
 
             <div class="info-button-row">
                 <div class="info-row">
-                    <div class="info-tale {{ this.isActive() }}">
-                        <img src="{{ asset('assets/img/eye.svg') }}" alt="Tile image">
-                    </div>
                     <div class="info-tale {{ this.isExclusive() }}">
                         <img src="{{ asset('assets/img/multiple.svg') }}" alt="Tile image">
                     </div>
@@ -22,10 +19,10 @@
                     </div>
                 </div>
                 <div class="button-row">
-                    <div class="desire-card-button">
-                        <a href="{{ path('app_secret_santa_detail', {'event': 1}) }}">
-                            <button class="join-button">
-                                Bearbeiten
+                    <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
+                        <a href="{{ this.ButtonLink }}">
+                            <button {{ this.reserveDisabled }}>
+                                {{this.reserveButtonText }}
                             </button>
                         </a>
                     </div>
@@ -33,7 +30,18 @@
             </div>
         </div>
         <div class="desire-details">
-            {{ this.desire.description }}
+            {% if this.isExactly() %}
+                <h2>ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h2>
+            {% endif %}
+            {% if this.desire.url is not null %}
+            <p>
+                <a href="{{ this.desire.url }}" target="_blank">Beispiel</a>
+            </p>
+            {% endif %}
+            <h3>Beschreibung:</h3>
+            <p>
+                {{ this.desire.description }}
+            </p>
         </div>
     </div>
 

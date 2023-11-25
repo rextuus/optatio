@@ -179,4 +179,25 @@ class SecretSantaService
 
         $this->accessRoleService->addRoleToEntity($desireList,'ROLE_SECRET_FOR_USER_'.$participant->getId());
     }
+
+    /**
+     * @param SecretSantaEvent $event
+     * @param User $participant
+     * @return Secret[]
+     */
+    public function getSecretsForUser(SecretSantaEvent $event, User $participant)
+    {
+        $firsts = $this->secretService->findBy(['event' => $event->getFirstRound(), 'provider' => $participant]);
+        $first = null;
+        if(count($firsts)){
+            $first = $firsts[0];
+        }
+        $seconds = $this->secretService->findBy(['event' => $event->getSecondRound(), 'provider' => $participant]);
+        $second = null;
+        if(count($seconds)){
+            $second = $seconds[0];
+        }
+
+        return ['first' => $first, 'second' => $second];
+    }
 }

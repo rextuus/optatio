@@ -13,21 +13,18 @@
     </div>
 
     <div class="content-body">
-{#        <div class="desire-create-button">#}
-{#        <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">#}
-{#            <button class="desire-navi-button">#}
-{#                Neuer Wunsch#}
-{#            </button>#}
-{#        </a>#}
-{#        </div>#}
+
         {% for desire in desires %}
-            {% if  loop.index  == 1 %}
-            {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: true, disableDown: false}) }}
-            {% elseif loop.index == desires|length  %}
-                {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: false, disableDown: true}) }}
-            {% else %}
-                {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: false, disableDown: false}) }}
-            {% endif %}
+            {{ component('ForeignDesireComponent', { desire: desire, desireList: list, currentUser: currentUser}) }}
+
         {% endfor %}
+
+        <div class="desire-create-button">
+            <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
+                <button class="desire-navi-button">
+                    Zu deiner eigenen Liste
+                </button>
+            </a>
+        </div>
     </div>
 {% endblock %}

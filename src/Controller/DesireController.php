@@ -29,13 +29,14 @@ class DesireController extends BaseController
     #[Route('/list/{desireList}', name: 'app_desire_list')]
     public function index(DesireList $desireList): Response
     {
-        $check = $this->checkDesireListAccess($this->getLoggedInUser(), $desireList);
+        $user = $this->getLoggedInUser();
+        $check = $this->checkDesireListAccess($user, $desireList);
         if ($check){
             return $check;
         }
-//dd($desireList->getOwner() === $this->getLoggedInUser());
+
         $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList);
-        if ($desireList->getOwner() === $this->getLoggedInUser()){
+        if ($desireList->getOwner() === $user){
             return $this->render('desire/list_own.html.twig', [
                 'desires' => $desires,
                 'list' => $desireList,
@@ -46,6 +47,7 @@ class DesireController extends BaseController
         return $this->render('desire/list_foreign.html.twig', [
             'desires' => $desires,
             'list' => $desireList,
+            'currentUser' => $user,
         ]);
     }
 
@@ -69,8 +71,27 @@ class DesireController extends BaseController
     #[Route('/reserve/{desireList}/{desire}', name: 'app_desire_reserve')]
     public function reserveDesire(DesireList $desireList, Desire $desire): Response
     {
+        $user = $this->getLoggedInUser();
+        $check = $this->checkDesireListAccess($user, $desireList);
+        if ($check){
+            return $check;
+        }
 
-        $desireList->getAccessRoles();
+        $this->desireManager->addReservation($user, $desire);
+
+        return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
+    }
+
+    #[Route('/release/{desireList}/{desire}', name: 'app_desire_release')]
+    public function releaseDesire(DesireList $desireList, Desire $desire): Response
+    {
+        $user = $this->getLoggedInUser();
+        $check = $this->checkDesireListAccess($user, $desireList);
+        if ($check) {
+            return $check;
+        }
+
+        $this->desireManager->removeReservation($user, $desire);
 
         return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
     }
@@ -100,6 +121,7 @@ class DesireController extends BaseController
             'form' => $form->createView(),
         ]);
     }
+
 
     private function checkDesireListAccess(User $user, DesireList $desireList): ?Response
     {

@@ -169,6 +169,6 @@ class AppFixtures extends Fixture
         $data->setSecondRound(false);
         $this->eventManager->addParticipantToSecretSantaEvent($user[2], $ssEvent, $data);
 
-        $this->secretSantaService->triggerCalculation($ssEvent);
+//        $this->secretSantaService->triggerCalculation($ssEvent);
     }
 }

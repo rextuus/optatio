@@ -12,22 +12,46 @@
                 <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
             </div>
         </div>
-        <div class="ss-header"></div>
+        <div class="content-body">
 
-        <div class="simple-text-box font-size-1-2">{{ stateText }}</div>
+            <div class="ss-header"></div>
 
-        <div class="ss-link-button">
-            <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}">
-                <button>
-                    Zu deiner Wunschliste
-                </button>
-            </a>
+            <div class="simple-text-box font-size-1-2">{{ stateText|raw }}</div>
+
+            {% if showPick %}
+                {{ component('SecretSantaPickComponent', { secret: secret, secretSantaEvent: event, currentUser: user, firstRound: showFirstRoundPick}) }}
+            {% endif %}
+
+            {% if firstRoundList is not null %}
+                <div class="desire-create-button">
+                    <a href="{{ path('app_desire_list', {'desireList': firstRoundList.id}) }}">
+                        <button>
+                            {{ firstRoundList.owner.firstName }}'s Wunschliste
+                        </button>
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if secondRoundList is not null %}
+                <div class="desire-create-button">
+                    <a href="{{ path('app_desire_list', {'desireList': secondRoundList.id}) }}">
+                        <button>
+                            {{ secondRoundList.owner.firstName }}'s Wunschliste
+                        </button>
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="desire-create-button">
+                <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}">
+                    <button>
+                        Zu deiner Wunschliste
+                    </button>
+                </a>
+            </div>
+
+
         </div>
-
-{#        {{ component('EventComponent', { event: event.firstRound, user: user, hasEditButton: false }) }}#}
-{#        {{ component('EventComponent', { event: event.secondRound, user: user, hasEditButton: false }) }}#}
-        {{ component('SecretSantaPickComponent', { secret: secret}) }}
-
     </div>
 
 

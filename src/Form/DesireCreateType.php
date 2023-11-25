@@ -3,12 +3,8 @@
 namespace App\Form;
 
 use App\Content\Desire\Data\DesireData;
-use App\Content\Desire\DesireState;
-use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
-use App\Entity\SecretSantaEvent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,7 +22,7 @@ class DesireCreateType extends AbstractType
             ->add('description', TextareaType::class)
             ->add('url', UrlType::class,['required' => false])
             ->add('exactly', CheckboxType::class, ['required' => false])
-            ->add('exclusive', CheckboxType::class, ['required' => false])
+            ->add('exclusive', CheckboxType::class, ['required' => false, 'attr' => ['checked' => 'checked']])
             ->add('submit', SubmitType::class, ['label' => 'Erstellen'])
         ;
     }

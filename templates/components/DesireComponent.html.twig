@@ -1,6 +1,6 @@
 <div{{ attributes }}>
     <div class="desire-card">
-        <div class="desire-banner"></div>
+        <div class="desire-banner">Dein Wunsch</div>
         <div class="toggle-indicator"></div>
 
         <div class="desire-header">
@@ -53,7 +53,18 @@
             </div>
         </div>
         <div class="desire-details">
-            {{ this.desire.description }}
+            {% if this.isExactly() %}
+                <h2>Du hast angegeben das du nur das Produkt aus dem Beispiel akzeptierst!</h2>
+            {% endif %}
+            {% if this.desire.url is not null %}
+                <p>
+                    <a href="{{ this.desire.url }}" target="_blank">Beispiel</a>
+                </p>
+            {% endif %}
+            <h3>Beschreibung:</h3>
+            <p>
+                {{ this.desire.description }}
+            </p>
         </div>
     </div>
 

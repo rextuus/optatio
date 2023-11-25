@@ -71,7 +71,7 @@ class DesireManager
 
     public function decreasePriority(DesireList $desireList, Desire $desire): void
     {
-        $priorities = $this->priorityService->findBy(['desireLists' => $desireList, 'desire' => $desire]);
+        $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
         if (count($priorities) !== 1) {
             throw new Exception('No unique Priority found for desire/desireLists combination');
         }
