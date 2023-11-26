@@ -25,7 +25,7 @@
                     {{ form_errors(form) }}
                 </div>
 
-                <div class="form-input-info-text">Möchtest du an der Wichtelrunde teilnehmen?</div>
+                <div class="form-input-info-text">Möchtest du an der Wichtelrunde {{ event.firstRound.name }} teilnehmen?</div>
                 <div class="form-input-field">
                     <label class="hidden" for="secret_santa_event_join_firstRound"></label>
                     <div class="image-form-row">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <div class="form-input-info-text">Möchtest du an der Wichtelrunde teilnehmen?</div>
+                <div class="form-input-info-text">Möchtest du an der Wichtelrunde {{ event.secondRound.name }} teilnehmen?</div>
                 <div class="form-input-field">
                     <label class="hidden" for="secret_santa_event_join_secondRound"></label>
                     <div class="image-form-row">
