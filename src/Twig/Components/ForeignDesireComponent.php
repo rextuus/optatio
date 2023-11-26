@@ -3,6 +3,7 @@
 namespace App\Twig\Components;
 
 use App\Content\Desire\DesireState;
+use App\Content\Reservation\ReservationState;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Reservation;
@@ -53,7 +54,7 @@ final class ForeignDesireComponent
     public function getReserveButtonText(): string
     {
         if ($this->checkIsReservedByUser()){
-            return 'Freigeben/Bestätigen';
+            return 'Freigeben';
         }
         if ($this->checkIsReservedGeneral()){
             return 'Reservieren';
@@ -65,6 +66,9 @@ final class ForeignDesireComponent
     {
         if ($this->checkIsReservedByUser()){
             return 'Von dir reserviert';
+        }
+        if ($this->checkIsResolvedByUser()){
+            return 'Von dir besorgt ('.$this->desire->getId().')';
         }
         if ($this->checkIsReservedGeneral()){
             return 'Von jemand anderem reserviert';
@@ -93,16 +97,41 @@ final class ForeignDesireComponent
         $user = $this->currentUser;
         return count($this->desire->getReservations()->filter(
             function (Reservation $reservation) use ($user) {
-                return $reservation->getOwner()->getId() === $user->getId();
+                return $reservation->getOwner()->getId() === $user->getId() && $reservation->getState() === ReservationState::RESERVED;
             }
         )) > 0;
+    }
+
+    public function checkIsResolvedByUser(): bool
+    {
+        $user = $this->currentUser;
+        return count($this->desire->getReservations()->filter(
+                function (Reservation $reservation) use ($user) {
+                    return $reservation->getOwner()->getId() === $user->getId() && $reservation->getState() === ReservationState::RESOLVED;
+                }
+            )) > 0;
     }
 
     public function checkIsReservedGeneral(): bool
     {
         return $this->desire->getReservations()->count() > 0;
     }
+    #[Route('/confirm/{desireList}/{desire}', name: 'app_desire_resolve')]
+    public function confirmDesire(DesireList $desireList, Desire $desire): Response
+    {
+        $user = $this->getLoggedInUser();
+        $check = $this->checkDesireListAccess($user, $desireList);
+        if ($check) {
+            return $check;
+        }
 
+        $this->desireManager->resolveReservation($user, $desire);
+
+        return $this->render('desire/list_foreign.html.twig', [
+            'desireList' => $desireList,
+            'desire' => $desire,
+        ]);
+    }
     public function getButtonLink(): string
     {
 
@@ -118,6 +147,17 @@ final class ForeignDesireComponent
 
         return $this->urlGenerator->generate(
             'app_desire_reserve',
+            [
+                'desireList' => $this->desireList->getId(),
+                'desire' => $this->desire->getId(),
+            ]
+        );
+    }
+
+    public function getResolveButtonLink(): string
+    {
+        return $this->urlGenerator->generate(
+            'app_desire_resolve',
             [
                 'desireList' => $this->desireList->getId(),
                 'desire' => $this->desire->getId(),

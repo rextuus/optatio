@@ -96,6 +96,20 @@ class DesireController extends BaseController
         return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
     }
 
+    #[Route('/resolve/{desireList}/{desire}', name: 'app_desire_resolve')]
+    public function resolveDesire(DesireList $desireList, Desire $desire): Response
+    {
+        $user = $this->getLoggedInUser();
+        $check = $this->checkDesireListAccess($user, $desireList);
+        if ($check) {
+            return $check;
+        }
+
+        $this->desireManager->resolveReservation($user, $desire);
+
+        return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
+    }
+
     #[Route('/create/{desireList}', name: 'app_desire_create')]
     public function create(Request $request, DesireList $desireList): Response
     {
@@ -136,6 +150,12 @@ class DesireController extends BaseController
             }
         )->toArray();
 
+        // check if its own list
+        if (in_array('USER_'.$user->getId(), $desireListIdents)){
+            return null;
+        }
+
+        // check if user has access via secret
         $secretIdent = 'secretIdent';
         $ownerId = -1;
         foreach ($desireListIdents as $ident){

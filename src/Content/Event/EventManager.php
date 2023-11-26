@@ -138,6 +138,7 @@ class EventManager
             },
             [$event->getFirstRound(), $event->getSecondRound()]
         );
+        $eventRoles[] = 'USER_'.$participant->getId();
 
         $debug = array_map(
             function (Event $event){

@@ -126,12 +126,10 @@ class DesireManager
         $data->setDesires([]);
 
         $desireList = $this->desireListService->createByData($data);
-        dump('created desire list');
 
         foreach ($eventRoles as $eventRole) {
             $this->accessRoleService->addRoleToEntity($desireList, $eventRole);
         }
-
     }
 
     public function addReservation(User $user, Desire $desire): Reservation

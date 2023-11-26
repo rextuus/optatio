@@ -18,6 +18,7 @@
                         <img src="{{ asset('assets/img/exactly.svg') }}" alt="Tile image">
                     </div>
                 </div>
+                {% if  this.checkIsResolvedByUser == false%}
                 <div class="button-row">
                     <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
                         <a href="{{ this.ButtonLink }}">
@@ -26,7 +27,17 @@
                             </button>
                         </a>
                     </div>
+                    {% if this.checkIsReservedByUser%}
+                        <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
+                            <a href="{{ this.ResolveButtonLink }}">
+                                <button {{ this.reserveDisabled }}>
+                                    Bestätigen
+                                </button>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="desire-details">
