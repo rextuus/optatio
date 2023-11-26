@@ -94,6 +94,11 @@ class DesireManager
     {
         $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound(), $event->getSecondRound()]);
         if (count($lists) !== 1) {
+            if(count($lists) === 2){
+                $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound()]);
+                return $lists[0];
+            }
+
             throw new Exception('No unique desirelist for ss event found');
         }
         return $lists[0];
