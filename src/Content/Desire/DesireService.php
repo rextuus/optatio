@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Content\Desire;
 
 use App\Content\Desire\Data\DesireData;
+use App\Content\Desire\Url\Data\UrlData;
+use App\Content\Desire\Url\UrlService;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 
@@ -13,7 +15,7 @@ use App\Entity\DesireList;
  */
 class DesireService
 {
-    public function __construct(private readonly DesireRepository $repository, private readonly DesireFactory $factory)
+    public function __construct(private readonly DesireRepository $repository, private readonly DesireFactory $factory, private UrlService $urlService)
     {
     }
 
@@ -21,6 +23,28 @@ class DesireService
     {
         $desire = $this->factory->createByData($data);
         $this->repository->save($desire);
+
+        if ($data->getUrl1()){
+            $urlData = new UrlData();
+            $urlData->setDesire($desire);
+            $urlData->setPath($data->getUrl1());
+            $this->urlService->createByData($urlData);
+        }
+
+        if ($data->getUrl2()){
+            $urlData = new UrlData();
+            $urlData->setDesire($desire);
+            $urlData->setPath($data->getUrl2());
+            $this->urlService->createByData($urlData);
+        }
+
+        if ($data->getUrl3()){
+            $urlData = new UrlData();
+            $urlData->setDesire($desire);
+            $urlData->setPath($data->getUrl3());
+            $this->urlService->createByData($urlData);
+        }
+
         return $desire;
     }
 

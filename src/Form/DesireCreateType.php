@@ -20,7 +20,9 @@ class DesireCreateType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', TextareaType::class)
-            ->add('url', UrlType::class,['required' => false])
+            ->add('url1', UrlType::class,['required' => false])
+            ->add('url2', UrlType::class,['required' => false])
+            ->add('url3', UrlType::class,['required' => false])
             ->add('exactly', CheckboxType::class, ['required' => false])
             ->add('exclusive', CheckboxType::class, ['required' => false, 'attr' => ['checked' => 'checked']])
             ->add('submit', SubmitType::class, ['label' => 'Erstellen'])

@@ -42,12 +42,32 @@
         </div>
 
         <div class="form-input-field">
-            <label class="hidden" for="desire_create_url"></label>
+            <label class="hidden" for="desire_create_url1"></label>
             <div class="image-form-row">
                 <div class="image-form-row-image">
                     <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
                 </div>
-                {{ form_widget(form.url, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink', 'id': 'url'}}) }}
+                {{ form_widget(form.url1, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink (optional)', 'id': 'url1'}}) }}
+            </div>
+        </div>
+
+        <div class="form-input-field">
+            <label class="hidden" for="desire_create_url2"></label>
+            <div class="image-form-row">
+                <div class="image-form-row-image">
+                    <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
+                </div>
+                {{ form_widget(form.url2, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink (optional)', 'id': 'url2'}}) }}
+            </div>
+        </div>
+
+        <div class="form-input-field">
+            <label class="hidden" for="desire_create_url3"></label>
+            <div class="image-form-row">
+                <div class="image-form-row-image">
+                    <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
+                </div>
+                {{ form_widget(form.url3, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink (optional)', 'id': 'url3'}}) }}
             </div>
         </div>
 

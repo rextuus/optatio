@@ -23,9 +23,6 @@ class Desire
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $url = null;
-
     #[ORM\Column(type: "string", enumType: DesireState::class)]
     private DesireState $state;
 
@@ -50,12 +47,16 @@ class Desire
     #[ORM\OneToMany(mappedBy: 'desire', targetEntity: Priority::class)]
     private Collection $priorities;
 
+    #[ORM\OneToMany(mappedBy: 'desire', targetEntity: Url::class)]
+    private Collection $urls;
+
     public function __construct()
     {
         $this->reservers = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->desireLists = new ArrayCollection();
         $this->priorities = new ArrayCollection();
+        $this->urls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,18 +84,6 @@ class Desire
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    public function setUrl(?string $url): static
-    {
-        $this->url = $url;
 
         return $this;
     }
@@ -256,6 +245,36 @@ class Desire
             // set the owning side to null (unless already changed)
             if ($priority->getDesire() === $this) {
                 $priority->setDesire(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Url>
+     */
+    public function getUrls(): Collection
+    {
+        return $this->urls;
+    }
+
+    public function addUrl(Url $url): static
+    {
+        if (!$this->urls->contains($url)) {
+            $this->urls->add($url);
+            $url->setDesire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUrl(Url $url): static
+    {
+        if ($this->urls->removeElement($url)) {
+            // set the owning side to null (unless already changed)
+            if ($url->getDesire() === $this) {
+                $url->setDesire(null);
             }
         }
 

@@ -24,7 +24,6 @@ class DesireFactory
         $desire->setName($data->getName());
         $desire->setDescription($data->getDescription());
         $desire->setState($data->getState());
-        $desire->setUrl($data->getUrl());
         $desire->setOwner($data->getOwner());
         $desire->setExactly($data->isExactly());
         $desire->setExclusive($data->isExclusive());

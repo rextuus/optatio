@@ -16,7 +16,9 @@ class DesireData
     private User $owner;
     private ?string $name;
     private ?string $description;
-    private ?string $url = null;
+    private ?string $url1 = null;
+    private ?string $url2 = null;
+    private ?string $url3 = null;
     private DesireState $state;
     private bool $exactly = false;
     private bool $exclusive = false;
@@ -56,14 +58,36 @@ class DesireData
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getUrl1(): ?string
     {
-        return $this->url;
+        return $this->url1;
     }
 
-    public function setUrl(?string $url): DesireData
+    public function setUrl1(?string $url): DesireData
     {
-        $this->url = $url;
+        $this->url1 = $url;
+        return $this;
+    }
+
+    public function getUrl2(): ?string
+    {
+        return $this->url2;
+    }
+
+    public function setUrl2(?string $url): DesireData
+    {
+        $this->url2 = $url;
+        return $this;
+    }
+
+    public function getUrl3(): ?string
+    {
+        return $this->url3;
+    }
+
+    public function setUrl3(?string $url): DesireData
+    {
+        $this->url3 = $url;
         return $this;
     }
 
@@ -116,7 +140,6 @@ class DesireData
         $this->setOwner($desire->getOwner());
         $this->setName($desire->getName());
         $this->setState($desire->getState());
-        $this->setUrl($desire->getUrl());
         $this->setExactly($desire->isExactly());
         $this->setExclusive($desire->isExclusive());
         $this->setDescription($desire->getDescription());
