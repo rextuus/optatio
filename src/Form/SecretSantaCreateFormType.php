@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventCreateData;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -17,9 +18,9 @@ class SecretSantaCreateFormType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('nameFirst', TextType::class)
-            ->add('nameSecond', TextType::class)
-            ->add('second', CheckboxType::class)
+            ->add('firstRoundName', TextType::class)
+            ->add('secondRoundName', TextType::class)
+//            ->add('second', CheckboxType::class)
             ->add('submit', SubmitType::class)
         ;
     }
@@ -27,7 +28,7 @@ class SecretSantaCreateFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SecretSantaEventJoinData::class,
+            'data_class' => SecretSantaEventCreateData::class,
         ]);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Content\Desire\DesireManager;
 use App\Content\Event\EventManager;
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventCreateData;
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
 use App\Content\SecretSanta\SecretSantaService;
 use App\Content\SecretSanta\SecretSantaState;
@@ -29,13 +31,13 @@ class SecretSantaController extends BaseController
     #[Route('/create', name: 'app_secret_santa_create')]
     public function index(Request $request, EventManager $eventManager): Response
     {
-        $data = new SecretSantaCreateData();
+        $data = new SecretSantaEventCreateData();
         $form = $this->createForm(SecretSantaCreateFormType::class, $data);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var SecretSantaEventJoinData $data */
+            /** @var SecretSantaEventCreateData $data */
             $data = $form->getData();
 
             $eventManager->initSecretSantaEvent($data, $this->getUser());
@@ -58,6 +60,9 @@ class SecretSantaController extends BaseController
 
             /** @var SecretSantaEventJoinData $data */
             $data = $form->getData();
+            if (!$data->isFirstRound() && !$data->isSecondRound()){
+                return $this->redirect($this->generateUrl('app_home', []));
+            }
 
             $this->eventManager->addParticipantToSecretSantaEvent($this->getUser(), $event, $data);
 
@@ -172,7 +177,6 @@ class SecretSantaController extends BaseController
 
         // TODO need to get the eventdesirelist from current user and the ones of its secrets
         $userDesireList = $this->desireManager->getDesireListForSecretSantaEvent($this->getUser(), $event);
-
 
         return $this->render('secret_santa/detail.html.twig', [
             'event' => $event,
