@@ -12,7 +12,10 @@
         </div>
     </div>
 
+
     <div class="content-body">
+        <button class="backButton" id="backButton">OK</button>
+
         {% for event in secretSantaEvents %}
             {{ component('SecretSantaComponent', { event: event, user: user }) }}
         {% endfor %}

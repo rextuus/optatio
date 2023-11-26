@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components;
 
+use App\Content\User\UserService;
 use App\Entity\DesireList;
 use App\Entity\Secret;
 use App\Entity\SecretSantaEvent;
@@ -25,6 +26,14 @@ final class SecretSantaPickComponent
     {
     }
 
+    public function getSecretName(): string
+    {
+        if ($this->secret->getReceiver()){
+            return $this->secret->getReceiver()->getFirstName();
+
+        }
+        return '';
+    }
 
     public function getBackUrl(): string
     {

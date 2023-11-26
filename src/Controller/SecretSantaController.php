@@ -95,6 +95,7 @@ class SecretSantaController extends BaseController
         $showFirstRoundPick = false;
         $showSecondRoundPick = false;
         $secrets = $this->secretSantaService->getSecretsForUser($event, $participant);
+        $secret = null;
 
         $stateText = sprintf(
             'Das Event "%s" wurde noch nicht gestartet. Wir informieren dich sobald es los geht. Leg derweil doch schon mal ein paar eigene Wünsche an!',
@@ -102,6 +103,8 @@ class SecretSantaController extends BaseController
         );
 
         if ($event->getState() === SecretSantaState::PHASE_1 && $firstRoundActive) {
+            $secret = $secrets['first'];
+
             $showFirstRoundPick = true;
             $stateText = sprintf(
                 'Und los gehts. Ziehe hier deinen Wichtel für <b>%s</b>',
@@ -110,7 +113,8 @@ class SecretSantaController extends BaseController
             if ($secrets['first']->isRetrieved()) {
                 $showFirstRoundPick = false;
                 $stateText = sprintf(
-                    'Du hast deinen Wichtel für %s bereits. Sobald alle anderen gezogen haben, starten wir Runde 2',
+                    'Du hast deinen Wichtel für %s bereits. Es ist %s. Sobald alle anderen gezogen haben, starten wir Runde 2',
+                    $secrets['first']->getReceiver()->getFirstName(),
                     $event->getFirstRound()->getName()
                 );
             }
@@ -127,7 +131,7 @@ class SecretSantaController extends BaseController
 
             if ($secondRoundActive){
                 $showSecondRoundPick = true;
-
+                $secret = $secrets['second'];
                 $stateText = sprintf(
                     'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
                     $event->getSecondRound()->getName()
@@ -170,7 +174,6 @@ class SecretSantaController extends BaseController
         $userDesireList = $this->desireManager->getDesireListForSecretSantaEvent($this->getUser(), $event);
 
 
-        $secret = new Secret();
         return $this->render('secret_santa/detail.html.twig', [
             'event' => $event,
             'user' => $this->getUser(),
