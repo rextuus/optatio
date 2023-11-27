@@ -122,11 +122,11 @@ class EventManager
     public function addParticipantToSecretSantaEvent(User $participant, SecretSantaEvent $event, SecretSantaEventJoinData $data): void
     {
         $events = [];
-        if ($data->isFirstRound()){
+        if ($data->isFirstRound() && !$event->getFirstRound()->getParticipants()->contains($participant)){
             $this->addParticipant($event->getFirstRound(), $participant);
             $events[] = $event->getFirstRound();
         }
-        if ($data->isSecondRound()){
+        if ($data->isSecondRound() && !$event->getSecondRound()->getParticipants()->contains($participant)){
             $this->addParticipant($event->getSecondRound(), $participant);
             $events[] = $event->getSecondRound();
         }
@@ -140,14 +140,14 @@ class EventManager
         );
         $eventRoles[] = 'USER_'.$participant->getId();
 
-        $debug = array_map(
-            function (Event $event){
-                return $event->getName();
-            },
-            $events
-        );
+//        $debug = array_map(
+//            function (Event $event){
+//                return $event->getName();
+//            },
+//            $events
+//        );
 
-        dump('adde '.$participant->getFullName().' to '.implode(', ',$debug));
+//        dump('adde '.$participant->getFullName().' to '.implode(', ',$debug));
         $this->desireManager->initDesireListsForSecretSantaEvent($participant, $event, $events, $eventRoles);
 
 //        $this->userService->addRolesToUser($participant, $eventRoles);
