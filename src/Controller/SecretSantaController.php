@@ -173,7 +173,25 @@ class SecretSantaController extends BaseController
                 $secondRoundList = $this->desireManager->getDesireListForSecretSantaEvent($secrets['second']->getReceiver(), $event);
             }
 
-            $stateText = 'Es wurde gewichtelt was das Zeug hält. Der sorting hat ist leer gezogen. Jetzt heißt es Geschenke kaufen!';
+            $stateText = 'Es wurde gewichtelt was das Zeug hält. Der sorting hat ist leer gezogen. Jetzt heißt es Geschenke kaufen!</br>';
+
+            if ($firstRoundActive) {
+                $stateText = $stateText . sprintf(
+                        'Dein Wichtel für <span class="ss-event-text-name">%s</span> ist <span class="ss-event-text-name">%s</span>. ',
+                        $event->getFirstRound()->getName(),
+                        $secrets['first']->getReceiver()->getFirstName(),
+                    );
+            }
+
+            if ($secondRoundActive) {
+                $stateText = $stateText . sprintf(
+                        'Dein Wichtel für <span class="ss-event-text-name">%s</span> ist <span class="ss-event-text-name">%s</span>.',
+                        $event->getSecondRound()->getName(),
+                        $secrets['second']->getReceiver()->getFirstName(),
+                    );
+            }
+
+
         }
 
         // TODO need to get the eventdesirelist from current user and the ones of its secrets

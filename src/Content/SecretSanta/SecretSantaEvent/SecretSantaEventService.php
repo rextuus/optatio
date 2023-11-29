@@ -39,7 +39,7 @@ class SecretSantaEventService
         return $this->repository->findBy($conditions);
     }
 
-    public function findByFirstOrSecondRound(Event $event)
+    public function findByFirstOrSecondRound(Event $event): array
     {
         return $this->repository->findByFirstOrSecondRound($event);
     }

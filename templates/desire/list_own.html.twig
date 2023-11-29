@@ -8,18 +8,27 @@
             Deine {{ list.name }}
         </div>
         <div class="page-header-image">
-            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            <img src="{{ asset('assets/img/heart.svg') }}" alt="Tile image">
         </div>
     </div>
 
     <div class="content-body">
         <div class="desire-image-button">
+            <a href="{{ path('app_secret_santa_detail',  {'event': event.id}) }}">
+                <button>
+                    <img src="{{ asset('assets/img/event.svg') }}" alt="Tile image">
+                    <div class="desire-image-button-text">Übersicht</div>
+                </button>
+            </a>
+        </div>
+
+        <div class="desire-image-button">
             <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
                 <button>
                     <img src="{{ asset('assets/img/list_add.svg') }}" alt="Tile image">
+                    <div class="desire-image-button-text">Neuer Wunsch</div>
                 </button>
             </a>
-            <div class="desire-image-button-text">Neuer Wunsch</div>
         </div>
 
 

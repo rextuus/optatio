@@ -40,10 +40,19 @@
                         </div>
                     </div>
 
-                    <div class="desire-card-button">
+{#                    <div class="desire-card-button">#}
+{#                        <a href="{{ path('app_desire_edit', {'desireList': this.desireList.id, 'desire': this.desire.id}) }}">#}
+{#                            <button class="join-button">#}
+{#                                Bearbeiten#}
+{#                            </button>#}
+{#                        </a>#}
+{#                    </div>#}
+
+                    <div class="desire-image-button min ">
                         <a href="{{ path('app_desire_edit', {'desireList': this.desireList.id, 'desire': this.desire.id}) }}">
-                            <button class="join-button">
-                                Bearbeiten
+                            <button >
+                                <img class="min" src="{{ asset('assets/img/pencil.svg') }}" alt="Tile image">
+                                <span class="desire-image-button-text min">Bearbeiten</span>
                             </button>
                         </a>
                     </div>

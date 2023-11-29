@@ -25,37 +25,73 @@
             {% endif %}
 
             {% if firstRoundList is not null %}
-                <div class="desire-create-button">
+{#                <div class="desire-create-button">#}
+{#                    <a href="{{ path('app_desire_list', {'desireList': firstRoundList.id}) }}">#}
+{#                        <button>#}
+{#                            {{ firstRoundList.owner.firstName }}'s Wunschliste#}
+{#                        </button>#}
+{#                    </a>#}
+{#                </div>#}
+
+                <div class="desire-image-button">
                     <a href="{{ path('app_desire_list', {'desireList': firstRoundList.id}) }}">
                         <button>
-                            {{ firstRoundList.owner.firstName }}'s Wunschliste
+                            <img src="{{ asset('assets/img/target-person.svg') }}" alt="Tile image">
+                            <span class="desire-image-button-text">{{ firstRoundList.owner.firstName }}'s Wunschliste</span>
                         </button>
                     </a>
                 </div>
             {% endif %}
 
             {% if secondRoundList is not null %}
-                <div class="desire-create-button">
+{#                <div class="desire-create-button">#}
+{#                    <a href="{{ path('app_desire_list', {'desireList': secondRoundList.id}) }}">#}
+{#                        <button>#}
+{#                            {{ secondRoundList.owner.firstName }}'s Wunschliste#}
+{#                        </button>#}
+{#                    </a>#}
+{#                </div>#}
+
+                <div class="desire-image-button">
                     <a href="{{ path('app_desire_list', {'desireList': secondRoundList.id}) }}">
                         <button>
-                            {{ secondRoundList.owner.firstName }}'s Wunschliste
+                            <img src="{{ asset('assets/img/target-person.svg') }}" alt="Tile image">
+                            <span class="desire-image-button-text">Zu {{ secondRoundList.owner.firstName }}'s Wunschliste</span>
                         </button>
                     </a>
                 </div>
             {% endif %}
 
-            <div class="desire-create-button">
-                <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}">
+{#            <div class="desire-create-button">#}
+{#                <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}">#}
+{#                    <button>#}
+{#                        Zu deiner Wunschliste#}
+{#                    </button>#}
+{#                </a>#}
+{#            </div>#}
+
+            <div class="desire-image-button">
+                <a href="{{ path('app_desire_list',  {'desireList': ownList.id}) }}">
                     <button>
-                        Zu deiner Wunschliste
+                        <img src="{{ asset('assets/img/heart.svg') }}" alt="Tile image">
+                        <span class="desire-image-button-text">Zu deiner Wunschliste</span>
                     </button>
                 </a>
             </div>
 
-            <div class="desire-create-button">
+{#            <div class="desire-create-button">#}
+{#                <a href="{{ path('app_exclusion_create', {'event': event.id}) }}">#}
+{#                    <button>#}
+{#                        Personen ausschließen#}
+{#                    </button>#}
+{#                </a>#}
+{#            </div>#}
+
+            <div class="desire-image-button">
                 <a href="{{ path('app_exclusion_create', {'event': event.id}) }}">
                     <button>
-                        Personen ausschließen
+                        <img src="{{ asset('assets/img/stop.svg') }}" alt="Tile image">
+                        <span class="desire-image-button-text">Personen ausschließen</span>
                     </button>
                 </a>
             </div>

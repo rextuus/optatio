@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Content\Desire\Data\DesireData;
 use App\Content\Desire\DesireManager;
+use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
+use App\Content\SecretSanta\SecretSantaService;
 use App\Entity\AccessRole;
 use App\Entity\Desire;
 use App\Entity\DesireList;
@@ -22,7 +24,8 @@ class DesireController extends BaseController
 
 
     public function __construct(
-        private readonly DesireManager $desireManager
+        private readonly DesireManager $desireManager,
+        private readonly SecretSantaEventService $secretSantaService
     )
     {
     }
@@ -36,12 +39,17 @@ class DesireController extends BaseController
             return $check;
         }
 
+        // get first event for redirect => TODO we need a param to know where we come from ugly bugly fucking
+        $event = $desireList->getEvents()->first();
+        $ssEvent = $this->secretSantaService->findByFirstOrSecondRound($event)[0];
+
         // own list
         $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList);
         if ($desireList->getOwner() === $user){
             return $this->render('desire/list_own.html.twig', [
                 'desires' => $desires,
                 'list' => $desireList,
+                'event' => $ssEvent,
             ]);
         }
 
@@ -51,6 +59,7 @@ class DesireController extends BaseController
             'desires' => $desires,
             'list' => $desireList,
             'currentUser' => $user,
+            'event' => $ssEvent,
         ]);
     }
 

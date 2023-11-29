@@ -13,18 +13,18 @@
     </div>
 
     <div class="content-body">
+        <div class="desire-image-button">
+            <a href="{{ path('app_secret_santa_detail',  {'event': event.id}) }}">
+                <button>
+                    <img src="{{ asset('assets/img/event.svg') }}" alt="Tile image">
+                    <div class="desire-image-button-text">Übersicht</div>
+                </button>
+            </a>
+        </div>
 
         {% for desire in desires %}
             {{ component('ForeignDesireComponent', { desire: desire, desireList: list, currentUser: currentUser}) }}
 
         {% endfor %}
-
-        <div class="desire-create-button">
-            <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
-                <button class="desire-navi-button">
-                    Zu deiner eigenen Liste
-                </button>
-            </a>
-        </div>
     </div>
 {% endblock %}
