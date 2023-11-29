@@ -21,7 +21,6 @@ inputs.forEach(function(inputElement) {
     }
 
     // checkboxes should have always a visible labe
-    console.log(input.classList);
     if(input.classList.contains('toggle-box')){
         var id = input.getAttribute("id");
         var label = document.querySelector("label[for='" + id + "']");
