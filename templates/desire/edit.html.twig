@@ -42,7 +42,7 @@
         </div>
 
         <div class="form-input-field">
-            <label class="hidden" for="desire_create_url1"></label>
+            <label class="hidden" for="desire_edit_url1"></label>
             <div class="image-form-row">
                 <div class="image-form-row-image">
                     <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
@@ -52,7 +52,7 @@
         </div>
 
         <div class="form-input-field">
-            <label class="hidden" for="desire_create_url2"></label>
+            <label class="hidden" for="desire_edit_url2"></label>
             <div class="image-form-row">
                 <div class="image-form-row-image">
                     <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
@@ -62,7 +62,7 @@
         </div>
 
         <div class="form-input-field">
-            <label class="hidden" for="desire_create_url3"></label>
+            <label class="hidden" for="desire_edit_url3"></label>
             <div class="image-form-row">
                 <div class="image-form-row-image">
                     <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
@@ -73,15 +73,15 @@
 
         <div class="form-input-field">
             <div class="form-input-info-text">Soll es exakt das Produkt aus dem Beispiellink sein?</div>
-            <label class="hidden" for="secret_santa_event_join_firstRound"></label>
+            <label class="hidden" for="desire_edit_exactly"></label>
             <div class="image-form-row">
                 <div class="image-form-row-image">
                     <img src="{{ asset('assets/img/reason.svg') }}" alt="Tile image">
                 </div>
                 <div class="toggle-switch-container">
                     <label class="switch">
-                        <label for="secret_santa_event_join_firstRound" class="switch-toggle-label"></label>
-                        {{ form_widget(form.exactly, {'attr': {'class': 'toggle-box', 'placeholder': 'Verfügbar', 'id': 'enabled', 'value': 1}}) }}
+                        <label for="desire_edit_exactly" class="switch-toggle-label"></label>
+                        {{ form_widget(form.exactly, {'attr': {'class': 'toggle-box', 'placeholder': 'Exakt', 'id': 'exactly', 'value': 1}}) }}
                         <span class="slider round"></span>
                     </label>
                 </div>
@@ -91,15 +91,33 @@
         <div class="form-input-field">
             <div class="form-input-info-text">Ist es dir egal, wenn dir mehrere Leute den Wunsch erfüllen?</div>
 
-            <label class="hidden" for="secret_santa_event_join_secondRound"></label>
+            <label class="hidden" for="desire_edit_exclusive"></label>
             <div class="image-form-row">
                 <div class="image-form-row-image">
                     <img src="{{ asset('assets/img/reason.svg') }}" alt="Tile image">
                 </div>
                 <div class="toggle-switch-container">
                     <label class="switch">
-                        <label for="secret_santa_event_join_secondRound" class="switch-toggle-label"></label>
-                        {{ form_widget(form.exclusive, {'attr': {'class': 'toggle-box', 'placeholder': 'Verfügbar', 'id': 'enabled', 'value': 1}}) }}
+                        <label for="desire_edit_exclusive" class="switch-toggle-label"></label>
+                        {{ form_widget(form.exclusive, {'attr': {'class': 'toggle-box', 'placeholder': 'Exklusiv', 'id': 'exclusive', 'value': 1}}) }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-input-field">
+            <div class="form-input-info-text">Soll der Wunsch anderen Usern angezeigt werden oder arbeitest du noch daran?</div>
+
+            <label class="hidden" for="desire_edit_listed"></label>
+            <div class="image-form-row">
+                <div class="image-form-row-image">
+                    <img src="{{ asset('assets/img/reason.svg') }}" alt="Tile image">
+                </div>
+                <div class="toggle-switch-container">
+                    <label class="switch">
+                        <label for="desire_edit_listed" class="switch-toggle-label"></label>
+                        {{ form_widget(form.listed, {'attr': {'class': 'toggle-box', 'placeholder': 'Sichtbar', 'id': 'listed', 'value': 1}}) }}
                         <span class="slider round"></span>
                     </label>
                 </div>

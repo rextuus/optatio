@@ -44,11 +44,11 @@
             {% if this.isExactly() %}
                 <h2>ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h2>
             {% endif %}
-            {% if this.desire.url is not null %}
-            <p>
-                <a href="{{ this.desire.url }}" target="_blank">Beispiel</a>
-            </p>
-            {% endif %}
+            {% for url in this.desire.urls %}
+                <p>
+                    <a href="{{ url.path }}" target="_blank">Beispiel</a>
+                </p>
+            {% endfor %}
             <h3>Beschreibung:</h3>
             <p>
                 {{ this.desire.description }}

@@ -9,6 +9,7 @@ use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\User;
 use App\Form\DesireCreateType;
+use App\Form\DesireEditType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,6 +36,7 @@ class DesireController extends BaseController
             return $check;
         }
 
+        // own list
         $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList);
         if ($desireList->getOwner() === $user){
             return $this->render('desire/list_own.html.twig', [
@@ -43,6 +45,7 @@ class DesireController extends BaseController
             ]);
         }
 
+        // foreign list
         $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList, true);
         return $this->render('desire/list_foreign.html.twig', [
             'desires' => $desires,
@@ -133,9 +136,37 @@ class DesireController extends BaseController
 
         return $this->render('desire/create.html.twig', [
             'form' => $form->createView(),
+            'desireList' => $desireList,
         ]);
     }
 
+    #[Route('/edit/{desireList}/{desire}', name: 'app_desire_edit')]
+    public function edit(Request $request, DesireList $desireList, Desire $desire): Response
+    {
+        $user = $this->getLoggedInUser();
+        if ($desireList->getOwner() !== $user || $desire->getOwner() !== $user){
+            return $this->redirect($this->generateUrl('app_home', []));
+        }
+
+        $data = (new DesireData())->initFromEntity($desire);
+
+        $form = $this->createForm(DesireEditType::class, $data);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var DesireData $data */
+            $data = $form->getData();
+
+            $this->desireManager->updateDesire($data, $desire);
+            return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
+        }
+
+        return $this->render('desire/edit.html.twig', [
+            'form' => $form->createView(),
+            'desireList' => $desireList,
+        ]);
+    }
 
     private function checkDesireListAccess(User $user, DesireList $desireList): ?Response
     {

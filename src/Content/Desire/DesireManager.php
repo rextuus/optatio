@@ -330,4 +330,9 @@ class DesireManager
 
         $this->priorityService->createByData($priorityData);
     }
+
+    public function updateDesire(DesireData $data, Desire $desire)
+    {
+        $this->desireService->update($desire, $data);
+    }
 }

@@ -13,13 +13,16 @@
     </div>
 
     <div class="content-body">
-        <div class="desire-create-button">
-        <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
-            <button class="desire-navi-button">
-                Neuer Wunsch
-            </button>
-        </a>
+        <div class="desire-image-button">
+            <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
+                <button>
+                    <img src="{{ asset('assets/img/list_add.svg') }}" alt="Tile image">
+                </button>
+            </a>
+            <div class="desire-image-button-text">Neuer Wunsch</div>
         </div>
+
+
         {% for desire in desires %}
             {% if  loop.index  == 1 %}
             {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: true, disableDown: false}) }}
