@@ -159,6 +159,18 @@ class DesireController extends BaseController
 
         $data = (new DesireData())->initFromEntity($desire);
 
+        $urls = $desire->getUrls();
+        if ($urls->get(0)){
+            $data->setUrl1($urls->get(0)->getPath());
+        }
+        if ($urls->get(1)){
+            $data->setUrl2($urls->get(1)->getPath());
+        }
+        if ($urls->get(2)){
+            $data->setUrl3($urls->get(2)->getPath());
+        }
+
+
         $form = $this->createForm(DesireEditType::class, $data);
 
         $form->handleRequest($request);

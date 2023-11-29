@@ -52,6 +52,27 @@ class DesireService
     {
         $desire = $this->factory->mapData($data, $desire);
         $this->repository->save($desire);
+
+        if ($data->getUrl1()){
+            $url = $desire->getUrls()->get(0);
+            $urlData = (new UrlData())->initFromEntity($url);
+            $urlData->setPath($data->getUrl1());
+            $this->urlService->update($url, $urlData);
+        }
+
+        if ($data->getUrl2()){
+            $url = $desire->getUrls()->get(1);
+            $urlData = (new UrlData())->initFromEntity($url);
+            $urlData->setPath($data->getUrl2());
+            $this->urlService->update($url, $urlData);
+        }
+
+        if ($data->getUrl3()){
+            $url = $desire->getUrls()->get(2);
+            $urlData = (new UrlData())->initFromEntity($url);
+            $urlData->setPath($data->getUrl3());
+            $this->urlService->update($url, $urlData);
+        }
         return $desire;
     }
 

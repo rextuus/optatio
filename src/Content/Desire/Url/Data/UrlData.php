@@ -37,8 +37,11 @@ class UrlData
         return $this;
     }
 
-    public function initFromEntity(Url $url){
+    public function initFromEntity(Url $url): UrlData
+    {
         $this->path = $url->getPath();
         $this->desire = $url->getDesire();
+
+        return $this;
     }
 }
