@@ -41,7 +41,7 @@ class Desire
     #[ORM\Column]
     private ?bool $listed = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 3000)]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'desire', targetEntity: Priority::class)]
