@@ -37,4 +37,9 @@ class ExclusionService
     {
         return $this->repository->findBy($conditions);
     }
+
+    public function delete(Exclusion $exclusion): void
+    {
+        $this->repository->delete($exclusion);
+    }
 }

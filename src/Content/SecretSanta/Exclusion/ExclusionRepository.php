@@ -52,4 +52,11 @@ class ExclusionRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function delete(Exclusion $exclusion, bool $flush = true): void
+    {
+        $this->_em->remove($exclusion);
+        if($flush){
+            $this->_em->flush();
+        }
+    }
 }

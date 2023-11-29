@@ -112,15 +112,16 @@ class SecretSantaController extends BaseController
 
             $showFirstRoundPick = true;
             $stateText = sprintf(
-                'Und los gehts. Ziehe hier deinen Wichtel für <b>%s</b>',
+                'Und los gehts. Ziehe hier deinen Wichtel für <b><span class="ss-event-text-name">%s</span></b>',
                 $event->getFirstRound()->getName()
             );
             if ($secrets['first']->isRetrieved()) {
                 $showFirstRoundPick = false;
                 $stateText = sprintf(
-                    'Du hast deinen Wichtel für %s bereits. Es ist %s. Sobald alle anderen gezogen haben, starten wir Runde 2',
+                    'Du hast deinen Wichtel für <span class="ss-event-text-name"><span class="ss-event-text-name">%s</span></span> bereits. Es ist <span class="ss-event-text-name">%s</span>. Sobald alle anderen gezogen haben, starten wir mit der Ziehung für <span class="ss-event-text-name">%s</span>',
+                    $event->getFirstRound()->getName(),
                     $secrets['first']->getReceiver()->getFirstName(),
-                    $event->getFirstRound()->getName()
+                    $event->getSecondRound()->getName(),
                 );
             }
         }
@@ -128,7 +129,7 @@ class SecretSantaController extends BaseController
         if ($event->getState() === SecretSantaState::PHASE_2) {
             if ($firstRoundActive){
                 $stateText = sprintf(
-                    'Du hast deinen Wichtel für "%s" bereits gezogen. Es ist %s. Sobald es weiter geht siehst du hier seine Wunschliste',
+                    'Du hast deinen Wichtel für "<span class="ss-event-text-name">%s</span>" bereits gezogen. Es ist <span class="ss-event-text-name">%s</span>. Sobald es weiter geht siehst du hier seine Wunschliste',
                     $event->getFirstRound()->getName(),
                     $secrets['first']->getReceiver()->getFirstName(),
                 );
@@ -138,20 +139,20 @@ class SecretSantaController extends BaseController
                 $showSecondRoundPick = true;
                 $secret = $secrets['second'];
                 $stateText = sprintf(
-                    'Und weiter gehts. Ziehe hier deinen Wichtel für "%s"',
+                    'Und weiter gehts. Ziehe hier deinen Wichtel für "<span class="ss-event-text-name">%s</span>"',
                     $event->getSecondRound()->getName()
                 );
                 if ($secrets['second']->isRetrieved()) {
                     $showSecondRoundPick = false;
                     $stateText = sprintf(
-                        'Du hast deinen Wichtel für "%s" bereits gezogen. Es ist %s. Sobald es weiter geht siehst du hier seine Wunschliste',
+                        'Du hast deinen Wichtel für "<span class="ss-event-text-name">%s</span>" bereits gezogen. Es ist <span class="ss-event-text-name">%s</span>. Sobald es weiter geht siehst du hier seine Wunschliste',
                         $event->getSecondRound()->getName(),
                         $secrets['second']->getReceiver()->getFirstName(),
                     );
 
                     if ($firstRoundActive) {
                         $stateText = sprintf(
-                            'Du hast deine Wichtel für "%s" und "%s" bereits gezogen. Es sind %s und %s. Sobald es weiter geht siehst du hier ihre Wunschlisten',
+                            'Du hast deine Wichtel für "<span class="ss-event-text-name">%s</span>" und "<span class="ss-event-text-name">%s</span>" bereits gezogen. Es sind <span class="ss-event-text-name">%s</span> und <span class="ss-event-text-name">%s</span>. Sobald es weiter geht siehst du hier ihre Wunschlisten',
                             $event->getFirstRound()->getName(),
                             $event->getSecondRound()->getName(),
                             $secrets['first']->getReceiver()->getFirstName(),

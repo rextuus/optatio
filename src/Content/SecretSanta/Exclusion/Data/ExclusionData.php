@@ -17,7 +17,7 @@ class ExclusionData
 
     private User $exclusionCreator;
 
-    private User $excludedUser;
+    private ?User $excludedUser = null;
     private bool $bidirectional;
 
     public function getEvent(): SecretSantaEvent
@@ -42,7 +42,7 @@ class ExclusionData
         return $this;
     }
 
-    public function getExcludedUser(): User
+    public function getExcludedUser(): ?User
     {
         return $this->excludedUser;
     }
