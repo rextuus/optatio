@@ -10,7 +10,7 @@ import './styles/navi.scss';
 import './styles/footer.scss';
 
 // start the Stimulus application
-require('bootstrap')
+// require('bootstrap')
 
 let burger = document.getElementById('burger'),
     nav    = document.getElementById('main-nav'),
@@ -21,11 +21,11 @@ burger.addEventListener('click', function(e){
     nav.classList.toggle('is-open');
 });
 
-if (slowmo){
-    slowmo.addEventListener('click', function(e){
-        this.classList.toggle('is-slowmo');
-    });
-}
+// if (slowmo){
+//     slowmo.addEventListener('click', function(e){
+//         this.classList.toggle('is-slowmo');
+//     });
+// }
 
 
 /* Onload demo - dirty timeout */
