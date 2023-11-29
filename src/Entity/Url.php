@@ -13,7 +13,7 @@ class Url
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 1000)]
+    #[ORM\Column(length: 3000)]
     private ?string $path = null;
 
     #[ORM\ManyToOne(inversedBy: 'urls')]
