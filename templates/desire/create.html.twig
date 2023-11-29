@@ -13,7 +13,13 @@
         </div>
     </div>
     <div class="content-body">
-
+    <div class="form-submit-field" style="margin-bottom: 10px">
+        <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}">
+            <button class="btn cancel">
+                Zurück
+            </button>
+        </a>
+    </div>
     <div class="form-area">
         {{ form_start(form, {'method': 'POST'}) }}
         <div class="my-custom-class-for-errors">
@@ -112,17 +118,8 @@
                 {{ form_widget(form.submit, {'attr': {'class': 'btn'}}) }}
             </div>
 
-            <div class="form-submit-field">
-                <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}">
-                    <button class="btn cancel">
-                        Abbrechen
-                    </button>
-                </a>
-            </div>
         </div>
     </div>
-
-
 
 
 {% endblock %}
