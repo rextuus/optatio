@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block title %}Wichtelrunde erstellen{% endblock %}
+
+{% block body %}
+
+    <h1>Digital-Frame Upload</h1>
+
+    {{ form_start(form) }}
+
+    {# Hide the original file input and replace it with a camera icon #}
+    <div class="input-group mb-3">
+        <div class="custom-file">
+            <label class="custom-file-label" for="{{ form.imageFile.vars.id }}">
+                <i class="fas fa-camera"></i> Select an image
+            </label>
+            {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input'}}) }}
+        </div>
+    </div>
+
+    {# Image preview area #}
+    <div id="image-preview" class="image-area"></div>
+
+    {{ form_widget(form.upload) }}
+
+    {{ form_end(form) }}
+
+    <script>
+        function handleImagePreview(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const imagePreview = document.getElementById('image-preview');
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Selected Image" style="">`;
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Event listener to trigger the image preview when a file is selected
+        const imageFileInput = document.querySelector('.custom-file-input');
+        if (imageFileInput) {
+            imageFileInput.addEventListener('change', function () {
+                handleImagePreview(this);
+            });
+        }
+    </script>
+{% endblock %}
