@@ -7,6 +7,7 @@ use App\Content\Event\EventManager;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventCreateData;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
+use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaStartData;
 use App\Content\SecretSanta\SecretSantaService;
 use App\Content\SecretSanta\SecretSantaState;
 use App\Entity\Event;
@@ -15,6 +16,7 @@ use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 use App\Form\SecretSantaCreateFormType;
 use App\Form\SecretSantaEventJoinType;
+use App\Form\SecretSantaStartType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -208,6 +210,39 @@ class SecretSantaController extends BaseController
             'showSecondRoundPick' => $showSecondRoundPick,
             'firstRoundList' => $firstRoundList,
             'secondRoundList' => $secondRoundList,
+        ]);
+    }
+
+    #[Route('/start/{event}', name: 'app_secret_santa_start')]
+    public function start(SecretSantaEvent $event, Request $request): Response
+    {
+        $data = new SecretSantaStartData();
+        $form = $this->createForm(SecretSantaStartType::class, $data);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var SecretSantaStartData $data */
+            $data = $form->getData();
+            if ($data->getCheckSum() === 'sss'){
+                $this->secretSantaService->triggerCalculation($event);
+            }
+
+            return $this->redirect($this->generateUrl('app_secret_santa_start', ['event' => $event->getId()]));
+        }
+
+        $round1 = $event->getFirstRound()->getParticipants()->toArray();
+        $round2 = $event->getSecondRound()->getParticipants()->toArray();
+        $exclusions = $event->getExclusions()->toArray();
+
+        $result = $this->secretSantaService->testCalculation($event);
+
+        return $this->render('secret_santa/start.html.twig', [
+            'event' => $event,
+            'result' => $result,
+            'form' => $form,
+            'round1' => $round1,
+            'round2' => $round2,
+            'exclusions' => $exclusions,
         ]);
     }
 

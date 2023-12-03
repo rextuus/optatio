@@ -37,6 +37,8 @@ class CalculationResult
 
     public function isSuccess(): bool
     {
+        dump($this->round1);
+        dump($this->round2);
         return count($this->round1) > 0 && count($this->round2) > 0;
     }
 

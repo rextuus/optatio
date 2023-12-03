@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wichtelrunde erstellen{% endblock %}
+
+{% block body %}
+    <div class="ss-container">
+        <div class="ss-banner"></div>
+
+        <div class="page-header">
+            <div class="page-header-text">
+                {{ event.name }}
+            </div>
+            <div class="page-header-image">
+                <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            </div>
+        </div>
+        <div class="content-body">
+
+
+            <div class="simple-text-box font-size-1-2">Wähle aus an welchen Wichtelrunden du teilnehmen möchtest</div>
+
+            {% if result.checkIntegrity %}
+                Integrity: OK
+            {% else %}
+                Integrity: Not-OK
+            {% endif %}
+            <br>
+            {% if result.success %}
+                Success: OK
+            {% else %}
+                Success: Not-OK
+            {% endif %}
+            <br>
+            Runde 1
+            <table>
+                <tr>
+                    <th>Teilnehmer</th>
+                </tr>
+                {% for participant in round1 %}
+                <tr>
+                    <td>{{ participant.fullName }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            Runde 2
+            <table>
+                <tr>
+                    <th>Teilnehmer</th>
+                </tr>
+                {% for participant in round2 %}
+                    <tr>
+                        <td>{{ participant.fullName }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+
+            {{ form(form) }}
+
+        </div>
+    </div>
+
+
+
+{% endblock %}

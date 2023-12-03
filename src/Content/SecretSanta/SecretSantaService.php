@@ -39,6 +39,15 @@ class SecretSantaService
     {
     }
 
+    public function testCalculation(SecretSantaEvent $event): Calculation\CalculationResult
+    {
+        $calculationResult = $this->secretCalculator->testCalculateSecrets(
+            $event->getFirstRound()->getParticipants()->toArray(),
+            $event->getSecondRound()->getParticipants()->toArray(),
+            $event->getExclusions()->toArray()
+        );
+        return $calculationResult;
+    }
     public function triggerCalculation(SecretSantaEvent $event): void
     {
         $calculationResult = $this->secretCalculator->testCalculateSecrets(
