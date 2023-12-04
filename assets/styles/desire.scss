@@ -160,7 +160,6 @@ $size-img-info-tale: 15px;
           }
         }
       }
-
       .button-row {
         margin-left: auto;
 
@@ -273,6 +272,19 @@ $size-img-info-tale: 15px;
       }
     }
 
+    .image-container {
+      display: flex;
+      overflow-x: auto; /* Add horizontal scrollbar */
+      flex-wrap: nowrap; /* Prevent images from wrapping to the next line */
+
+      .image {
+        img {
+          width: 100px;
+          height: 100px;
+          margin-right: 10px; /* Optional margin between images */
+        }
+      }
+    }
 
     p {
       margin: 5px 0;
@@ -300,6 +312,75 @@ $size-img-info-tale: 15px;
 
     &.reserved {
       background-color: $color-desire-banner-reserved;
+    }
+  }
+}
+
+/* SCSS for the modal */
+.modal {
+  margin-top: 200px;
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+
+  .modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    margin-top: 10%; /* Adjust this value to suit your layout */
+  }
+
+  .close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      color: #ccc;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.upload {
+  h2{
+    font-size: 1.2em;
+  }
+  .image-container {
+    display: flex;
+    overflow-x: auto; /* Add horizontal scrollbar */
+    flex-wrap: nowrap; /* Prevent images from wrapping to the next line */
+
+    .image {
+      position: relative;
+      margin-right: 10px; /* Optional margin between images */
+
+      img {
+        width: 100px;
+        height: 100px;
+      }
+
+      .delete-icon {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+        img{
+          width: 20px;
+          height: 20px;
+        }
+      }
     }
   }
 }

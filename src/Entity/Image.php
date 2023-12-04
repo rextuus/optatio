@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\ImageRepository;
+use App\Content\Image\ImageRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
@@ -49,6 +49,10 @@ class Image
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Groups(['read'])]
     private ?\DateTimeInterface $uploaded = null;
+
+    #[ORM\ManyToOne(inversedBy: 'images')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Desire $desire = null;
 
     public function getId(): ?int
     {
@@ -156,6 +160,18 @@ class Image
     public function setUploaded(?\DateTimeInterface $uploaded): static
     {
         $this->uploaded = $uploaded;
+
+        return $this;
+    }
+
+    public function getDesire(): ?Desire
+    {
+        return $this->desire;
+    }
+
+    public function setDesire(?Desire $desire): static
+    {
+        $this->desire = $desire;
 
         return $this;
     }

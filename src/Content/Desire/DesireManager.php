@@ -6,6 +6,7 @@ namespace App\Content\Desire;
 use App\Content\Desire\Data\DesireData;
 use App\Content\DesireList\Data\DesireListData;
 use App\Content\DesireList\DesireListService;
+use App\Content\Image\ImageService;
 use App\Content\Priority\Data\PriorityData;
 use App\Content\Priority\PriorityService;
 use App\Content\Reservation\Data\ReservationData;
@@ -15,6 +16,7 @@ use App\Content\User\AccessRoleService;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Event;
+use App\Entity\Image;
 use App\Entity\Reservation;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
@@ -34,6 +36,7 @@ class DesireManager
         private readonly PriorityService    $priorityService,
         private readonly AccessRoleService  $accessRoleService,
         private readonly ReservationService $reservationService,
+        private readonly ImageService       $imageService,
     )
     {
     }
@@ -94,7 +97,7 @@ class DesireManager
     {
         $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound(), $event->getSecondRound()]);
         if (count($lists) !== 1) {
-            if(count($lists) === 2){
+            if (count($lists) === 2) {
                 $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound()]);
                 return $lists[0];
             }
@@ -110,7 +113,7 @@ class DesireManager
     public function initDesireListsForSecretSantaEvent(User $participant, SecretSantaEvent $event, array $events, array $eventRoles): void
     {
         $eventNames = array_map(
-            function (Event $event){
+            function (Event $event) {
                 return $event->getName();
             },
             $events
@@ -334,5 +337,11 @@ class DesireManager
     public function updateDesire(DesireData $data, Desire $desire)
     {
         $this->desireService->update($desire, $data);
+    }
+
+    public function deleteImageOfDesire(Desire $desire, Image $image)
+    {
+//        $this->desireService->removeImage($desire, $image);
+        $this->imageService->delete($image);
     }
 }

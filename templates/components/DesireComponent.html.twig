@@ -10,6 +10,7 @@
             </div>
 
             <div class="info-button-row">
+
                 <div class="info-row">
                     <div class="info-tale {{ this.isActive() }}">
                         <img src="{{ asset('assets/img/eye.svg') }}" alt="Tile image">
@@ -22,7 +23,6 @@
                     </div>
                 </div>
                 <div class="button-row">
-
                     <div class="priority-nav">
                         <div class="desire-card-priority-button {{ this.getDisableUp() }}">
                             <a href="{{ path('app_desire_decrease_priority', {'desire': this.desire.id, 'desireList': this.desireList.id}) }}">
@@ -40,31 +40,46 @@
                         </div>
                     </div>
 
-{#                    <div class="desire-card-button">#}
-{#                        <a href="{{ path('app_desire_edit', {'desireList': this.desireList.id, 'desire': this.desire.id}) }}">#}
-{#                            <button class="join-button">#}
-{#                                Bearbeiten#}
-{#                            </button>#}
-{#                        </a>#}
-{#                    </div>#}
-
-                    <div class="desire-image-button min ">
-                        <a href="{{ path('app_desire_edit', {'desireList': this.desireList.id, 'desire': this.desire.id}) }}">
-                            <button >
-                                <img class="min" src="{{ asset('assets/img/pencil.svg') }}" alt="Tile image">
-                                <span class="desire-image-button-text min">Bearbeiten</span>
-                            </button>
-                        </a>
-                    </div>
-
 
                 </div>
+
+                <div class="desire-image-button min ">
+                    <a href="{{ path('app_desire_edit', {'desireList': this.desireList.id, 'desire': this.desire.id}) }}">
+                        <button>
+                            <img class="min" src="{{ asset('assets/img/pencil.svg') }}" alt="Tile image">
+                            <span class="desire-image-button-text min"></span>
+                        </button>
+                    </a>
+                </div>
+
+                <div class="desire-image-button min ">
+                    <a href="{{ path('app_upload_desire_image', {'desireList': this.desireList.id, 'desire': this.desire.id}
+                    ) }}">
+                        <button>
+                            <img class="min" src="{{ asset('assets/img/camera.svg') }}" alt="Tile image">
+                            <span class="desire-image-button-text min"></span>
+                        </button>
+                    </a>
+                </div>
+
             </div>
         </div>
         <div class="desire-details">
             {% if this.isExactly() %}
                 <h2>Du hast angegeben, dass du nur das Produkt aus dem Beispiel akzeptierst!</h2>
             {% endif %}
+
+            <div id="imageModal" class="modal" onclick="closeModal()">
+                <span class="close">&times;</span>
+                <img class="modal-content" id="img01">
+            </div>
+            <div class="image-container">
+                {% for image in this.desire.images %}
+                    <div class="image" onclick="showLargeImage('{{ image.cdnUrl }}')">
+                        <img src="{{ image.cdnUrl }}">
+                    </div>
+                {% endfor %}
+            </div>
             {% for url in this.desire.urls %}
                 <p>
                     <a href="{{ url.path }}" target="_blank">Beispiel</a>
@@ -87,5 +102,17 @@
             eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
             eventCard.classList.toggle('expanded');
         }
+    }
+
+    function showLargeImage(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('img01');
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
     }
 </script>

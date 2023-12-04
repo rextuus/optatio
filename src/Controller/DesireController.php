@@ -9,6 +9,7 @@ use App\Content\SecretSanta\SecretSantaService;
 use App\Entity\AccessRole;
 use App\Entity\Desire;
 use App\Entity\DesireList;
+use App\Entity\Image;
 use App\Entity\User;
 use App\Form\DesireCreateType;
 use App\Form\DesireEditType;
@@ -187,6 +188,20 @@ class DesireController extends BaseController
             'form' => $form->createView(),
             'desireList' => $desireList,
         ]);
+    }
+
+    #[Route('/delete/{desire}/{image}', name: 'app_desire_image_delete')]
+    public function delete(Request $request, Desire $desire, Image $image): Response
+    {
+        $user = $this->getLoggedInUser();
+        if ($desire->getOwner() !== $user || $image->getOwner() !== $user){
+            return $this->redirect($this->generateUrl('app_home', []));
+        }
+
+        $this->desireManager->deleteImageOfDesire($desire, $image);
+
+        return $this->json([true]);
+//        return $this->redirect($this->generateUrl('app_upload_desire_image', ['desireList' => $desireList->getId(), 'desire' => $desire->getId()]));
     }
 
     private function checkDesireListAccess(User $user, DesireList $desireList): ?Response

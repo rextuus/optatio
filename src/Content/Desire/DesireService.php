@@ -8,6 +8,7 @@ use App\Content\Desire\Url\Data\UrlData;
 use App\Content\Desire\Url\UrlService;
 use App\Entity\Desire;
 use App\Entity\DesireList;
+use App\Entity\Image;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -111,5 +112,11 @@ class DesireService
     public function findByListOrderedByPriority(DesireList $list, bool $isForeign = false): array
     {
         return $this->repository->findByListOrderByPriority($list, $isForeign);
+    }
+
+    public function removeImage(Desire $desire, Image $image)
+    {
+        $desire->removeImage($image);
+        $this->repository->save($desire);
     }
 }

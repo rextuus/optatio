@@ -108,6 +108,7 @@ class ImageData
         $this->setDelivered($image->getDelivered());
         $this->setDisplayed($image->getDisplayed());
         $this->setCdnUrl($image->getCdnUrl());
+        $this->setDesire($image->getDesire());
         return $this;
     }
 }

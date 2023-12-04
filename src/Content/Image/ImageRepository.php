@@ -66,4 +66,11 @@ class ImageRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function delete(Image $reservation, bool $flush = true): void
+    {
+        $this->_em->remove($reservation);
+        if($flush){
+            $this->_em->flush();
+        }
+    }
 }

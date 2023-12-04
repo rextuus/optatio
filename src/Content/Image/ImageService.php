@@ -48,12 +48,9 @@ class ImageService
         return $this->repository->find($imageId);
     }
 
-    /**
-     * @param User $frame
-     * @return Image[]
-     */
-    public function getNewUndeliveredImagesByFrame(User $frame): array
+    public function delete(Image $image): void
     {
-       return $this->repository->findNewUndeliveredImagesByFrame($frame);
+
+        $this->repository->delete($image);
     }
 }

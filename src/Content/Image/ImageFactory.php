@@ -40,6 +40,7 @@ class ImageFactory
         $image->setDisplayed($data->getDisplayed());
         $image->setFilePath($data->getFilePath());
         $image->setCdnUrl($data->getCdnUrl());
+        $image->setDesire($data->getDesire());
     }
 
     private function getNewInstance(): Image

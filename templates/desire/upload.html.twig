@@ -8,27 +8,47 @@
 {% block title %}Wichtelrunde erstellen{% endblock %}
 
 {% block body %}
+    <div class="content-body">
 
-    <h1>Digital-Frame Upload</h1>
+        <div class="simple-text-box font-size-1-2">Lade hier Bilder oder Screenshots passend zu deinem Wunsch hoch</div>
 
-    {{ form_start(form) }}
+        {{ form_start(form) }}
 
-    {# Hide the original file input and replace it with a camera icon #}
-    <div class="input-group mb-3">
-        <div class="custom-file">
-            <label class="custom-file-label" for="{{ form.imageFile.vars.id }}">
-                <i class="fas fa-camera"></i> Select an image
-            </label>
-            {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input'}}) }}
+        {# Hide the original file input and replace it with a camera icon #}
+        <div class="input-group mb-3">
+            <div class="custom-file">
+                <label class="custom-file-label" for="{{ form.imageFile.vars.id }}">
+                    <i class="fas fa-camera"></i> Bild hochladen
+                </label>
+                {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input'}}) }}
+            </div>
         </div>
+
+        {# Image preview area #}
+        <div id="image-preview" class="image-area"></div>
+
+        {{ form_widget(form.upload) }}
+
+        {{ form_end(form) }}
+        <br>
+        <div class="upload">
+            <div id="imageModal" class="modal">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <img class="modal-content" id="img01">
+            </div>
+            <h2>Bereits hochgeladene Bilder</h2>
+            <div class="image-container">
+
+                {% for image in desire.images %}
+                    <div class="image" data-image-url="{{ path('app_desire_image_delete', {'desire': desire.id, 'image': image.id}) }}">
+                        <img src="{{ image.cdnUrl }}" onclick="showLargeImage('{{ image.cdnUrl }}')">
+                        <span class="delete-icon" onclick="deleteImage(event)"><img src="{{ asset('assets/img/trash_red.svg') }}" alt="Tile image"></span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
-
-    {# Image preview area #}
-    <div id="image-preview" class="image-area"></div>
-
-    {{ form_widget(form.upload) }}
-
-    {{ form_end(form) }}
 
     <script>
         function handleImagePreview(input) {
@@ -51,5 +71,45 @@
                 handleImagePreview(this);
             });
         }
+
+
+        function showLargeImage(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('img01');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+
+        function deleteImage(event) {
+            const imageContainer = event.target.parentElement.parentElement;
+            const imageUrl = imageContainer.getAttribute('data-image-url');
+console.log(imageUrl);
+            // Perform AJAX request to delete image
+            // Replace 'deleteImageRoute' with your actual route URL
+            fetch(imageUrl, {
+                method: 'GET',
+                // body: JSON.stringify({imageUrl}),
+                // headers: {
+                //     'Content-Type': 'application/json'
+                // }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Remove the image container from the DOM on successful deletion
+                        imageContainer.remove();
+                    } else {
+                        console.error('Failed to delete image');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting image:', error);
+                });
+        }
+
     </script>
 {% endblock %}

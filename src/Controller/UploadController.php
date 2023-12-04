@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Desire;
-use App\Entity\User;
-use App\Form\ImageUploadType;
 use App\Content\Image\Data\ImageCreateData;
 use App\Content\Image\ImageService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Desire;
+use App\Entity\DesireList;
+use App\Form\ImageUploadType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +16,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class UploadController extends BaseController
 {
-    #[Route('/desire/image/upload/{desire}', name: 'app_upload')]
-    public function upload(Desire $desire, Request $request, ImageService $imageService): Response
+    #[Route('/desire/image/upload/{desire}/{desireList}', name: 'app_upload_desire_image')]
+    public function upload(Desire $desire, DesireList $desireList, Request $request, ImageService $imageService): Response
     {
         $form = $this->createForm(ImageUploadType::class,);
 
@@ -39,10 +38,14 @@ class UploadController extends BaseController
             $imageData->setFilePath('uploads/images/' . $filename);
 
             $imageService->createByData($imageData);
+
+            return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
         }
 
         return $this->render('desire/upload.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'desire' => $desire,
+            'desireList' => $desireList,
         ]);
     }
 }
