@@ -5,6 +5,8 @@ namespace App\Content\Desire;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Priority;
+use App\Entity\SecretSantaEvent;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -72,5 +74,28 @@ class DesireRepository extends ServiceEntityRepository
         $qb->orderBy('p.value', 'ASC');
 
         return $qb->getQuery()->getResult();
+    }
+
+    // TODO make this nicer software engineer guy
+    public function getAllDesiresForSecretSantaEvent(SecretSantaEvent $event, $firstRound = true)
+    {
+        $round = $event->getFirstRound()->getId();
+        if (!$firstRound){
+            $round = $event->getSecondRound()->getId();
+        }
+
+        $qb = $this->createQueryBuilder('d');
+        $qb->join(User::class, 'u', 'WITH', 'd.owner = u.id');
+        $qb->join('d.desireLists', 'dl');
+        $qb->join('dl.events', 'e');
+        $qb->leftJoin('d.reservations', 'r');
+
+        $qb->select('COUNT(d.id) as desires, u.id as user, e.id as round, r.id as reserved');
+
+        $qb->where($qb->expr()->eq('e.id',':desireListId'))
+            ->setParameter('desireListId', $round);
+
+        $qb->groupBy('e.id, u.id, r.id');
+        return ($qb->getQuery()->getResult());
     }
 }

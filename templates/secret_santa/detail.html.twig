@@ -19,17 +19,41 @@
             <div class="ss-header"></div>
 
             <div class="ss-participant-header">
-                <div class="ss-participant-header-header">Teilnehmer</div>
+                <div class="ss-participant-header-header">Info</div>
                 <div class="ss-participant-header-rounds">
-                    <div class="ss-participant-header-round">
-                        <img src="{{ asset('assets/img/tree.svg') }}" alt="Tile image">
-                        <div class="ss-participant-header-amount">{{ event.firstRound.participants|length }}</div>
+                    <div class="ss-participant-header-col">
+                        <div class="ss-participant-header-round">
+                            <img src="{{ asset('assets/img/tree.svg') }}" alt="Tile image">
+                            <div class="ss-participant-header-amount">{{ statistic.firstRoundRetrieved }}/{{ event.firstRound.participants|length }}</div>
+                        </div>
+
+                        <div class="ss-participant-header-round">
+                            <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
+                            <div class="ss-participant-header-amount">{{ statistic.secondRoundRetrieved }}/{{ event.secondRound.participants|length }}</div>
+                        </div>
                     </div>
 
-                    <div class="ss-participant-header-round">
-                        <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
-                        <div class="ss-participant-header-amount">{{ event.secondRound.participants|length }}</div>
+                    <div class="ss-participant-header-col">
+                        <div class="ss-participant-header-round">
+                            <img src="{{ asset('assets/img/gift.svg') }}" alt="Tile image">
+                            <div class="ss-participant-header-amount">{{ statistic.desiresTotal }}</div>
+                            <span class="ss-participant-header-round-text">Wünsche insgesamt</span>
+                        </div>
+
+                        <div class="ss-participant-header-round">
+                            <img src="{{ asset('assets/img/reserve.svg') }}" alt="Tile image">
+                            <div class="ss-participant-header-amount">{{ statistic.desiresReserved }}</div>
+                            <span class="ss-participant-header-round-text">Reservierungen insgesamt</span>
+                        </div>
+
+                        <div class="ss-participant-header-round">
+                            <img src="{{ asset('assets/img/grinch.svg') }}" alt="Tile image">
+                            <div class="ss-participant-header-amount">{{ statistic.userWithoutDesires }}</div>
+                            <span class="ss-participant-header-round-text">Grinches ohne Wünsche</span>
+                        </div>
+
                     </div>
+
                 </div>
             </div>
 

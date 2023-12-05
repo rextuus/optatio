@@ -37,4 +37,9 @@ class SecretService
     {
         return $this->repository->findBy($conditions);
     }
+
+    public function getStatistic(\App\Entity\SecretSantaEvent $event)
+    {
+        return $this->repository->getStatistic($event);
+    }
 }

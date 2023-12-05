@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Content\SecretSanta;
 
+use App\Content\Desire\DesireService;
 use App\Content\DesireList\Data\DesireListData;
 use App\Content\DesireList\DesireListService;
 use App\Content\SecretSanta\Calculation\PotentialSecret;
@@ -34,6 +35,7 @@ class SecretSantaService
         readonly private UserService             $userService,
         readonly private SecretService           $secretService,
         readonly private DesireListService       $desireListService,
+        readonly private DesireService           $desireService,
         readonly private AccessRoleService       $accessRoleService,
     )
     {
@@ -48,6 +50,7 @@ class SecretSantaService
         );
         return $calculationResult;
     }
+
     public function triggerCalculation(SecretSantaEvent $event): void
     {
         $calculationResult = $this->secretCalculator->testCalculateSecrets(
@@ -180,13 +183,13 @@ class SecretSantaService
     {
         $desireLists = $this->desireListService->findByUserAndEvent($participant, $event);
 
-        if (count($desireLists) !== 1){
+        if (count($desireLists) !== 1) {
             throw new \Exception('User has no desireList for event');
         }
 
         $desireList = $desireLists[0];
 
-        $this->accessRoleService->addRoleToEntity($desireList,'ROLE_SECRET_FOR_USER_'.$participant->getId());
+        $this->accessRoleService->addRoleToEntity($desireList, 'ROLE_SECRET_FOR_USER_' . $participant->getId());
     }
 
     /**
@@ -198,15 +201,86 @@ class SecretSantaService
     {
         $firsts = $this->secretService->findBy(['event' => $event->getFirstRound(), 'provider' => $participant]);
         $first = null;
-        if(count($firsts)){
+        if (count($firsts)) {
             $first = $firsts[0];
         }
         $seconds = $this->secretService->findBy(['event' => $event->getSecondRound(), 'provider' => $participant]);
         $second = null;
-        if(count($seconds)){
+        if (count($seconds)) {
             $second = $seconds[0];
         }
 
         return ['first' => $first, 'second' => $second];
+    }
+
+    public function getSecretStatisticForEvent(SecretSantaEvent $event): SecretSantaEventStatistic
+    {
+        $firstRoundId = $event->getFirstRound()->getId();
+        $secondRoundId = $event->getSecondRound()->getId();
+        $result = $this->secretService->getStatistic($event);
+
+        $statistic = new SecretSantaEventStatistic();
+        foreach ($result as $entry) {
+            if ($entry['eventId'] === $firstRoundId && !$entry['retrievedState']) {
+                $statistic->setFirstRoundNonRetrieved($entry['amount']);
+            }
+            if ($entry['eventId'] === $firstRoundId && $entry['retrievedState']) {
+                $statistic->setFirstRoundRetrieved($entry['amount']);
+            }
+
+            if ($entry['eventId'] === $secondRoundId && !$entry['retrievedState']) {
+                $statistic->setSecondRoundNonRetrieved($entry['amount']);
+            }
+            if ($entry['eventId'] === $secondRoundId && $entry['retrievedState']) {
+                $statistic->setSecondRoundRetrieved($entry['amount']);
+            }
+        }
+
+        $participants = array_unique(array_merge(
+            $event->getFirstRound()->getParticipants()->map(
+                function (User $user) {
+                    return $user->getId();
+                }
+            )->toArray(),
+            $event->getSecondRound()->getParticipants()->map(
+                function (User $user) {
+                    return $user->getId();
+                }
+            )->toArray(),
+        ));
+
+        $desires1 = $this->desireService->getAllDesiresForSecretSantaEvent($event);
+        $desires2 = $this->desireService->getAllDesiresForSecretSantaEvent($event, false);
+
+        $excludesUsers = [];
+        $desireCount = 0;
+        $reservations = 0;
+        foreach ($desires1 as $desire){
+            $excludesUsers[] = $desire['user'];
+            if($desire['reserved']){
+                $reservations = $reservations + $desire['desires'];
+            }
+            $desireCount = $desireCount + $desire['desires'];
+        }
+
+        foreach ($desires2 as $desire){
+            if (in_array($desire['user'], $excludesUsers)){
+                continue;
+            }
+
+            $excludesUsers[] = $desire['user'];
+            if($desire['reserved']){
+                $reservations = $reservations + $desire['desires'];
+            }
+            $desireCount = $desireCount + $desire['desires'];
+        }
+        $excludesUsers = array_unique($excludesUsers);
+
+        $noDesires = count(array_intersect($participants, $excludesUsers));
+        $statistic->setUserWithoutDesires($noDesires);
+        $statistic->setDesiresTotal($desireCount);
+        $statistic->setDesiresReserved($reservations);
+//        dd($statistic);
+        return $statistic;
     }
 }

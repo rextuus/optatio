@@ -9,6 +9,7 @@ use App\Content\Desire\Url\UrlService;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Image;
+use App\Entity\SecretSantaEvent;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -118,5 +119,10 @@ class DesireService
     {
         $desire->removeImage($image);
         $this->repository->save($desire);
+    }
+
+    public function getAllDesiresForSecretSantaEvent(SecretSantaEvent $event, bool $firstRound = true)
+    {
+        return $this->repository->getAllDesiresForSecretSantaEvent($event, $firstRound);
     }
 }

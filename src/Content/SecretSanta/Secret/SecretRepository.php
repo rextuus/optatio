@@ -2,9 +2,12 @@
 
 namespace App\Content\SecretSanta\Secret;
 
+use App\Entity\Event;
 use App\Entity\Secret;
+use App\Entity\SecretSantaEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<Secret>
@@ -53,4 +56,15 @@ class SecretRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getStatistic(SecretSantaEvent $ssEvent)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->join('s.event', 'e'); // Assuming 'event' is the property that refers to the Event entity in SecretSantaEvent
+
+        $qb->select('COUNT(s.id) as amount, e.id as eventId, s.retrieved as retrievedState');
+        $qb->where($qb->expr()->eq('s.secretSantaEvent', ':ssEvent'));
+        $qb->setParameter('ssEvent', $ssEvent);
+        $qb->groupBy('e.id, s.retrieved');
+        return ($qb->getQuery()->getResult());
+    }
 }

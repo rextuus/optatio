@@ -199,6 +199,8 @@ class SecretSantaController extends BaseController
         // TODO need to get the eventdesirelist from current user and the ones of its secrets
         $userDesireList = $this->desireManager->getDesireListForSecretSantaEvent($this->getUser(), $event);
 
+        $resolvedSecretsFirstRound = $this->secretSantaService->getSecretStatisticForEvent($event);
+
         return $this->render('secret_santa/detail.html.twig', [
             'event' => $event,
             'user' => $this->getUser(),
@@ -210,6 +212,7 @@ class SecretSantaController extends BaseController
             'showSecondRoundPick' => $showSecondRoundPick,
             'firstRoundList' => $firstRoundList,
             'secondRoundList' => $secondRoundList,
+            'statistic' => $resolvedSecretsFirstRound,
         ]);
     }
 
