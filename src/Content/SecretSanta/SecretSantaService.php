@@ -276,7 +276,7 @@ class SecretSantaService
         }
         $excludesUsers = array_unique($excludesUsers);
 
-        $noDesires = count(array_intersect($participants, $excludesUsers));
+        $noDesires = count(array_diff($participants, $excludesUsers));
         $statistic->setUserWithoutDesires($noDesires);
         $statistic->setDesiresTotal($desireCount);
         $statistic->setDesiresReserved($reservations);
