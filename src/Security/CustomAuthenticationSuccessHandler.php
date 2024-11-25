@@ -23,7 +23,7 @@ class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
-        $url = $this->urlGenerator->generate('app_home');
+        $url = $this->urlGenerator->generate('app_event_list');
         return new RedirectResponse($url);
     }
 

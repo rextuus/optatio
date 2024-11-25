@@ -3,5 +3,83 @@
 {% block title %}Wichtelrunde erstellen{% endblock %}
 
 {% block body %}
-    {{ form (form) }}
+    <div class="page-header">
+        <div class="page-header-text">
+            Event erstellen
+        </div>
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+        </div>
+    </div>
+    <div class="content-body">
+        <div class="form-submit-field" style="margin-bottom: 10px">
+            <a href="{{ path('app_event_list') }}">
+                <button class="btn cancel">
+                    Zurück
+                </button>
+            </a>
+        </div>
+
+        <div class="form-area" data-controller="secret-santa-form">
+            {{ form_start(form, {'method': 'POST', }) }}
+            <div class="my-custom-class-for-errors">
+                {{ form_errors(form) }}
+            </div>
+
+            <div class="form-input-field">
+                <label class="hidden" for="desire_create_name"></label>
+                <div class="image-form-row">
+                    <div class="image-form-row-image">
+                        <i class="fa-solid fa-font icon" style="color: #000000;"></i>
+                    </div>
+                    {{ form_widget(form.name, {'attr': {'class': 'form-style', 'placeholder':'Event-Name', 'id': 'name'}}) }}
+                </div>
+            </div>
+
+            <div class="form-input-field">
+                <label class="hidden" for="desire_create_first_round_name"></label>
+                <div class="image-form-row">
+                    <div class="image-form-row-image">
+                        <i class="fa-solid fa-gift icon" style="color: #000000;"></i>
+                    </div>
+                    {{ form_widget(form.firstRoundName, {'attr': {'class': 'form-style', 'placeholder':'Heilig Abend', 'id': 'firstRoundName'}}) }}
+                </div>
+            </div>
+
+            <div class="form-input-field">
+                <label class="hidden" for="desire_create_enable_second_round"></label>
+                <div class="image-form-row">
+                    <div class="image-form-row-image">
+                        Wird an 2 Tagen gewichtelt?
+                    </div>
+                    <div class="toggle-switch-container">
+                        <label class="switch">
+                            <label for="desire_create_exactly" class="switch-toggle-label"></label>
+                            {{ form_widget(form.enableSecondRound, {'attr': {'class': 'toggle-box', 'placeholder': 'Exakt', 'id': 'exactly', 'value': 1, 'data-action': 'change->secret-santa-form#toggle', 'data-secret-santa-form-target': 'checkbox'}}) }}
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+{#                    {{ form_widget(form.enableSecondRound, {'attr': {'class': 'toggle-box', 'id': 'enableSecondRound', 'data-action': 'change->secret-santa-form#toggle', 'data-secret-santa-form-target': 'checkbox'}}) }}#}
+                </div>
+            </div>
+
+            <div class="form-input-field" data-secret-santa-form-target="field">
+                <label class="hidden" for="desire_create_second_round_name"></label>
+                <div class="image-form-row">
+                    <div class="image-form-row-image">
+                        <i class="fa-solid fa-sleigh icon"></i>
+                    </div>
+                    {{ form_widget(form.secondRoundName, {'attr': {'class': 'form-style', 'placeholder':'Weihnachten', 'id': 'secondRoundName'}}) }}
+                </div>
+            </div>
+            {{ form_row(form._token) }}
+
+            <div class="form-submit-area">
+                <div class="form-submit-field">
+                    {{ form_widget(form.submit, {'attr': {'class': 'btn'}}) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

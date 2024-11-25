@@ -4,13 +4,18 @@ namespace App\Controller;
 
 use App\Content\Desire\Data\DesireData;
 use App\Content\Desire\DesireManager;
+use App\Content\DesireList\Data\DesireCopyData;
+use App\Content\Event\EventType;
 use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
 use App\Content\SecretSanta\SecretSantaService;
+use App\Content\User\AccessRoleService;
 use App\Entity\AccessRole;
 use App\Entity\Desire;
 use App\Entity\DesireList;
+use App\Entity\Event;
 use App\Entity\Image;
 use App\Entity\User;
+use App\Form\DesireCopyType;
 use App\Form\DesireCreateType;
 use App\Form\DesireEditType;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +31,8 @@ class DesireController extends BaseController
 
     public function __construct(
         private readonly DesireManager $desireManager,
-        private readonly SecretSantaEventService $secretSantaService
+        private readonly SecretSantaEventService $secretSantaService,
+        private readonly AccessRoleService $accessRoleService,
     )
     {
     }
@@ -42,7 +48,12 @@ class DesireController extends BaseController
 
         // get first event for redirect => TODO we need a param to know where we come from ugly bugly fucking
         $event = $desireList->getEvents()->first();
-        $ssEvent = $this->secretSantaService->findByFirstOrSecondRound($event)[0];
+        $ssEvents = $this->secretSantaService->findByFirstOrSecondRound($event);
+
+        $ssEvent = null;
+        if (count($ssEvents) > 0){
+            $ssEvent = $ssEvents[0];
+        }
 
         // own list
         $desires = $this->desireManager->findDesiresByListOrderedByPriority($desireList);
@@ -50,7 +61,8 @@ class DesireController extends BaseController
             return $this->render('desire/list_own.html.twig', [
                 'desires' => $desires,
                 'list' => $desireList,
-                'event' => $ssEvent,
+                'ssEvent' => $ssEvent,
+                'event' => $event,
             ]);
         }
 
@@ -60,7 +72,8 @@ class DesireController extends BaseController
             'desires' => $desires,
             'list' => $desireList,
             'currentUser' => $user,
-            'event' => $ssEvent,
+            'ssEvent' => $ssEvent,
+            'event' => $event,
         ]);
     }
 
@@ -127,7 +140,7 @@ class DesireController extends BaseController
     public function create(Request $request, DesireList $desireList): Response
     {
         if ($desireList->getOwner() !== $this->getUser()){
-            return $this->redirect($this->generateUrl('app_home', []));
+            return $this->redirect($this->generateUrl('app_event_list', []));
         }
 
         $data = new DesireData();
@@ -140,7 +153,7 @@ class DesireController extends BaseController
             $data = $form->getData();
             $data->setOwner($this->getUser());
 
-            $this->desireManager->storeDesire($data, $desireList, $this->getUser());
+            $this->desireManager->storeDesire($data, $desireList);
             return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
         }
 
@@ -155,7 +168,7 @@ class DesireController extends BaseController
     {
         $user = $this->getLoggedInUser();
         if ($desireList->getOwner() !== $user || $desire->getOwner() !== $user){
-            return $this->redirect($this->generateUrl('app_home', []));
+            return $this->redirect($this->generateUrl('app_event_list', []));
         }
 
         $data = (new DesireData())->initFromEntity($desire);
@@ -195,59 +208,38 @@ class DesireController extends BaseController
     {
         $user = $this->getLoggedInUser();
         if ($desire->getOwner() !== $user || $image->getOwner() !== $user){
-            return $this->redirect($this->generateUrl('app_home', []));
+            return $this->redirect($this->generateUrl('app_event_list', []));
         }
 
         $this->desireManager->deleteImageOfDesire($desire, $image);
 
         return $this->json([true]);
-//        return $this->redirect($this->generateUrl('app_upload_desire_image', ['desireList' => $desireList->getId(), 'desire' => $desire->getId()]));
+    }
+
+    #[Route('/home', name: 'app_desire_home')]
+    public function master(Request $request): Response
+    {
+        $user = $this->getLoggedInUser();
+
+        $masterList = $this->desireManager->getMasterListByUser($user);
+        $otherLists = $this->desireManager->getNonMasterListsByUser($user);
+
+        $data = new DesireCopyData();
+        $data->setFrom($masterList);
+        $data->setTo($otherLists[0]);
+        $data->setDesires([]);
+
+        return $this->render('desire/home.html.twig', [
+            'initialFormData' => $data,
+            'user' => $user,
+        ]);
     }
 
     private function checkDesireListAccess(User $user, DesireList $desireList): ?Response
     {
-        $desireListIdents = $desireList->getAccessRoles()->map(
-            function (AccessRole $accessRole) {
-                return $accessRole->getIdent();
-            }
-        )->toArray();
-        $userIdents = $user->getAccessRoles()->map(
-            function (AccessRole $accessRole) {
-                return $accessRole->getIdent();
-            }
-        )->toArray();
-
-        // check if its own list
-        if (in_array('USER_'.$user->getId(), $desireListIdents)){
+        if ($this->accessRoleService->checkDesireListAccess($user, $desireList)){
             return null;
         }
-
-        // check if user has access via secret
-        $secretIdent = 'secretIdent';
-        $ownerId = -1;
-        foreach ($desireListIdents as $ident){
-            preg_match('~^ROLE_SECRET_FOR_USER_(\d*)?~', $ident, $matches);
-            if ($matches){
-                $secretIdent = $matches[0];
-                $ownerId = $matches[1];
-            }
-        }
-
-        $userId = -2;
-        foreach ($userIdents as $ident){
-            preg_match('~^USER_(\d*)?~', $ident, $matches);
-            if ($matches){
-                $userId = $matches[1];
-            }
-        }
-
-        $userIsOwner = $ownerId === $userId;
-        $userIsSecret = in_array($secretIdent, $userIdents);
-
-        $shared = array_intersect($desireListIdents, $userIdents);
-        if (count($shared) && ($userIsOwner || $userIsSecret) > 0){
-            return null;
-        }
-        return $this->redirect($this->generateUrl('app_home', []));
+        return $this->redirect($this->generateUrl('app_event_list'));
     }
 }

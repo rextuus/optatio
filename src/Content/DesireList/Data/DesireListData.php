@@ -36,6 +36,8 @@ class DesireListData
     private string $name;
     private string $description;
 
+    private bool $master = false;
+
     public function getAccessRoles(): array
     {
         return $this->accessRoles;
@@ -102,6 +104,17 @@ class DesireListData
         return $this;
     }
 
+    public function isMaster(): bool
+    {
+        return $this->master;
+    }
+
+    public function setMaster(bool $master): DesireListData
+    {
+        $this->master = $master;
+        return $this;
+    }
+
     public function initFromEntity(DesireList $desireList): DesireListData
     {
         $this->setDesires($desireList->getDesires()->toArray());
@@ -109,6 +122,7 @@ class DesireListData
         $this->setEvents($desireList->getEvents()->toArray());
         $this->setName($desireList->getName());
         $this->setDescription($desireList->getDescription());
+        $this->setMaster($desireList->isMaster());
 
         return $this;
     }

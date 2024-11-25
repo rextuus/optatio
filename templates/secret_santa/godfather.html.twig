@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wichtelrunde administrieren{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-text">
+            {{ event.name }} Einstellungen
+        </div>
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+        </div>
+    </div>
+    <div class="content-body">
+        <div class="form-submit-field" style="margin-bottom: 10px">
+            <a href="{{ path('app_secret_santa_detail', {event: event.id}) }}">
+                <button class="btn cancel">
+                    Zurück
+                </button>
+            </a>
+        </div>
+        <div class="godfathers">
+            <span>Godfather User eines Events können auf jede Wunschliste zugreifen. Sie werden bei der Wichtelziehung nicht berücksichtigt. Godathers:</span>
+            <div class="container mt-3">
+                <div class="row">
+                    {% for godfather in event.godfathers %}
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ godfather.fullName }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% if event.state == 'open' %}
+        {{ form(form) }}
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -26,6 +26,7 @@ class SecretSantaEventFactory
         $secretSantaEvent->setFirstRound($data->getFirstRound());
         $secretSantaEvent->setSecondRound($data->getSecondRound());
         $secretSantaEvent->setCreator($data->getCreator());
+        $secretSantaEvent->setIsDoubleRound($data->isDoubleRound());
 
         return $secretSantaEvent;
     }

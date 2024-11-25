@@ -21,7 +21,7 @@ class SecretSantaStartType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('checkSum', PasswordType::class, ['required' => true])
+            ->add('checkSum', PasswordType::class, ['required' => true, 'label' => 'Check sum'])
             ->add('start', SubmitType::class)
         ;
     }

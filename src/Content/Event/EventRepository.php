@@ -60,11 +60,17 @@ class EventRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findEventsWithoutSecretSantaRounds()
+    public function findEventsWithoutSecretSantaRounds(?User $user = null)
     {
         $qb = $this->createQueryBuilder('e');
         $qb->where($qb->expr()->neq('e.eventType', ':type'));
         $qb->setParameter('type', EventType::SECRET_SANTA);
+
+        if ($user !== null) {
+            $qb->innerJoin('e.participants', 'p')
+                ->andWhere('p = :user')
+                ->setParameter('user', $user);
+        }
 
         return $qb->getQuery()->getResult();
     }

@@ -1,0 +1,61 @@
+
+    <div {{ attributes }} class="form-area">
+        {{ form_start(form, {
+            attr: {
+            }
+        }) }}
+
+        <div class="my-custom-class-for-errors">
+            {{ form_errors(form) }}
+        </div>
+
+        <div class="form-input-field">
+            <label class="" for="form_from">Von</label>
+            <div class="image-form-row">
+                <div class="image-form-row-image">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                {{ form_widget(form.from, {'attr': {'class': 'form-style', 'placeholder':'From', 'id': 'form_from'}}) }}
+                {{ form_errors(form.from) }}
+            </div>
+        </div>
+
+
+
+        <div class="form-input-field">
+            <label class="hidden" for="form_desires"></label>
+            <div class="image-form-row">
+                <div class="image-form-row-icon">
+                    <i class="fas fa-swift"></i>
+                </div>
+                <div class="desires-list">
+                    {% for child in form.desires %}
+                        <div class="form-checkbox">
+                            {{ form_widget(child) }}
+                            {{ form_label(child) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.desires) }}
+            </div>
+        </div>
+
+        <div class="form-input-field">
+            <label class="" for="form_to">Nach</label>
+            <div class="image-form-row">
+                <div class="image-form-row-image">
+                    <i class="fas fa-tarp"></i>
+                </div>
+                {{ form_widget(form.to, {'attr': {'class': 'form-style', 'placeholder':'To', 'id': 'form_to'}}) }}
+                {{ form_errors(form.to) }}
+            </div>
+        </div>
+
+        {{ form_row(form._token) }}
+
+        <div class="form-submit-field" style="margin-top: 15px;">
+            <button type="submit" class="btn">{{ 'Save' | trans }}</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>

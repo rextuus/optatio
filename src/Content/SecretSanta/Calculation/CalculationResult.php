@@ -9,6 +9,8 @@ namespace App\Content\SecretSanta\Calculation;
  */
 class CalculationResult
 {
+    private bool $isDoubleRound;
+
     /**
      * @var PotentialSecret[]
      */
@@ -19,10 +21,11 @@ class CalculationResult
      */
     private array $round2;
 
-    public function __construct(array $round1, array $round2)
+    public function __construct(array $round1, array $round2, bool $isDoubleRound = false)
     {
         $this->round1 = $round1;
         $this->round2 = $round2;
+        $this->isDoubleRound = $isDoubleRound;
     }
 
     public function getRound1(): array
@@ -37,9 +40,11 @@ class CalculationResult
 
     public function isSuccess(): bool
     {
-        dump($this->round1);
-        dump($this->round2);
-        return count($this->round1) > 0 && count($this->round2) > 0;
+        if ($this->isDoubleRound){
+            return count($this->round1) > 0 && count($this->round2) > 0;
+        }
+
+        return count($this->round1) > 0;
     }
 
     public function checkIntegrity(): bool

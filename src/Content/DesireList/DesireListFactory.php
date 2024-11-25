@@ -24,6 +24,7 @@ class DesireListFactory
         $desireList->setOwner($data->getOwner());
         $desireList->setName($data->getName());
         $desireList->setDescription($data->getDescription());
+        $desireList->setMaster($data->isMaster());
         foreach ($data->getDesires() as $desire){
             $desireList->addDesire($desire);
         }

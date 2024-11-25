@@ -5,13 +5,13 @@
                 Hallo {{ user.fullName }}
             </div>
             <div class="home-button-container">
-                <a href="{{ path('app_home') }}" class="home-button">
+                <a href="{{ path('app_event_list') }}" class="home-button">
                     <img src="{{ asset('assets/img/home.svg') }}" alt="Tile image">
                 </a>
             </div>
         {% else %}
             <div class="login-button-container">
-                <a href="{{ path('app_home') }}" class="login-button">
+                <a href="{{ path('app_event_list') }}" class="login-button">
                     <img src="{{ asset('assets/img/icons/navigation/login.svg') }}" alt="Tile image">
                 </a>
                 <div class="login-text">

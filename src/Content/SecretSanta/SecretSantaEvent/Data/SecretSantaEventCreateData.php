@@ -14,7 +14,7 @@ class SecretSantaEventCreateData
 {
     private string $name;
     private string $firstRoundName;
-    private string $secondRoundName;
+    private ?string $secondRoundName = null;
 
     public function getName(): string
     {
@@ -38,12 +38,12 @@ class SecretSantaEventCreateData
         return $this;
     }
 
-    public function getSecondRoundName(): string
+    public function getSecondRoundName(): ?string
     {
         return $this->secondRoundName;
     }
 
-    public function setSecondRoundName(string $secondRoundName): SecretSantaEventCreateData
+    public function setSecondRoundName(?string $secondRoundName): SecretSantaEventCreateData
     {
         $this->secondRoundName = $secondRoundName;
         return $this;

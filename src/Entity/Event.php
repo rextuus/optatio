@@ -194,4 +194,23 @@ class Event
 
         return $this;
     }
+
+    /**
+     * @return array<User>
+     */
+    public function getParticipantsWithoutGodFathers(SecretSantaEvent $secretSantaEvent): array
+    {
+        $godFathers = $secretSantaEvent->getGodFathers()->toArray();
+        $participants = $this->getParticipants()->toArray();
+
+        // Get the IDs of the godFathers
+        $godFatherIds = array_map(function($godFather) {
+            return $godFather->getId();
+        }, $godFathers);
+
+        // Filter out the godFathers from the participants based on their IDs
+        return array_filter($participants, function($participant) use ($godFatherIds) {
+            return !in_array($participant->getId(), $godFatherIds);
+        });
+    }
 }

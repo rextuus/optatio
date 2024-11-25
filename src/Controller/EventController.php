@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Content\Desire\DesireManager;
+use App\Content\DesireList\DesireListService;
 use App\Content\Event\Data\EventCreateData;
 use App\Content\Event\Data\EventData;
 use App\Content\Event\EventManager;
@@ -13,6 +15,7 @@ use App\Entity\User;
 use App\Form\EventCreateType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +37,7 @@ class EventController extends AbstractController
         $events = $eventService->findEventsWithoutSecretSantaRounds();
         $secretSantaEvents = $secretSantaEventService->findBy([]);
 
-        return $this->render('landing/home.html.twig', [
+        return $this->render('event/home.html.twig', [
             'user' => $this->getUser(),
             'events' => $events,
             'secretSantaEvents' => $secretSantaEvents,
@@ -53,9 +56,9 @@ class EventController extends AbstractController
             /** @var EventCreateData $data */
             $data = $form->getData();
 
-            $this->eventManager->initEvent($data, $this->getUser());
+            $this->eventManager->initBirthdayEvent($data, $this->getUser());
 
-            return $this->redirect($this->generateUrl('app_home', []));
+            return $this->redirect($this->generateUrl('app_event_list', []));
         }
 
         return $this->render('event/create.html.twig', [
@@ -68,16 +71,19 @@ class EventController extends AbstractController
     public function contribute(Event $event): Response
     {
         $user = $this->getUser();
+        if (!$user instanceof User){
+            throw new \Exception('User not found');
+        }
 
         $this->eventManager->addParticipant($event, $user);
         $user = $this->getUser();
 
         $roles = [];
         if ($user instanceof User){
-            $roles[] = $user->getUserAccessRoles()->getRoles();
+            $roles[] = $user->getAccessRoles()->toArray();
         }
 
-        return new JsonResponse($roles);
+        return new RedirectResponse($this->generateUrl('app_event_detail', ['event' => $event->getId()]));
     }
 
     #[Route('/exit/{event}', name: 'app_event_exit')]
@@ -91,10 +97,17 @@ class EventController extends AbstractController
     }
 
     #[Route('/detail/{event}', name: 'app_event_detail')]
-    public function manage(Event $event): Response
+    public function manage(Event $event, DesireListService $desireListService): Response
     {
+        $userDesireList = $event->getDesireLists()->first();
+
+        if ($userDesireList->getOwner() !== $this->getUser()){
+            return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $userDesireList->getId()]));
+        }
+
         return $this->render('event/detail.html.twig', [
             'event' => $event,
+            'userDesireList' => $userDesireList,
         ]);
     }
 }

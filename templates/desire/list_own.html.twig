@@ -14,7 +14,11 @@
 
     <div class="content-body">
         <div class="desire-image-button">
-            <a href="{{ path('app_secret_santa_detail',  {'event': event.id}) }}">
+            {% if ssEvent is not null %}
+            <a href="{{ path('app_secret_santa_detail',  {'event': ssEvent.id}) }}">
+                {% else %}
+                <a href="{{ path('app_event_detail',  {'event': event.id}) }}">
+                    {% endif %}
                 <button>
                     <img src="{{ asset('assets/img/event.svg') }}" alt="Tile image">
                     <div class="desire-image-button-text">Übersicht</div>

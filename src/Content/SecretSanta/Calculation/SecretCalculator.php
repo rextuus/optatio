@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Content\SecretSanta\Calculation;
 
 use App\Entity\Exclusion;
+use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 
 /**
@@ -12,18 +13,38 @@ use App\Entity\User;
  */
 class SecretCalculator
 {
+
+    public function testCalculateSecrets(SecretSantaEvent $event): CalculationResult
+    {
+        $participantsFirstRound = $event->getFirstRound()->getParticipantsWithoutGodFathers($event);
+
+        if ($event->isIsDoubleRound()){
+            $participantsSecondRound = $event->getSecondRound()->getParticipantsWithoutGodFathers($event);
+
+            return $this->testCalculateSecretsForDoubleRound(
+                $participantsFirstRound,
+                $participantsSecondRound,
+                $event->getExclusions()->toArray()
+            );
+        }
+        return $this->testCalculateSecretsForSingleRound(
+            $participantsFirstRound,
+            $event->getExclusions()->toArray()
+        );
+    }
+
     /**
      * @param User[] $userRound1
      * @param User[] $userRound2
      * @param Exclusion[] $exclusions
      */
-    public function testCalculateSecrets(array $userRound1, array $userRound2, array $exclusions = []): CalculationResult
+    public function testCalculateSecretsForDoubleRound(array $userRound1, array $userRound2, array $exclusions = []): CalculationResult
     {
         $tries = 0;
         $success = false;
         $secretsRound1 = [];
         $secretsRound2 = [];
-        while (!$success && $tries < 10){
+        while (!$success && $tries < 20){
             $userIds = array_map(
                 function (User $user){
                     return $user->getId();
@@ -43,6 +64,33 @@ class SecretCalculator
             $secretsRound2 = $this->calculateUserSecretCombination($userIds, $exclusions, $secretsRound1);
 
             $success = count($secretsRound1) > 0 &&  count($secretsRound2) > 0;
+            $tries++;
+        }
+
+        return new CalculationResult($secretsRound1, $secretsRound2, true);
+    }
+
+    /**
+     * @param User[] $userRound1
+     * @param Exclusion[] $exclusions
+     */
+    public function testCalculateSecretsForSingleRound(array $userRound1, array $exclusions = []): CalculationResult
+    {
+        $tries = 0;
+        $success = false;
+        $secretsRound1 = [];
+        $secretsRound2 = [];
+        while (!$success && $tries < 20){
+            $userIds = array_map(
+                function (User $user){
+                    return $user->getId();
+                },
+                $userRound1
+            );
+
+            $secretsRound1 = $this->calculateUserSecretCombination($userIds, $exclusions);
+
+            $success = count($secretsRound1) > 0;
             $tries++;
         }
 

@@ -36,10 +36,10 @@ inputs.forEach(function(inputElement) {
         if (this.value) {
             let id = this.getAttribute("id");
             let label = document.querySelector("label[for='" + id + "']");
-            if (label.innerHTML === ''){
+            if (label !== null && label.innerHTML === ''){
                 label.innerHTML = this.placeholder;
+                label.style.display = "block";
             }
-            label.style.display = "block";
         } else {
             let id = this.getAttribute("id");
             let label = document.querySelector("label[for='" + id + "']");

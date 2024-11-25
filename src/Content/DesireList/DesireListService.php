@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Content\DesireList;
 
+use App\Content\Desire\Data\DesireData;
 use App\Content\DesireList\Data\DesireListData;
+use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Event;
 use App\Entity\User;
@@ -57,9 +59,23 @@ class DesireListService
         return $this->repository->findByUserAndEvents($user, $events);
     }
 
-    public function addDesireToList(\App\Entity\Desire $desire, DesireList $desireList)
+    public function addDesireToList(Desire $desire, DesireList $desireList, bool $save = true): void
     {
         $desireList->addDesire($desire);
-        $this->repository->save($desireList);
+        if ($save) {
+            $this->repository->save($desireList);
+        }
+    }
+
+    /**
+     * @param array<Desire> $desires
+     */
+    public function shareDesiresBetweenLists(DesireList $targetList, array $desires): void
+    {
+        foreach ($desires as $desire) {
+            $this->addDesireToList($desire, $targetList, false);
+        }
+
+        $this->repository->save($targetList);
     }
 }

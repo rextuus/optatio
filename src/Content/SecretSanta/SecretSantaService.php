@@ -20,6 +20,7 @@ use App\Entity\Event;
 use App\Entity\Secret;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -28,7 +29,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class SecretSantaService
 {
-
     public function __construct(
         readonly private SecretCalculator        $secretCalculator,
         readonly private SecretSantaEventService $secretSantaEventService,
@@ -37,26 +37,22 @@ class SecretSantaService
         readonly private DesireListService       $desireListService,
         readonly private DesireService           $desireService,
         readonly private AccessRoleService       $accessRoleService,
+        readonly private EntityManagerInterface  $entityManager,
     )
     {
     }
 
     public function testCalculation(SecretSantaEvent $event): Calculation\CalculationResult
     {
-        $calculationResult = $this->secretCalculator->testCalculateSecrets(
-            $event->getFirstRound()->getParticipants()->toArray(),
-            $event->getSecondRound()->getParticipants()->toArray(),
-            $event->getExclusions()->toArray()
+        return $this->secretCalculator->testCalculateSecrets(
+            $event
         );
-        return $calculationResult;
     }
 
     public function triggerCalculation(SecretSantaEvent $event): void
     {
         $calculationResult = $this->secretCalculator->testCalculateSecrets(
-            $event->getFirstRound()->getParticipants()->toArray(),
-            $event->getSecondRound()->getParticipants()->toArray(),
-            $event->getExclusions()->toArray()
+            $event
         );
 
         if ($calculationResult->isSuccess() && $calculationResult->checkIntegrity()) {
@@ -68,18 +64,20 @@ class SecretSantaService
                 $receiver = $this->userService->getUser($potentialSecret->getReceiver());
                 $provider = $this->userService->getUser($potentialSecret->getProvider());
                 // give user role to access only list of secret TODO alternative: only after picking to avoid user can see his secret by testing desireLists
-                $this->accessRoleService->addRoleToEntity($provider, 'ROLE_SECRET_FOR_USER_' . $receiver->getId());
+                $this->accessRoleService->addSecretRoleToProvider($provider, $receiver, $event->getFirstRound());
             }
 
             // secrets round2
-            foreach ($calculationResult->getRound2() as $potentialSecret) {
-                $secretData = $this->prepareSecretData($event, $event->getSecondRound(), $potentialSecret);
-                $this->secretService->createByData($secretData);
+            if ($event->isIsDoubleRound()){
+                foreach ($calculationResult->getRound2() as $potentialSecret) {
+                    $secretData = $this->prepareSecretData($event, $event->getSecondRound(), $potentialSecret);
+                    $this->secretService->createByData($secretData);
 
-                $receiver = $this->userService->getUser($potentialSecret->getReceiver());
-                $provider = $this->userService->getUser($potentialSecret->getProvider());
-                // give user role to access only list of secret TODO alternative: only after picking to avoid user can see his secret by testing desireLists
-                $this->accessRoleService->addRoleToEntity($provider, 'ROLE_SECRET_FOR_USER_' . $receiver->getId());
+                    $receiver = $this->userService->getUser($potentialSecret->getReceiver());
+                    $provider = $this->userService->getUser($potentialSecret->getProvider());
+                    // give user role to access only list of secret TODO alternative: only after picking to avoid user can see his secret by testing desireLists
+                    $this->accessRoleService->addSecretRoleToProvider($provider, $receiver, $event->getSecondRound());
+                }
             }
 
             // desireLists round1
@@ -89,19 +87,43 @@ class SecretSantaService
             }
 
             // desireLists round2
-            foreach ($event->getSecondRound()->getParticipants() as $participant) {
-                $desireLists = $this->desireListService->findByUserAndEvent($participant, $event->getFirstRound());
-                if (count($desireLists) > 0) {
-                    $desireList = $desireLists[0];
+            if ($event->isIsDoubleRound()) {
+                foreach ($event->getSecondRound()->getParticipants() as $participant) {
+                    $desireLists = $this->desireListService->findByUserAndEvent($participant, $event->getFirstRound());
+                    if (count($desireLists) > 0) {
+                        $desireList = $desireLists[0];
 
-                    $desireListData = (new DesireListData())->initFromEntity($desireList);
-                    $desireListData->setEvents(array_merge($desireListData->getEvents(), [$event->getSecondRound()]));
-                    $this->desireListService->update($desireList, $desireListData);
-
-                } else {
-                    $this->addSecretAccessRoleToDesireListOfEvent($participant, $event->getSecondRound());
+                        $desireListData = (new DesireListData())->initFromEntity($desireList);
+                        $desireListData->setEvents(
+                            array_merge(
+                                $desireListData->getEvents(),
+                                [$event->getSecondRound()]
+                            )
+                        );
+                        $this->desireListService->update($desireList, $desireListData);
+                    } else {
+                        $this->addSecretAccessRoleToDesireListOfEvent($participant, $event->getSecondRound());
+                    }
                 }
             }
+
+            // give godFathers access to every DesireList in round
+            foreach ($event->getGodFathers() as $godFather){
+                foreach ($event->getOverallParticipants() as $participant){
+                    // give godfather access to desireList of each participant
+                    $this->accessRoleService->addSecretRoleToProvider($godFather, $participant, $event->getFirstRound());
+                    if ($event->isIsDoubleRound()){
+                        $this->accessRoleService->addSecretRoleToProvider($godFather, $participant, $event->getSecondRound());
+                    }
+
+                    // give participant access to godfathers desireList
+                    $this->accessRoleService->addSecretRoleToProvider($participant, $godFather, $event->getFirstRound());
+                    if ($event->isIsDoubleRound()){
+                        $this->accessRoleService->addSecretRoleToProvider($participant, $godFather, $event->getSecondRound());
+                    }
+                }
+            }
+
 
             // set ss state to round1 => user of round one can "pick" their already calculated secret
             $ssEventData = (new SecretSantaEventData())->initFromEntity($event);
@@ -112,7 +134,12 @@ class SecretSantaService
 
     public function performFirstRoundPick(SecretSantaEvent $event, User $participant): Secret
     {
-        return $this->pickSecretByEventAndUser($event, $event->getFirstRound(), $participant, SecretSantaState::PHASE_2);
+        $nextState = SecretSantaState::PHASE_2;
+        if (!$event->isIsDoubleRound()){
+            $nextState = SecretSantaState::RUNNING;
+        }
+
+        return $this->pickSecretByEventAndUser($event, $event->getFirstRound(), $participant, $nextState);
     }
 
     public function performSecondRoundPick(SecretSantaEvent $event, User $participant): Secret
@@ -123,8 +150,7 @@ class SecretSantaService
     public function userHasAlreadyPickedSecretForEvent(Event $event, UserInterface $participant): bool
     {
         $secrets = $this->secretService->findBy(['event' => $event, 'provider' => $participant]);
-//dump($event->getId());
-//dd($participant->getId());
+
         if (count($secrets) !== 1) {
             throw new \Exception('Secret for event and user is not unique!');
         }
@@ -189,7 +215,7 @@ class SecretSantaService
 
         $desireList = $desireLists[0];
 
-        $this->accessRoleService->addRoleToEntity($desireList, 'ROLE_SECRET_FOR_USER_' . $participant->getId());
+        $this->accessRoleService->addSecretRoleToDesireList($desireList, $participant, $event);
     }
 
     /**
@@ -216,7 +242,10 @@ class SecretSantaService
     public function getSecretStatisticForEvent(SecretSantaEvent $event): SecretSantaEventStatistic
     {
         $firstRoundId = $event->getFirstRound()->getId();
-        $secondRoundId = $event->getSecondRound()->getId();
+        $secondRoundId = -1;
+        if ($event->isIsDoubleRound()){
+            $secondRoundId = $event->getSecondRound()->getId();
+        }
         $result = $this->secretService->getStatistic($event);
 
         $statistic = new SecretSantaEventStatistic();
@@ -236,21 +265,25 @@ class SecretSantaService
             }
         }
 
+        $userIdsSecondRound = [];
+        if ($event->isIsDoubleRound()) {
+            $userIdsSecondRound = $event->getSecondRound()->getParticipants()->map(
+                function (User $user) {
+                    return $user->getId();
+                }
+            )->toArray();
+        }
+
         $participants = array_unique(array_merge(
             $event->getFirstRound()->getParticipants()->map(
                 function (User $user) {
                     return $user->getId();
                 }
             )->toArray(),
-            $event->getSecondRound()->getParticipants()->map(
-                function (User $user) {
-                    return $user->getId();
-                }
-            )->toArray(),
+            $userIdsSecondRound
         ));
 
         $desires1 = $this->desireService->getAllDesiresForSecretSantaEvent($event);
-        $desires2 = $this->desireService->getAllDesiresForSecretSantaEvent($event, false);
 
         $excludesUsers = [];
         $desireCount = 0;
@@ -263,16 +296,19 @@ class SecretSantaService
             $desireCount = $desireCount + $desire['desires'];
         }
 
-        foreach ($desires2 as $desire){
-            if (in_array($desire['user'], $excludesUsers)){
-                continue;
-            }
+        if ($event->isIsDoubleRound()) {
+            $desires2 = $this->desireService->getAllDesiresForSecretSantaEvent($event, false);
+            foreach ($desires2 as $desire){
+                if (in_array($desire['user'], $excludesUsers)){
+                    continue;
+                }
 
-            $excludesUsers[] = $desire['user'];
-            if($desire['reserved']){
-                $reservations = $reservations + $desire['desires'];
+                $excludesUsers[] = $desire['user'];
+                if($desire['reserved']){
+                    $reservations = $reservations + $desire['desires'];
+                }
+                $desireCount = $desireCount + $desire['desires'];
             }
-            $desireCount = $desireCount + $desire['desires'];
         }
         $excludesUsers = array_unique($excludesUsers);
 
@@ -280,7 +316,16 @@ class SecretSantaService
         $statistic->setUserWithoutDesires($noDesires);
         $statistic->setDesiresTotal($desireCount);
         $statistic->setDesiresReserved($reservations);
-//        dd($statistic);
+
         return $statistic;
+    }
+
+    public function addGodfather(User $user, SecretSantaEvent $event): void
+    {
+//        $user = $this->userService->getUser($userId);
+        $event->addGodfather($user);
+
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
     }
 }

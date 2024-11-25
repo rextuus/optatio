@@ -46,7 +46,7 @@ class SecretCalculatorTest extends TestCase
             $user3,
         ];
 
-        $result = $this->calculator->testCalculateSecrets($userRound1, $userRound2);
+        $result = $this->calculator->testCalculateSecretsForDoubleRound($userRound1, $userRound2);
         $this->assertTrue($result->isSuccess());
         $this->assertTrue($result->checkIntegrity());
     }
@@ -78,7 +78,7 @@ class SecretCalculatorTest extends TestCase
         $exclusion->setExclusionCreator($user1);
         $exclusion->setExcludedUser($user2);
 
-        $result = $this->calculator->testCalculateSecrets($userRound1, $userRound2, [$exclusion]);
+        $result = $this->calculator->testCalculateSecretsForDoubleRound($userRound1, $userRound2, [$exclusion]);
         $this->assertFalse($result->isSuccess());
         $this->assertTrue($result->checkIntegrity());
     }
@@ -110,7 +110,7 @@ class SecretCalculatorTest extends TestCase
         $exclusion->setExclusionCreator($user1);
         $exclusion->setExcludedUser($user3);
 
-        $result = $this->calculator->testCalculateSecrets($userRound1, $userRound2, [$exclusion]);
+        $result = $this->calculator->testCalculateSecretsForDoubleRound($userRound1, $userRound2, [$exclusion]);
         $this->assertTrue($result->isSuccess());
         $this->assertTrue($result->checkIntegrity());
     }
@@ -143,7 +143,7 @@ class SecretCalculatorTest extends TestCase
         $exclusion->setExcludedUser($user3);
         $exclusion->setBidirectional(true);
 
-        $result = $this->calculator->testCalculateSecrets($userRound1, $userRound2, [$exclusion]);
+        $result = $this->calculator->testCalculateSecretsForDoubleRound($userRound1, $userRound2, [$exclusion]);
         $this->assertFalse($result->isSuccess());
         $this->assertTrue($result->checkIntegrity());
     }

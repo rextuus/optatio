@@ -61,7 +61,7 @@ class ExcludeController extends BaseController
     {
         $user = $this->getLoggedInUser();
         if ($exclusion->getExclusionCreator() !== $user){
-            return $this->redirect($this->generateUrl('app_home', []));
+            return $this->redirect($this->generateUrl('app_event_list', []));
         }
 
         $this->exclusionService->delete($exclusion);

@@ -6,6 +6,8 @@ namespace App\Content\SecretSanta\SecretSantaEvent;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
 use App\Entity\Event;
 use App\Entity\SecretSantaEvent;
+use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -42,5 +44,10 @@ class SecretSantaEventService
     public function findByFirstOrSecondRound(Event $event): array
     {
         return $this->repository->findByFirstOrSecondRound($event);
+    }
+
+    public function findSecretSantaEvents(?User $user = null)
+    {
+        return $this->repository->findSecretSantaEvents($user);
     }
 }

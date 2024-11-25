@@ -27,10 +27,12 @@
                             <div class="ss-participant-header-amount">{{ statistic.firstRoundRetrieved }}/{{ event.firstRound.participants|length }}</div>
                         </div>
 
+                        {% if event.isDoubleRound %}
                         <div class="ss-participant-header-round">
                             <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
                             <div class="ss-participant-header-amount">{{ statistic.secondRoundRetrieved }}/{{ event.secondRound.participants|length }}</div>
                         </div>
+                        {% endif %}
                     </div>
 
                     <div class="ss-participant-header-col">
@@ -101,6 +103,19 @@
                 </div>
             {% endif %}
 
+            {% if godFatherDesireLists is not null %}
+                {% for godFatherDesireList in godFatherDesireLists %}
+                    <div class="desire-image-button">
+                        <a href="{{ path('app_desire_list', {'desireList': godFatherDesireList.id}) }}">
+                            <button>
+                                <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
+                                <span class="desire-image-button-text">Zu {{ godFatherDesireList.owner.firstName }}'s Wunschliste</span>
+                            </button>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             {#            <div class="desire-create-button"> #}
             {#                <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}"> #}
             {#                    <button> #}
@@ -126,6 +141,7 @@
             {#                </a> #}
             {#            </div> #}
 
+            {% if event.state.value == 'open' %}
             <div class="desire-image-button">
                 <a href="{{ path('app_exclusion_create', {'event': event.id}) }}">
                     <button>
@@ -134,6 +150,18 @@
                     </button>
                 </a>
             </div>
+            {% endif %}
+
+            {% if isOwner %}
+                <div class="desire-image-button">
+                    <a href="{{ path('app_secret_santa_admin', {'event': event.id}) }}">
+                        <button>
+                            <i class="fa-solid fa-gears"></i>
+                            <span class="desire-image-button-text">Event Einstellungen</span>
+                        </button>
+                    </a>
+                </div>
+            {% endif %}
 
 
         </div>

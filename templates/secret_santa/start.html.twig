@@ -1,66 +1,104 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Wichtelrunde erstellen{% endblock %}
-
 {% block body %}
-    <div class="ss-container">
-        <div class="ss-banner"></div>
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <h1><i class="fa fa-solid fa-gears"></i> {{ event.name }}</h1>
 
-        <div class="page-header">
-            <div class="page-header-text">
-                {{ event.name }}
-            </div>
-            <div class="page-header-image">
-                <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
-            </div>
         </div>
         <div class="content-body">
 
+            <div class="alert {% if result.checkIntegrity %}alert-success{% else %}alert-danger{% endif %}">
+                <i class="fa fa-solid {% if result.checkIntegrity %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                Integrity: {% if result.checkIntegrity %}OK{% else %}Not-OK{% endif %}
+            </div>
 
-            <div class="simple-text-box font-size-1-2">Wähle aus an welchen Wichtelrunden du teilnehmen möchtest</div>
+            <div class="alert {% if result.success %}alert-success{% else %}alert-danger{% endif %}">
+                <i class="fa fa-solid {% if result.success %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                Success: {% if result.success %}OK{% else %}Not-OK{% endif %}
+            </div>
 
-            {% if result.checkIntegrity %}
-                Integrity: OK
-            {% else %}
-                Integrity: Not-OK
-            {% endif %}
-            <br>
-            {% if result.success %}
-                Success: OK
-            {% else %}
-                Success: Not-OK
-            {% endif %}
-            <br>
-            Runde 1
-            <table>
-                <tr>
-                    <th>Teilnehmer</th>
-                </tr>
-                {% for participant in round1 %}
-                <tr>
-                    <td>{{ participant.fullName }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-
-            Runde 2
-            <table>
-                <tr>
-                    <th>Teilnehmer</th>
-                </tr>
-                {% for participant in round2 %}
+            <div>
+                <h3>Runde 1</h3>
+                <table class="table table-striped">
+                    <thead>
                     <tr>
-                        <td>{{ participant.fullName }}</td>
+                        <th>Teilnehmer</th>
                     </tr>
-                {% endfor %}
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for participant in round1 %}
+                        <tr>
+                            <td>{{ participant.fullName }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if round2 is not null %}
+                <div>
+                    <h3>Runde 2</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Teilnehmer</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for participant in round2 %}
+                            <tr>
+                                <td>{{ participant.fullName }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            <div class="container godfathers mt-5">
+                <span>Godathers:</span>
+                <div class="container mt-3">
+                    <div class="row">
+                        {% for godfather in event.godfathers %}
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ godfather.fullName }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {% if showForm %}
+            <div class="form-area">
+                {{ form_start(form, {'method': 'POST'}) }}
+                <div class="my-custom-class-for-errors">
+                    {{ form_errors(form) }}
+                </div>
+
+                <div class="form-input-field">
+                    <label class="hidden" for="secret_santa_start_checkSum"></label>
+                    <div class="image-form-row">
+                        <div class="image-form-row-image">
+                            <i class="fa-solid fa-check icon" style="color: #000000;"></i>
+                        </div>
+                        {{ form_widget(form.checkSum, {'attr': {'class': 'form-style', 'placeholder':'Checksum', 'id': 'checkSum'}}) }}
+                    </div>
+                </div>
 
 
-            {{ form(form) }}
+                {{ form_row(form._token) }}
 
+                <div class="form-submit-field">
+                    {{ form_widget(form.start, {'attr': {'class': 'btn'}}) }}
+                </div>
+            </div>
+
+            {% endif %}
         </div>
     </div>
-
-
-
 {% endblock %}

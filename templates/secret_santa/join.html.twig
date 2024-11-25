@@ -25,6 +25,7 @@
                     {{ form_errors(form) }}
                 </div>
 
+                {% if event.isDoubleRound %}
                 <div class="form-input-info-text">Möchtest du an der Wichtelrunde {{ event.firstRound.name }} teilnehmen?</div>
                 <div class="form-input-field">
                     <label class="hidden" for="secret_santa_event_join_firstRound"></label>
@@ -35,7 +36,11 @@
                         <div class="toggle-switch-container">
                             <label class="switch">
                                 <label for="secret_santa_event_join_firstRound" class="switch-toggle-label"></label>
-                                {{ form_widget(form.firstRound, {'attr': {'class': 'toggle-box', 'placeholder': 'Verfügbar', 'id': 'enabled', 'value': 1}}) }}
+                                {% set disabled = 'disabled' %}
+                                {% if event.isDoubleRound %}
+                                {% set disabled = '' %}
+                                {% endif %}
+                                {{ form_widget(form.firstRound, {'attr': {'class': 'toggle-box', 'placeholder': 'Verfügbar', 'id': 'enabled', 'value': 1, disabled}}) }}
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -58,6 +63,9 @@
                         </div>
                     </div>
                 </div>
+                    {% else %}
+                        {{ form_widget(form.firstRound, {'attr': {'class': 'hidden', 'value': 'checked'}}) }}
+                {% endif %}
 
                 {{ form_row(form._token) }}
 

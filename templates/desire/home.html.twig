@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wunsch switchen{% endblock %}
+
+{% block body %}
+
+    <div class="page-header">
+        <div class="page-header-text">
+            Wunsch switchen
+        </div>
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+        </div>
+    </div>
+    <div class="content-body">
+        {{ component('DesireCopyForm', {
+            initialFormData: initialFormData,
+            user: user,
+        }) }}
+    </div>
+{% endblock %}

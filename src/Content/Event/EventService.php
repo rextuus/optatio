@@ -44,9 +44,9 @@ class EventService
     /**
      * @return Event[]
      */
-    public function findEventsWithoutSecretSantaRounds(): array
+    public function findEventsWithoutSecretSantaRounds(?User $user = null): array
     {
-        return $this->repository->findEventsWithoutSecretSantaRounds();
+        return $this->repository->findEventsWithoutSecretSantaRounds($user);
     }
 
     public function findEventsForUser(User $user)

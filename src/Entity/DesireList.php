@@ -39,6 +39,9 @@ class DesireList implements HasAccessRoleInterface
     #[ORM\ManyToMany(targetEntity: AccessRole::class, mappedBy: 'desireLists')]
     private Collection $accessRoles;
 
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $master = false;
+
     public function __construct()
     {
         $this->desires = new ArrayCollection();
@@ -193,5 +196,26 @@ class DesireList implements HasAccessRoleInterface
         }
 
         return $this;
+    }
+
+    public function isMaster(): bool
+    {
+        if ($this->master === null) {
+            $this->master = false;
+        }
+
+        return $this->master;
+    }
+
+    public function setMaster(bool $master): static
+    {
+        $this->master = $master;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 }

@@ -97,24 +97,28 @@ class EventManager
 
     public function initSecretSantaEvent(SecretSantaEventCreateData $data, User $creator): SecretSantaEvent
     {
+        $isDoubleRound = $data->getSecondRoundName() !== null;
+
         // init events
         $eventData = new EventCreateData();
         $eventData->setName($data->getFirstRoundName());
         $eventData->setEventType(EventType::SECRET_SANTA);
         $eventFirst = $this->initEvent($eventData, $creator);
 
-        $eventData = new EventCreateData();
-        $eventData->setName($data->getSecondRoundName());
-        $eventData->setEventType(EventType::SECRET_SANTA);
-        $eventSecond = $this->initEvent($eventData, $creator);
-
-
         $createData = new SecretSantaEventData();
         $createData->setName($data->getName());
         $createData->setCreator($creator);
         $createData->setSecretSantaState(SecretSantaState::OPEN);
         $createData->setFirstRound($eventFirst);
-        $createData->setSecondRound($eventSecond);
+        $createData->setIsDoubleRound($isDoubleRound);
+
+        if ($isDoubleRound){
+            $eventData = new EventCreateData();
+            $eventData->setName($data->getSecondRoundName());
+            $eventData->setEventType(EventType::SECRET_SANTA);
+            $eventSecond = $this->initEvent($eventData, $creator);
+            $createData->setSecondRound($eventSecond);
+        }
 
         return $this->secretSantaEventService->createByData($createData);
     }
@@ -122,11 +126,12 @@ class EventManager
     public function addParticipantToSecretSantaEvent(User $participant, SecretSantaEvent $event, SecretSantaEventJoinData $data): void
     {
         $events = [];
+
         if ($data->isFirstRound() && !$event->getFirstRound()->getParticipants()->contains($participant)){
             $this->addParticipant($event->getFirstRound(), $participant);
             $events[] = $event->getFirstRound();
         }
-        if ($data->isSecondRound() && !$event->getSecondRound()->getParticipants()->contains($participant)){
+        if ($data->isSecondRound() && $event->getSecondRound() !== null && !$event->getSecondRound()->getParticipants()->contains($participant)){
             $this->addParticipant($event->getSecondRound(), $participant);
             $events[] = $event->getSecondRound();
         }
@@ -136,20 +141,18 @@ class EventManager
             function (Event $event){
                 return 'ROLE_EVENT_'.$event->getId().'_PARTICIPANT';
             },
-            [$event->getFirstRound(), $event->getSecondRound()]
+            $events
         );
         $eventRoles[] = 'USER_'.$participant->getId();
 
-//        $debug = array_map(
-//            function (Event $event){
-//                return $event->getName();
-//            },
-//            $events
-//        );
-
-//        dump('adde '.$participant->getFullName().' to '.implode(', ',$debug));
         $this->desireManager->initDesireListsForSecretSantaEvent($participant, $event, $events, $eventRoles);
+    }
 
-//        $this->userService->addRolesToUser($participant, $eventRoles);
+    public function initBirthdayEvent(EventCreateData $data, User $creator): Event
+    {
+        $event = $this->initEvent($data, $creator);
+        $this->desireManager->initDesireListForEvent($creator, $event);
+
+        return $event;
     }
 }

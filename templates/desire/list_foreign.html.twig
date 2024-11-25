@@ -14,13 +14,24 @@
 
     <div class="content-body">
         <div class="desire-image-button">
-            <a href="{{ path('app_secret_santa_detail',  {'event': event.id}) }}">
-                <button>
+            {% if ssEvent is not null %}
+            <a href="{{ path('app_secret_santa_detail',  {'event': ssEvent.id}) }}">
+                {% else %}
+                <a href="{{ path('app_event_list',  {'event': event.id}) }}">
+                    {% endif %}
+                    <button>
                     <img src="{{ asset('assets/img/event.svg') }}" alt="Tile image">
                     <div class="desire-image-button-text">Übersicht</div>
                 </button>
             </a>
         </div>
+
+        {% if desires|length == 0 %}
+            <h1>Diese Wunschliste enthält momentan noch keine Wünsche.</h1>
+            <p>Fändest du es wäre ein cooles Feature, wenn du über
+            Email oder Whatsapp benachrichtigt werden würdest, sobald die Person hier etwas einträgt?
+                Wenn ja gib das als Feedback an die Entwickler der WH-Company weiter. Und pack nen Bündel Scheine dazu...</p>
+        {% endif %}
 
         {% for desire in desires %}
             {{ component('ForeignDesireComponent', { desire: desire, desireList: list, currentUser: currentUser}) }}

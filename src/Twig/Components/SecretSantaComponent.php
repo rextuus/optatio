@@ -8,6 +8,8 @@ use App\Entity\User;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+use function Symfony\Component\String\b;
+
 #[AsLiveComponent()]
 final class SecretSantaComponent
 {
@@ -23,6 +25,10 @@ final class SecretSantaComponent
 
     public function isUserParticipantSecondRound(): bool
     {
+        if (!$this->event->isIsDoubleRound()){
+            return false;
+        }
+
         return in_array($this->user, $this->event->getSecondRound()->getParticipants()->toArray());
     }
 

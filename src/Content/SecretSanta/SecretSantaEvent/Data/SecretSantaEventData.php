@@ -16,9 +16,11 @@ class SecretSantaEventData
 {
     private string $name;
     private Event $firstRound;
-    private Event $secondRound;
+    private ?Event $secondRound = null;
     private SecretSantaState $secretSantaState;
     private User $creator;
+
+    private bool $isDoubleRound = false;
 
     public function getName(): string
     {
@@ -42,12 +44,12 @@ class SecretSantaEventData
         return $this;
     }
 
-    public function getSecondRound(): Event
+    public function getSecondRound(): ?Event
     {
         return $this->secondRound;
     }
 
-    public function setSecondRound(Event $secondRound): SecretSantaEventData
+    public function setSecondRound(?Event $secondRound): SecretSantaEventData
     {
         $this->secondRound = $secondRound;
         return $this;
@@ -75,6 +77,17 @@ class SecretSantaEventData
         return $this;
     }
 
+    public function isDoubleRound(): bool
+    {
+        return $this->isDoubleRound;
+    }
+
+    public function setIsDoubleRound(bool $isDoubleRound): SecretSantaEventData
+    {
+        $this->isDoubleRound = $isDoubleRound;
+        return $this;
+    }
+
     public function initFromEntity(SecretSantaEvent $event):SecretSantaEventData
     {
         $this->setName($event->getName());
@@ -82,6 +95,7 @@ class SecretSantaEventData
         $this->setFirstRound($event->getFirstRound());
         $this->setSecondRound($event->getSecondRound());
         $this->setSecretSantaState($event->getState());
+        $this->setIsDoubleRound($event->isIsDoubleRound());
 
         return $this;
     }

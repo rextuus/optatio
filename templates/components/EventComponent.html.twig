@@ -10,14 +10,22 @@
 
             <div class="button-row">
 
-                {% if this.event.openToJoin %}
+                {% if this.event.openToJoin and not this.isUserParticipant %}
                     <div class="event-card-button">
-                        <a href="{{ path('app_secret_santa_detail', {'event': event.id}) }}">
+                        <a href="{{ path('app_event_join', {'event': event.id}) }}">
                             <button class="join-button">
                                 Teilnehmen
                             </button>
                         </a>
                     </div>
+                    {% else %}
+                        <div class="event-card-button">
+                            <a href="{{ path('app_event_detail', {'event': event.id}) }}">
+                                <button class="join-button">
+                                    Zum Event
+                                </button>
+                            </a>
+                        </div>
                 {% endif %}
 
 

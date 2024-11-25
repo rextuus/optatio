@@ -13,5 +13,18 @@
             </div>
         </div>
     </div>
+    <div class="content-body">
+
+        <div class="ss-header"></div>
+
+        <div class="desire-image-button">
+            <a href="{{ path('app_desire_list',  {'desireList': userDesireList.id}) }}">
+                <button>
+                    <img src="{{ asset('assets/img/heart.svg') }}" alt="Tile image">
+                    <span class="desire-image-button-text">Zu deiner Wunschliste</span>
+                </button>
+            </a>
+        </div>
+    </div>
 
 {% endblock %}

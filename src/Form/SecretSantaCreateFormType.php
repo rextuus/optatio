@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventCreateData;
-use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventJoinData;
-use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -17,12 +15,20 @@ class SecretSantaCreateFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, ['label' => 'Event-Name'])
             ->add('firstRoundName', TextType::class)
-            ->add('secondRoundName', TextType::class)
-//            ->add('second', CheckboxType::class)
-            ->add('submit', SubmitType::class)
-        ;
+            ->add('enableSecondRound', CheckboxType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Enable Second Round',
+                'attr' => [
+                    'data-action' => 'change->secret-santa-form#toggle'
+                ]
+            ])
+            ->add('secondRoundName', TextType::class, [
+                'required' => false,
+            ])
+            ->add('submit', SubmitType::class, ['label' => 'Erstellen']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

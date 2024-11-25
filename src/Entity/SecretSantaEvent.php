@@ -24,7 +24,7 @@ class SecretSantaEvent
     private ?Event $firstRound = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Event $secondRound = null;
 
     #[ORM\Column(type: "string", enumType: SecretSantaState::class)]
@@ -40,10 +40,17 @@ class SecretSantaEvent
     #[ORM\OneToMany(mappedBy: 'secretSantaEvent', targetEntity: Secret::class)]
     private Collection $secrets;
 
+    #[ORM\Column]
+    private bool $isDoubleRound = false;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'godFatherEvents')]
+    private Collection $godFathers;
+
     public function __construct()
     {
         $this->exclusions = new ArrayCollection();
         $this->secrets = new ArrayCollection();
+        $this->godFathers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,5 +180,53 @@ class SecretSantaEvent
         }
 
         return $this;
+    }
+
+    public function isIsDoubleRound(): bool
+    {
+        return $this->isDoubleRound;
+    }
+
+    public function setIsDoubleRound(bool $isDoubleRound): static
+    {
+        $this->isDoubleRound = $isDoubleRound;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getGodFathers(): Collection
+    {
+        return $this->godFathers;
+    }
+
+    public function addGodfather(User $godfather): static
+    {
+        if (!$this->godFathers->contains($godfather)) {
+            $this->godFathers->add($godfather);
+        }
+
+        return $this;
+    }
+
+    public function removeGodfather(User $godfather): static
+    {
+        $this->godFathers->removeElement($godfather);
+
+        return $this;
+    }
+
+    /**
+     * @return array<User>
+     */
+    public function getOverallParticipants(): array
+    {
+        if ($this->isDoubleRound) {
+            return array_merge($this->firstRound->getParticipants()->toArray(), $this->secondRound->getParticipants()->toArray());
+        }
+
+        return $this->firstRound->getParticipants()->toArray();
     }
 }

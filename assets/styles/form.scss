@@ -114,6 +114,12 @@
     height: 30px;
 }
 
+.image-form-row-image .icon{
+    width: 30px;
+    height: 30px;
+    color: black;
+}
+
 .hidden{
     display: none;
 }
@@ -318,3 +324,18 @@ select{
     }
 }
 
+.form-checkbox {
+    margin: 20px 0;
+    label{
+        color: black;
+    }
+}
+
+.desires-list {
+    list-style-type: none; /* Removes the default list style */
+    padding: 0;
+}
+
+.desires-list div {
+    display: block; /* Ensures each item is on a new line */
+}

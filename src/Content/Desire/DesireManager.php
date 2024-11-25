@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Content\Desire;
@@ -20,6 +21,8 @@ use App\Entity\Image;
 use App\Entity\Reservation;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -29,21 +32,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class DesireManager
 {
+    private const MASTER_LIST_ROLE = 'ROLE_MASTER_LIST';
 
     public function __construct(
-        private readonly DesireService      $desireService,
-        private readonly DesireListService  $desireListService,
-        private readonly PriorityService    $priorityService,
-        private readonly AccessRoleService  $accessRoleService,
+        private readonly DesireService $desireService,
+        private readonly DesireListService $desireListService,
+        private readonly PriorityService $priorityService,
+        private readonly AccessRoleService $accessRoleService,
         private readonly ReservationService $reservationService,
-        private readonly ImageService       $imageService,
-    )
-    {
-    }
-
-    public function createNewDesire(DesireData $data)
-    {
-
+        private readonly ImageService $imageService,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function initPriorityForDesire(Desire $desire): void
@@ -95,7 +94,15 @@ class DesireManager
 
     public function getDesireListForSecretSantaEvent(User $user, SecretSantaEvent $event): DesireList
     {
-        $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound(), $event->getSecondRound()]);
+        $events = [$event->getFirstRound()];
+        if ($event->isIsDoubleRound()) {
+            $events[] = $event->getSecondRound();
+        }
+
+        $lists = $this->desireListService->findByUserAndEvents(
+            $user,
+            $events
+        );
         if (count($lists) !== 1) {
             if (count($lists) === 2) {
                 $lists = $this->desireListService->findByUserAndEvents($user, [$event->getFirstRound()]);
@@ -109,9 +116,14 @@ class DesireManager
 
     /**
      * @param Event[] $events
+     * @param string[] $eventRoles
      */
-    public function initDesireListsForSecretSantaEvent(User $participant, SecretSantaEvent $event, array $events, array $eventRoles): void
-    {
+    public function initDesireListsForSecretSantaEvent(
+        User $participant,
+        SecretSantaEvent $event,
+        array $events,
+        array $eventRoles
+    ): void {
         $eventNames = array_map(
             function (Event $event) {
                 return $event->getName();
@@ -140,6 +152,30 @@ class DesireManager
         }
     }
 
+    public function initDesireListForEvent(User $owner, Event $event): DesireList
+    {
+        $description = sprintf(
+            "%s's Wunschliste für %s. Die Liste wird genutzt für das Event:\n %s",
+            $owner->getFirstName(),
+            $event->getName(),
+            $event->getName()
+        );
+
+        $data = new DesireListData();
+        $data->setName('Wunschliste - ' . $event->getName());
+        $data->setOwner($owner);
+        $data->setDescription($description);
+        $data->setEvents([$event]);
+        $data->setDesires([]);
+
+        $desireList = $this->desireListService->createByData($data);
+
+        $this->accessRoleService->addRoleToEntity($desireList, 'ROLE_EVENT_' . $event->getId() . '_PARTICIPANT');
+        $this->accessRoleService->addRoleToEntity($desireList, 'USER_' . $owner->getId());
+
+        return $desireList;
+    }
+
     public function addReservation(User $user, Desire $desire): Reservation
     {
         if (!$desire->isListed()) {
@@ -149,7 +185,9 @@ class DesireManager
         // check reservation is allowed
         $newState = match ($desire->getState()) {
             DesireState::FREE => DesireState::RESERVED,
-            DesireState::RESERVED, DesireState::RESOLVED, DesireState::MULTIPLE_RESERVED, DesireState::MULTIPLE_RESOLVED, DesireState::MULTIPLE_RESERVED_OR_RESOLVED => $this->isMultipleReservationAllowed($desire),
+            DesireState::RESERVED, DesireState::RESOLVED, DesireState::MULTIPLE_RESERVED, DesireState::MULTIPLE_RESOLVED, DesireState::MULTIPLE_RESERVED_OR_RESOLVED => $this->isMultipleReservationAllowed(
+                $desire
+            ),
         };
 
         // make reservation
@@ -200,9 +238,14 @@ class DesireManager
         // check reservation is allowed
         $newState = match ($desire->getState()) {
             DesireState::RESERVED => DesireState::FREE,
-            DesireState::MULTIPLE_RESERVED, DesireState::MULTIPLE_RESERVED_OR_RESOLVED => $this->calculateReservationStateAfterRemoval($desire, $reservation),
+            DesireState::MULTIPLE_RESERVED, DesireState::MULTIPLE_RESERVED_OR_RESOLVED => $this->calculateReservationStateAfterRemoval(
+                $desire,
+                $reservation
+            ),
             DesireState::FREE => throw new Exception('Desire with reservation should not have state FREE'),
-            DesireState::RESOLVED, DesireState::MULTIPLE_RESOLVED => throw new Exception('Desire seems to have only resolved reservations'),
+            DesireState::RESOLVED, DesireState::MULTIPLE_RESOLVED => throw new Exception(
+                'Desire seems to have only resolved reservations'
+            ),
         };
 
         // delete reservation
@@ -216,8 +259,10 @@ class DesireManager
         return $reservation;
     }
 
-    private function calculateReservationStateAfterRemoval(Desire $desire, Reservation $reservationToRemove): DesireState
-    {
+    private function calculateReservationStateAfterRemoval(
+        Desire $desire,
+        Reservation $reservationToRemove
+    ): DesireState {
         // should never happen but how knows...
         $reservations = $desire->getReservations();
         if ($reservations->count() === 1) {
@@ -319,12 +364,12 @@ class DesireManager
     }
 
 
-    public function storeDesire(DesireData $data, DesireList $desireList, UserInterface $owner): void
+    public function storeDesire(DesireData $data, DesireList $desireList, bool $save = true): void
     {
         $data->setState(DesireState::FREE);
 
         $desire = $this->desireService->createByData($data);
-        $this->desireListService->addDesireToList($desire, $desireList);
+        $this->desireListService->addDesireToList($desire, $desireList, $save);
 
         $priorityData = new PriorityData();
         $priorityData->setValue($this->priorityService->getHighestPriorityByList($desireList));
@@ -343,5 +388,62 @@ class DesireManager
     {
 //        $this->desireService->removeImage($desire, $image);
         $this->imageService->delete($image);
+    }
+
+    public function createMasterListForUser(User $user): DesireList
+    {
+        $data = new DesireListData();
+        $data->setName('Globale Wunschliste ' . $user->getFirstName());
+        $data->setDescription('Verwende diese Liste um deine Wünsche zentral zu verwalten. Du kannst jeden Wunsch in beliebig viele Listen übernehmen oder kopieren.');
+        $data->setOwner($user);
+        $data->setEvents([]);
+        $data->setDesires([]);
+        $data->setAccessRoles([]);
+        $data->setMaster(true);
+
+        $desireList = $this->desireListService->createByData($data);
+        $this->accessRoleService->addRoleToEntity($desireList, 'USER_' . $user->getId());
+
+        return $desireList;
+    }
+
+    public function getMasterListByUser(User $user): DesireList
+    {
+        $masterList = $this->desireListService->findBy(['owner' => $user, 'master' => true]);
+        if (count($masterList) === 0) {
+            return $this->createMasterListForUser($user);
+        }
+
+        return $masterList[0];
+    }
+
+    /**
+     * @return array<DesireList>
+     */
+    public function getNonMasterListsByUser(User $user): array
+    {
+        return $this->desireListService->findBy(['owner' => $user, 'master' => false]);
+    }
+
+    /**
+     * @param array<Desire> $desires
+     */
+    public function hardCopyDesiresBetweenLists(DesireList $targetList, array $desires): void
+    {
+        foreach ($desires as $desire) {
+            $data = (new DesireData())->initFromEntity($desire);
+
+            $this->storeDesire($data, $targetList, false);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param array<Desire> $desires
+     */
+    public function shareDesiresBetweenLists(DesireList $targetList, array $desires): void
+    {
+        $this->desireListService->shareDesiresBetweenLists($targetList, $desires);
     }
 }

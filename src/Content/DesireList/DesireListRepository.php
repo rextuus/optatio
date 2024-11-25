@@ -91,4 +91,12 @@ class DesireListRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findMasterListByUser(User $user)
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb->where($qb->expr()->eq('d.owner', ':owner'));
+        $qb->setParameter('owner', $user);
+        $qb->andWhere($qb->expr()->eq('d.isMaster', ':isMaster'));
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Content\SecretSanta\SecretSantaEvent;
 
 use App\Entity\Event;
 use App\Entity\SecretSantaEvent;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -62,5 +63,22 @@ class SecretSantaEventRepository extends ServiceEntityRepository
         $qb->setParameter(':event', $event);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findSecretSantaEvents(?User $user = null)
+    {
+        $qb = $this->createQueryBuilder('sse');
+
+        if ($user !== null) {
+            $qb->leftJoin('sse.firstRound', 'fr')
+                ->leftJoin('sse.secondRound', 'sr')
+                ->leftJoin('fr.participants', 'frp')
+                ->leftJoin('sr.participants', 'srp')
+                ->where('frp = :user OR srp = :user OR sse.creator = :user')
+                ->setParameter('user', $user);
+        }
+
+        $query = $qb->getQuery();
+        return $query->getResult();
     }
 }

@@ -73,6 +73,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
     #[ORM\ManyToMany(targetEntity: AccessRole::class, mappedBy: 'user')]
     private Collection $accessRoles;
 
+    #[ORM\ManyToMany(targetEntity: SecretSantaEvent::class, mappedBy: 'godFathers')]
+    private Collection $godFatherEvents;
+
     public function __construct()
     {
         $this->desires = new ArrayCollection();
@@ -86,6 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
         $this->providingSecrets = new ArrayCollection();
         $this->receivingSecrets = new ArrayCollection();
         $this->accessRoles = new ArrayCollection();
+        $this->godFatherEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -495,6 +499,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
     {
         if ($this->accessRoles->removeElement($accessRole)) {
             $accessRole->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SecretSantaEvent>
+     */
+    public function getGodFatherEvents(): Collection
+    {
+        return $this->godFatherEvents;
+    }
+
+    public function addGodFatherEvent(SecretSantaEvent $godFatherEvent): static
+    {
+        if (!$this->godFatherEvents->contains($godFatherEvent)) {
+            $this->godFatherEvents->add($godFatherEvent);
+            $godFatherEvent->addGodfather($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGodFatherEvent(SecretSantaEvent $godFatherEvent): static
+    {
+        if ($this->godFatherEvents->removeElement($godFatherEvent)) {
+            $godFatherEvent->removeGodfather($this);
         }
 
         return $this;
