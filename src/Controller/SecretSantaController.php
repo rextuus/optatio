@@ -117,7 +117,9 @@ class SecretSantaController extends BaseController
             $event->getName()
         );
 
-        if ($event->getState() === SecretSantaState::PHASE_1 && $firstRoundActive) {
+        $isGodfather = $this->checkUserIsGodFatherOfSecretSantaEvent($participant, $event);
+
+        if ($event->getState() === SecretSantaState::PHASE_1 && $firstRoundActive && !$isGodfather) {
             $secret = $secrets['first'];
 
             $showFirstRoundPick = true;
@@ -182,7 +184,6 @@ class SecretSantaController extends BaseController
             }
         }
 
-        $isGodfather = $this->checkUserIsGodFatherOfSecretSantaEvent($participant, $event);
         $firstRoundList = null;
         $secondRoundList = null;
         if ($event->getState() === SecretSantaState::RUNNING) {;
@@ -233,6 +234,10 @@ class SecretSantaController extends BaseController
                     $godFatherDesireLists[] = $this->desireManager->getDesireListForSecretSantaEvent($participant, $event);
                 }
             }
+        }
+
+        if ($event->getState() === SecretSantaState::PHASE_1){
+            $godFatherDesireLists = [];
         }
 
         return $this->render('secret_santa/detail.html.twig', [
