@@ -118,6 +118,12 @@ class SecretSantaController extends BaseController
         );
 
         $isGodfather = $this->checkUserIsGodFatherOfSecretSantaEvent($participant, $event);
+        if ($event->getState() === SecretSantaState::PHASE_1 && $isGodfather){
+            $stateText = sprintf(
+                'Momentan werden Wichtel für das Event "%s" gezogen. Als Godfather hast du sobald alle Wichtel verteilt sind Zugriff auf die Listen aller Teilnehmer!',
+                $event->getName()
+            );
+        }
 
         if ($event->getState() === SecretSantaState::PHASE_1 && $firstRoundActive && !$isGodfather) {
             $secret = $secrets['first'];
