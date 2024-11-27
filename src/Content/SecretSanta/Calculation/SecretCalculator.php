@@ -105,6 +105,8 @@ class SecretCalculator
      */
     private function calculateUserSecretCombination(array $userIds, array $exclusions = [], array $secretsRound1 = []): array
     {
+        $userIds = array_values($userIds);
+
         $secrets = [];
         $tries = 0;
         while (count($secrets) === 0 && $tries < 10) {

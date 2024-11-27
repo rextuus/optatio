@@ -46,7 +46,7 @@ class ExcludeCreateType extends AbstractType
                     $qb = $repository->createQueryBuilder('u');
 
                     $qb->join('u.events', 'e');
-                        $qb->leftJoin(Exclusion::class, 'x', Join::WITH, 'u.id = x.excludedUser');
+                        $qb->leftJoin(Exclusion::class, 'x', Join::WITH, 'u.id = x.excludedUser and x.event = e');
                         $qb->where('e = :firstRoundEvent OR e = :secondRoundEvent');
                         $qb->andWhere('u != :currentUser');
                         $qb->andWhere(
