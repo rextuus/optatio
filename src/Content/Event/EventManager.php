@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Content\Event;
 
 use App\Content\Desire\DesireManager;
+use App\Content\DesireList\DesireListService;
 use App\Content\Event\Data\EventCreateData;
 use App\Content\Event\Data\EventData;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventCreateData;
@@ -31,6 +32,7 @@ class EventManager
         private DesireManager $desireManager,
         private UserService $userService,
         private SecretSantaEventService $secretSantaEventService,
+        private DesireListService $desireListService
     )
     {
 
@@ -123,17 +125,17 @@ class EventManager
         return $this->secretSantaEventService->createByData($createData);
     }
 
-    public function addParticipantToSecretSantaEvent(User $participant, SecretSantaEvent $event, SecretSantaEventJoinData $data): void
+    public function addParticipantToSecretSantaEvent(User $participant, SecretSantaEvent $ssEvent, SecretSantaEventJoinData $data): void
     {
         $events = [];
 
-        if ($data->isFirstRound() && !$event->getFirstRound()->getParticipants()->contains($participant)){
-            $this->addParticipant($event->getFirstRound(), $participant);
-            $events[] = $event->getFirstRound();
+        if ($data->isFirstRound() && !$ssEvent->getFirstRound()->getParticipants()->contains($participant)){
+            $this->addParticipant($ssEvent->getFirstRound(), $participant);
+            $events[] = $ssEvent->getFirstRound();
         }
-        if ($data->isSecondRound() && $event->getSecondRound() !== null && !$event->getSecondRound()->getParticipants()->contains($participant)){
-            $this->addParticipant($event->getSecondRound(), $participant);
-            $events[] = $event->getSecondRound();
+        if ($data->isSecondRound() && $ssEvent->getSecondRound() !== null && !$ssEvent->getSecondRound()->getParticipants()->contains($participant)){
+            $this->addParticipant($ssEvent->getSecondRound(), $participant);
+            $events[] = $ssEvent->getSecondRound();
         }
 
         // create default desire list so that each user of the two ss events can see
@@ -145,7 +147,40 @@ class EventManager
         );
         $eventRoles[] = 'USER_'.$participant->getId();
 
-        $this->desireManager->initDesireListsForSecretSantaEvent($participant, $event, $events, $eventRoles);
+        $this->desireManager->initDesireListsForSecretSantaEvent($participant, $ssEvent, $events, $eventRoles);
+    }
+
+    // Was created to fix if user need added to second round later
+    public function fixUser(User $participant, SecretSantaEvent $ssEvent, SecretSantaEventJoinData $data): void
+    {
+        if ($data->isFirstRound()){
+            $this->addParticipant($ssEvent->getFirstRound(), $participant);
+            $events[] = $ssEvent->getFirstRound();
+        }
+        if ($data->isSecondRound() && $ssEvent->getSecondRound() !== null){
+            $this->addParticipant($ssEvent->getSecondRound(), $participant);
+            $events[] = $ssEvent->getSecondRound();
+        }
+
+        $eventRoles = array_map(
+            function (Event $event){
+                return 'ROLE_EVENT_'.$event->getId().'_PARTICIPANT';
+            },
+            $events
+        );
+        $eventRoles[] = 'USER_'.$participant->getId();
+
+        $lists = $this->desireListService->findByUserAndEvent($participant, $ssEvent->getFirstRound());
+        if(count($lists) === 0){
+            $lists = $this->desireListService->findByUserAndEvent($participant, $ssEvent->getSecondRound());
+        }
+        if(count($lists) === 0){
+            throw new \Exception('No desire list found');
+        }
+        $list = $lists[0];
+
+        $this->desireManager->addAccessRolesToDesireList($eventRoles, $list);
+
     }
 
     public function initBirthdayEvent(EventCreateData $data, User $creator): Event

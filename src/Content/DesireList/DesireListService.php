@@ -52,6 +52,7 @@ class DesireListService
     }
 
     /**
+     * @param Event[] $events
      * @return DesireList[]
      */
     public function findByUserAndEvents(User $user, array $events): array

@@ -15,7 +15,7 @@ class SecretSantaEventJoinType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstRound', CheckboxType::class, ['required' => false, 'data'     => true,])
+            ->add('firstRound', CheckboxType::class, ['required' => false])
             ->add('secondRound', CheckboxType::class, ['required' => false])
             ->add('submit', SubmitType::class, ['label' => 'Mitmachen'])
         ;

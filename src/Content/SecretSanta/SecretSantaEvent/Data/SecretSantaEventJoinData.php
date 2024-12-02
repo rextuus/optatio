@@ -9,7 +9,7 @@ namespace App\Content\SecretSanta\SecretSantaEvent\Data;
  */
 class SecretSantaEventJoinData
 {
-    private bool $firstRound = true;
+    private bool $firstRound;
     private bool $secondRound;
 
     public function isFirstRound(): bool
