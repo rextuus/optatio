@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
+use App\Form\PasswordHashFormType;
 use App\Form\ResetPasswordRequestFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -173,5 +174,26 @@ class ResetPasswordController extends AbstractController
         $this->setTokenObjectInSession($resetToken);
 
         return $this->redirectToRoute('app_check_email');
+    }
+
+    #[Route('/plain', name: 'app_reset_password_plain')]
+
+    public function hashPassword(Request $request): Response
+    {
+        $form = $this->createForm(PasswordHashFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
+
+            return $this->render('reset_password/result.html.twig', [
+                'hashedPassword' => $hashedPassword,
+            ]);
+        }
+
+        return $this->render('reset_password/plain.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }
