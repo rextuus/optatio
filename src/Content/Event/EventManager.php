@@ -183,6 +183,28 @@ class EventManager
 
     }
 
+    public function fixDesireList(User $participant, SecretSantaEvent $ssEvent, SecretSantaEventJoinData $data): void
+    {
+        if ($data->isFirstRound()){
+//            $this->addParticipant($ssEvent->getFirstRound(), $participant);
+            $events[] = $ssEvent->getFirstRound();
+        }
+        if ($data->isSecondRound() && $ssEvent->getSecondRound() !== null){
+//            $this->addParticipant($ssEvent->getSecondRound(), $participant);
+            $events[] = $ssEvent->getSecondRound();
+        }
+
+        $eventRoles = array_map(
+            function (Event $event){
+                return 'ROLE_EVENT_'.$event->getId().'_PARTICIPANT';
+            },
+            $events
+        );
+        $eventRoles[] = 'USER_'.$participant->getId();
+
+        $this->desireManager->initDesireListsForSecretSantaEvent($participant, $ssEvent, $events, $eventRoles);
+    }
+
     public function initBirthdayEvent(EventCreateData $data, User $creator): Event
     {
         $event = $this->initEvent($data, $creator);
