@@ -53,7 +53,7 @@ class DesireManager
             $data->setDesire($desire);
             $data->setDesireList($desireList);
             $data->setValue($highestPriority + 1);
-            dd($data);
+
             $this->priorityService->createByData($data);
         }
     }
@@ -146,10 +146,6 @@ class DesireManager
         $data->setDesires([]);
 
         // check if there is already an desireList for this
-        dump($events);
-        $desireLists = $this->desireListService->findByUserAndEvent($participant, $events[0]);
-        dd($desireLists);
-
         $desireList = $this->desireListService->createByData($data);
 
         foreach ($eventRoles as $eventRole) {
