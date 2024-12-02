@@ -5,7 +5,22 @@
 </head>
 <body>
 <h1>Hashed Password Result</h1>
+<p>The hashed password is: <span id="hashedPassword">{{ hashedPassword }}</span></p>
+<button id="copyButton">Copy to Clipboard</button>
 
-<p>The hashed password is: {{ hashedPassword }}</p>
+<script>
+    const copyButton = document.getElementById('copyButton');
+    const hashedPassword = document.getElementById('hashedPassword');
+
+    copyButton.addEventListener('click', () => {
+        const el = document.createElement('textarea');
+        el.value = hashedPassword.textContent;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('Password copied to clipboard');
+    });
+</script>
 </body>
 </html>
