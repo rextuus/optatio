@@ -146,7 +146,19 @@ class DesireManager
         $data->setDesires([]);
 
         // check if there is already an desireList for this
-        $desireList = $this->desireListService->createByData($data);
+        $desireList = null;
+        $existingList = $this->desireListService->findByUserAndEvent($participant, $event->getFirstRound());
+        if (count($existingList) === 0) {
+            $existingList = $this->desireListService->findByUserAndEvent($participant, $event->getSecondRound());
+        }
+
+        if (count($existingList) !== 0) {
+            $desireList = $existingList[0];
+        }
+
+        if ($desireList === null) {
+            $desireList = $this->desireListService->createByData($data);
+        }
 
         foreach ($eventRoles as $eventRole) {
             $this->accessRoleService->addRoleToEntity($desireList, $eventRole);
