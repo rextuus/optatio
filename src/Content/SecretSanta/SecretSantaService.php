@@ -170,7 +170,7 @@ class SecretSantaService
         $secrets = $this->secretService->findBy(['event' => $event, 'provider' => $participant]);
 
         if (count($secrets) !== 1) {
-            throw new \Exception('Secret for event and user is not unique!');
+            throw new \Exception('Secret for event and user is not unique! Found' . count($secrets));
         }
 
         $secret = $secrets[0];
