@@ -46,8 +46,8 @@ class StoreSecretBackupForSsEventCommand extends Command
                 implode(
                     '',
                     array_map(function (Secret $secret) {
-                        return $secret->getProvider()->getId(). " -> ".$secret->getReceiver()->getId()."\n";
-//                        return $secret->getProvider()->getFullName(). " -> ?\n";
+//                        return $secret->getProvider()->getId(). " -> ".$secret->getReceiver()->getId()."\n";
+                        return $secret->getProvider()->getFullName(). " -> ?\n";
                     },
                         $event->getSecretBackups()->first()->getSecrets()->toArray()
                     )
