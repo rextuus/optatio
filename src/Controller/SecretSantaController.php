@@ -314,7 +314,7 @@ class SecretSantaController extends BaseController
         $exclusions = $event->getExclusions()->toArray();
 
         $result = $this->secretSantaService->testCalculation($event);
-
+dd($result);
         $showForm = $event->getState() === SecretSantaState::OPEN;
         return $this->render('secret_santa/start.html.twig', [
             'event' => $event,

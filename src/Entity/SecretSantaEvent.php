@@ -46,11 +46,15 @@ class SecretSantaEvent
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'godFatherEvents')]
     private Collection $godFathers;
 
+    #[ORM\OneToMany(mappedBy: 'secretSantaEvent', targetEntity: SecretBackup::class)]
+    private Collection $secretBackups;
+
     public function __construct()
     {
         $this->exclusions = new ArrayCollection();
         $this->secrets = new ArrayCollection();
         $this->godFathers = new ArrayCollection();
+        $this->secretBackups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,5 +232,35 @@ class SecretSantaEvent
         }
 
         return $this->firstRound->getParticipants()->toArray();
+    }
+
+    /**
+     * @return Collection<int, SecretBackup>
+     */
+    public function getSecretBackups(): Collection
+    {
+        return $this->secretBackups;
+    }
+
+    public function addSecretBackup(SecretBackup $secretBackup): static
+    {
+        if (!$this->secretBackups->contains($secretBackup)) {
+            $this->secretBackups->add($secretBackup);
+            $secretBackup->setSecretSantaEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSecretBackup(SecretBackup $secretBackup): static
+    {
+        if ($this->secretBackups->removeElement($secretBackup)) {
+            // set the owning side to null (unless already changed)
+            if ($secretBackup->getSecretSantaEvent() === $this) {
+                $secretBackup->setSecretSantaEvent(null);
+            }
+        }
+
+        return $this;
     }
 }

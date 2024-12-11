@@ -32,6 +32,9 @@ class Secret
     #[ORM\Column]
     private ?bool $retrieved = null;
 
+    #[ORM\ManyToOne(inversedBy: 'secrets')]
+    private ?SecretBackup $secretBackup = null;
+
     public function getSecretSantaEvent(): ?SecretSantaEvent
     {
         return $this->secretSantaEvent;
@@ -88,6 +91,18 @@ class Secret
     public function setRetrieved(bool $retrieved): static
     {
         $this->retrieved = $retrieved;
+
+        return $this;
+    }
+
+    public function getSecretBackup(): ?SecretBackup
+    {
+        return $this->secretBackup;
+    }
+
+    public function setSecretBackup(?SecretBackup $secretBackup): static
+    {
+        $this->secretBackup = $secretBackup;
 
         return $this;
     }

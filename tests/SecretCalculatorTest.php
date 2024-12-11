@@ -5,6 +5,7 @@ namespace App\Tests;
 
 use App\Content\SecretSanta\Calculation\SecretCalculator;
 use App\Entity\Exclusion;
+use App\Entity\Secret;
 use App\Entity\User;
 use PHPUnit\Framework\TestCase;
 
@@ -145,6 +146,52 @@ class SecretCalculatorTest extends TestCase
 
         $result = $this->calculator->testCalculateSecretsForDoubleRound($userRound1, $userRound2, [$exclusion]);
         $this->assertFalse($result->isSuccess());
+        $this->assertTrue($result->checkIntegrity());
+    }
+
+    public function testCalculateSecretsWithCorrespondingShipsShouldFindAValidCombinationUsingBackup(): void
+    {
+        /*
+         * R1: 1 => 2, 2 => 3, 3 => 1 || 1 => 3, 2 => 1, 3 => 2
+         * R2: 1 => 2, 2 => 3, 4 => 1 || 1 => 4, 2 => 1, 4 => 2
+         */
+        $user1 = $this->getUser(1, 'User1');
+        $user2 = $this->getUser(2, 'User2');
+        $user3 = $this->getUser(3, 'User3');
+        $user4 = $this->getUser(4, 'User4');
+
+        $userRound1 = [
+            $user1,
+            $user2,
+            $user3,
+        ];
+        $userRound2 = [
+            $user1,
+            $user2,
+            $user4,
+        ];
+
+        // if we exclude only in one direction we can solve it
+        $exclusion = new Exclusion();
+        $exclusion->setExclusionCreator($user1);
+        $exclusion->setExcludedUser($user3);
+
+        $backupSecret = new Secret();
+        $backupSecret->setProvider($user1);
+        $backupSecret->setReceiver($user2);
+
+        $result = $this->calculator->testCalculateSecretsForDoubleRound($userRound1, $userRound2, [$exclusion], [$backupSecret]);
+
+        // check if the backup secret is again there
+        $foundRestoredSecret = false;
+        foreach ($result->getRound1() as $secret){
+            if ($secret->getReceiver() === $user2->getId() && $secret->getProvider() === $user1->getId()){
+                $foundRestoredSecret = true;
+            }
+        }
+        $this->assertTrue($foundRestoredSecret);
+
+        $this->assertTrue($result->isSuccess());
         $this->assertTrue($result->checkIntegrity());
     }
 
