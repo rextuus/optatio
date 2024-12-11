@@ -158,6 +158,11 @@ class DesireManager
 
         if ($desireList === null) {
             $desireList = $this->desireListService->createByData($data);
+        }else{
+            $data = (new DesireListData())->initFromEntity($desireList);
+            $data->setEvents($events);
+
+            $this->desireListService->update($desireList, $data);
         }
 
         foreach ($eventRoles as $eventRole) {
