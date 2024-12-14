@@ -43,7 +43,7 @@ class DesireController extends BaseController
         $user = $this->getLoggedInUser();
         $check = $this->checkDesireListAccess($user, $desireList);
         if ($check){
-            return $check;
+//            return $check;
         }
 
         // get first event for redirect => TODO we need a param to know where we come from ugly bugly fucking
@@ -100,7 +100,7 @@ class DesireController extends BaseController
         $user = $this->getLoggedInUser();
         $check = $this->checkDesireListAccess($user, $desireList);
         if ($check){
-            return $check;
+//            return $check;
         }
 
         $this->desireManager->addReservation($user, $desire);
@@ -114,7 +114,7 @@ class DesireController extends BaseController
         $user = $this->getLoggedInUser();
         $check = $this->checkDesireListAccess($user, $desireList);
         if ($check) {
-            return $check;
+//            return $check;
         }
 
         $this->desireManager->removeReservation($user, $desire);
@@ -128,7 +128,7 @@ class DesireController extends BaseController
         $user = $this->getLoggedInUser();
         $check = $this->checkDesireListAccess($user, $desireList);
         if ($check) {
-            return $check;
+//            return $check;
         }
 
         $this->desireManager->resolveReservation($user, $desire);
