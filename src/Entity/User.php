@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -17,6 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAccessRoleInterface
 {
+    #[Groups(['live_component'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,6 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    #[Groups([])]
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Desire::class)]
     private Collection $desires;
 
@@ -529,5 +532,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFullName();
     }
 }

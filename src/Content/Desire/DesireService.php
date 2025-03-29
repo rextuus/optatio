@@ -104,7 +104,7 @@ class DesireService
      */
     public function findBy(array $conditions): array
     {
-        return $this->repository->findBy($conditions, ['priority' => 'DESC']);
+        return $this->repository->findBy($conditions);
     }
 
     /**

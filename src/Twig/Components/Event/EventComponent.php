@@ -1,22 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Event;
 
 use App\Content\Event\EventManager;
 use App\Entity\Event;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
 #[AsLiveComponent()]
 class EventComponent extends AbstractController
 {
@@ -24,7 +18,6 @@ class EventComponent extends AbstractController
 
     public User $user;
     public Event $event;
-    public bool $hasEditButton;
 
     public function isUserParticipant(): bool
     {
@@ -33,7 +26,7 @@ class EventComponent extends AbstractController
 
     public function joinDisabled(): string
     {
-        if ($this->isUserParticipant()){
+        if ($this->isUserParticipant()) {
             return 'disabled';
         }
         return '';
@@ -41,7 +34,7 @@ class EventComponent extends AbstractController
 
     public function exitDisabled(): string
     {
-        if (!$this->isUserParticipant()){
+        if (!$this->isUserParticipant()) {
             return 'disabled';
         }
         return '';
@@ -50,6 +43,23 @@ class EventComponent extends AbstractController
 
     public function canEdit(): bool
     {
-        return $this->hasEditButton && in_array(EventManager::getEventOwnerRole($this->event), $this->user->getRoles());
+        return in_array(
+            EventManager::getEventOwnerRole($this->event),
+            $this->user->getAccessRoles()->toArray()
+        );
     }
+
+    public function getHeaderText(): string
+    {
+        if ($this->canEdit()) {
+            return 'Dies ist dein Event';
+        }
+
+        if ($this->isUserParticipant()) {
+            return 'Du nimmst bereits teil';
+        }
+
+        return 'Das ist ein Event von ' . $this->event->getCreator()->getFirstName();
+    }
+
 }

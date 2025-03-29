@@ -8,37 +8,46 @@
             Home
         </div>
         <div class="page-header-image">
-            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            <i class="fa-solid fa-home fa-lg me-3 text-secondary"></i>
         </div>
     </div>
-
-
-    <div class="content-body">
-        <div>Willkommen bei Optatio</div>
-        Events bei denen du dabei bist
-        {% for event in secretSantaEvents %}
-            {{ component('SecretSantaComponent', { event: event, user: user }) }}
-        {% endfor %}
-        {% for event in events %}
-            {{ component('EventComponent', { event: event, user: user, hasEditButton: true }) }}
-        {% endfor %}
-
-        <div class="desire-image-button">
-            <a href="{{ path('app_event_list') }}">
-                <button>
-                    <i class="fa-solid fa-calendar-alt icon" style="color: #000000;"></i>
-                    <span class="desire-image-button-text">Zu den Events</span>
-                </button>
-            </a>
-        </div>
-        <div class="desire-image-button">
-            <a href="{{ path('app_event_list') }}">
-                <button>
-                    <i class="fa-solid fa-gifts icon" style="color: #000000;"></i>
-                    <span class="desire-image-button-text">Zu deiner globalen Wunschliste</span>
-                </button>
-            </a>
+    <div class="container py-5">
+        <!-- Welcome Section -->
+        <div class="alert alert-primary text-center" role="alert">
+            <h4 class="mb-0">Willkommen bei Optatio</h4>
         </div>
 
+        <!-- Participated Events Section -->
+        <div class="mt-4">
+            <h5 class="mb-3">Deine Events</h5>
+            {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
+            <div class="row">
+                {% for event in secretSantaEvents %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        {{ component('SecretSantaComponent', { event: event, user: user }) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Other Events Section -->
+        <div class="mt-4">
+            <h5 class="mb-3">Events bei denen du dabei bist</h5>
+            {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="mt-5 text-center">
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <a href="{{ path('app_event_list') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-calendar-alt"></i>
+                    <span>Zu den Events</span>
+                </a>
+                <a href="{{ path('app_desire_home') }}" class="btn btn-outline-success d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-gifts"></i>
+                    <span>Zu deiner globalen Wunschliste</span>
+                </a>
+            </div>
+        </div>
     </div>
 {% endblock %}

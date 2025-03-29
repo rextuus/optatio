@@ -1,0 +1,87 @@
+<div{{ attributes }} class="container-fluid">
+    <div class="card mb-3">
+        <!-- Card Header (Desire Name, Details, Priority and Action Buttons) -->
+        <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
+            <!-- Name and Priority Buttons -->
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Desire Name -->
+                <button class="btn btn-link text-white text-decoration-none p-0"
+                        style="flex: 1; min-width: 0;"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        aria-expanded="false"
+                        aria-controls="collapseDetails{{ this.event.id }}"
+                        data-bs-target="#collapseDetails{{ this.event.id }}">
+                    <h5 class="mb-0 clamp-text">
+                        {{ this.event.name }}
+                    </h5>
+                </button>
+
+                <!-- Buttons -->
+                <div class="d-flex flex-column align-items-stretch ms-3">
+                    {% if this.canEdit %}
+                        <a href="{{ path('app_event_join', {'event': event.id}) }}"
+                           class="no-uppercase btn btn-outline-light btn-sm btn-secondary mt-2">
+                            <i class="fa-solid fa-gears"></i>
+                            <span class="ms-2">Edit</span>
+                        </a>
+                    {% else %}
+                        {% if this.event.openToJoin and not this.isUserParticipant %}
+                            <a href="{{ path('app_event_join', {'event': event.id}) }}"
+                               class="no-uppercase btn btn-outline-light btn-sm btn-success mt-2">
+                                <i class="fa-solid fa-check"></i>
+                                <span class="ms-2">Teilnehmen</span>
+                            </a>
+                        {% endif %}
+                        {% if this.isUserParticipant %}
+                            <a href="{{ path('app_event_detail', {'event': event.id}) }}"
+                               class="no-uppercase btn btn-outline-light btn-sm btn-secondary mt-2">
+                                <i class="fa-solid fa-eye"></i>
+                                <span class="ms-2">Zum Event</span>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mt-2">
+                <small class="text-black-50">{{ this.getHeaderText() }}</small>
+            </div>
+        </div>
+
+        <div id="collapseDetails{{ this.event.id }}" class="collapse">
+            <div class="card-body">
+                <p class="fw-bold">{{ this.event.name }}</p>
+                <!-- Event Details -->
+                <p class="mt-3">Details:</p>
+                <ul class="list-group list-group-flush">
+                    <!-- Creator -->
+                    <li class="list-group-item"><strong>Ersteller:</strong> {{ event.creator.fullName }}</li>
+
+                    <!-- Event Type -->
+                    <li class="list-group-item"><strong>Typ:</strong> {{ event.eventType.value }}</li>
+
+                    <!-- Participants Count -->
+                    <li class="list-group-item">
+                        <strong>Teilnehmer:</strong> {{ event.participants|length }}
+                    </li>
+
+                    <!-- Open to Join -->
+                    <li class="list-group-item">
+                        <strong>Offen zur Teilnahme:</strong>
+                        {% set open = 'bg-danger' %}
+                        {% set openText = 'Nein' %}
+                        {% if this.event.openToJoin %}
+                            {% set open = 'bg-success' %}
+                            {% set openText = 'Ja' %}
+                        {% endif %}
+                        <span class="badge {{ open }}">{{ openText }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-footer text-muted">
+                <p><strong>Eingetragen Wünsche:</strong> {{ event.desireLists.first.desires|length }}</p>
+            </div>
+        </div>
+    </div>
+</div>

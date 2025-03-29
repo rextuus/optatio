@@ -1,147 +1,146 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wichtelrunde erstellen{% endblock %}
+{% block title %}Wichtelrunde bearbeiten{% endblock %}
 
 {% block body %}
-
     <div class="page-header">
         <div class="page-header-text">
-            Wunsch erstellen
+            Wunsch bearbeiten
         </div>
         <div class="page-header-image">
-            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            <i class="fa-solid fa-plus me-2"></i>
         </div>
     </div>
-    <div class="content-body">
+    <div class="container py-5">
 
-    <div class="form-area">
-        {{ form_start(form, {'method': 'POST'}) }}
-        <div class="my-custom-class-for-errors">
-            {{ form_errors(form) }}
-        </div>
+        <div class="card shadow">
+            <div class="card-body">
+                {{ form_start(form, {'method': 'POST', 'attr': {'class': 'needs-validation'}}) }}
 
+                {# Display form-wide errors if any #}
+                {% if form is not empty and form_errors(form) is not empty %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
 
-        <div class="form-input-field">
-            <label class="hidden" for="desire_create_name"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset ('assets/img/email.svg') }}" alt="Tile image">
+                {# Name Field #}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-tag"></i>
+                        </span>
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Name', 'id': 'name'}}) }}
+                    </div>
+                    {{ form_errors(form.name) }}
                 </div>
-                {{ form_widget(form.name, {'attr': {'class': 'form-style', 'placeholder':'Name', 'id': 'name'}}) }}
-            </div>
-        </div>
 
-        <div class="form-input-field">
-            <label class="hidden" for="desire_create_description"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset ('assets/img/description.svg') }}" alt="Tile image">
+                {# Description Field #}
+                <div class="mb-3">
+                    <label for="description" class="form-label">Beschreibung</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </span>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Beschreibung', 'id': 'description'}}) }}
+                    </div>
+                    {{ form_errors(form.description) }}
                 </div>
-                {{ form_widget(form.description, {'attr': {'class': 'form-style', 'placeholder':'Beschreibung', 'id': 'description'}}) }}
-            </div>
-        </div>
 
-        <div class="form-input-field">
-            <label class="hidden" for="desire_edit_url1"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
-                </div>
-                {{ form_widget(form.url1, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink (optional)', 'id': 'url1'}}) }}
-            </div>
-        </div>
+                {# URL Fields #}
+                {% set urlFields = [
+                    {'field': form.url1, 'label': 'Beispiellink (optional)'},
+                    {'field': form.url2, 'label': 'Beispiellink (optional)'},
+                    {'field': form.url3, 'label': 'Beispiellink (optional)'}
+                ] %}
+                {% for item in urlFields %}
+                    <div class="mb-3">
+                        <label for="{{ item.field.vars.id }}" class="form-label">{{ item.label }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa-solid fa-link"></i>
+                            </span>
+                            {{ form_widget(item.field, {'attr': {'class': 'form-control', 'placeholder': item.label}}) }}
+                        </div>
+                        {{ form_errors(item.field) }}
+                    </div>
+                {% endfor %}
 
-        <div class="form-input-field">
-            <label class="hidden" for="desire_edit_url2"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
-                </div>
-                {{ form_widget(form.url2, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink (optional)', 'id': 'url2'}}) }}
-            </div>
-        </div>
-
-        <div class="form-input-field">
-            <label class="hidden" for="desire_edit_url3"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset ('assets/img/link.svg') }}" alt="Tile image">
-                </div>
-                {{ form_widget(form.url3, {'attr': {'class': 'form-style', 'placeholder':'Beispiellink (optional)', 'id': 'url3'}}) }}
-            </div>
-        </div>
-
-        <div class="form-input-field">
-            <div class="form-input-info-text">Soll es exakt das Produkt aus dem Beispiellink sein?</div>
-            <label class="hidden" for="desire_edit_exactly"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset('assets/img/reason.svg') }}" alt="Tile image">
-                </div>
-                <div class="toggle-switch-container">
-                    <label class="switch">
-                        <label for="desire_edit_exactly" class="switch-toggle-label"></label>
-                        {{ form_widget(form.exactly, {'attr': {'class': 'toggle-box', 'placeholder': 'Exakt', 'id': 'exactly', 'value': 1}}) }}
-                        <span class="slider round"></span>
+                {# Toggle - Exactly #}
+                <div class="mb-3"
+                     data-controller="toggle-field"
+                     data-toggle-field-checked-value="Ja"
+                     data-toggle-field-unchecked-value="Nein">
+                    <label class="form-label d-flex align-items-center">
+                        <i class="fa-solid fa-fingerprint me-2 text-danger" data-toggle-field-target="emblem"></i> Soll es exakt das Produkt aus dem Beispiellink sein?
                     </label>
+                    <div class="form-check form-switch">
+                        {{ form_widget(form.exactly, {
+                            'attr': {
+                                'class': 'form-check-input',
+                                'data-action': 'change->toggle-field#updateLabel',
+                                'data-toggle-field-target': 'checkbox'
+                            }
+                        }) }}
+                        <label for="{{ form.exactly.vars.id }}" class="form-check-label" data-toggle-field-target="label">Nein</label>
+                    </div>
+                    {{ form_errors(form.exactly) }}
                 </div>
-            </div>
-        </div>
 
-        <div class="form-input-field">
-            <div class="form-input-info-text">Darf der Wunsch mehrfach erfüllt werden?</div>
-
-            <label class="hidden" for="desire_edit_exclusive"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset('assets/img/reason.svg') }}" alt="Tile image">
-                </div>
-                <div class="toggle-switch-container">
-                    <label class="switch">
-                        <label for="desire_edit_exclusive" class="switch-toggle-label"></label>
-                        {{ form_widget(form.exclusive, {'attr': {'class': 'toggle-box', 'placeholder': 'Exklusiv', 'id': 'exclusive', 'value': 1}}) }}
-                        <span class="slider round"></span>
+                {# Toggle - Exclusive #}
+                <div class="mb-3"
+                     data-controller="toggle-field"
+                     data-toggle-field-checked-value="Ja"
+                     data-toggle-field-unchecked-value="Nein">
+                    <label class="form-label d-flex align-items-center">
+                        <i class="fa-solid fa-copy me-2 text-danger" data-toggle-field-target="emblem"></i> Darf der Wunsch mehrfach erfüllt werden?
                     </label>
+                    <div class="form-check form-switch">
+                        {{ form_widget(form.exclusive, {
+                            'attr': {
+                                'class': 'form-check-input',
+                                'data-action': 'change->toggle-field#updateLabel',
+                                'data-toggle-field-target': 'checkbox'
+                            }
+                        }) }}
+                        <label for="{{ form.exclusive.vars.id }}" class="form-check-label" data-toggle-field-target="label">Nein</label>
+                    </div>
+                    {{ form_errors(form.exclusive) }}
                 </div>
-            </div>
-        </div>
 
-        <div class="form-input-field">
-            <div class="form-input-info-text">Soll der Wunsch anderen Usern angezeigt werden oder arbeitest du noch daran?</div>
-
-            <label class="hidden" for="desire_edit_listed"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <img src="{{ asset('assets/img/reason.svg') }}" alt="Tile image">
-                </div>
-                <div class="toggle-switch-container">
-                    <label class="switch">
-                        <label for="desire_edit_listed" class="switch-toggle-label"></label>
-                        {{ form_widget(form.listed, {'attr': {'class': 'toggle-box', 'placeholder': 'Sichtbar', 'id': 'listed', 'value': 1}}) }}
-                        <span class="slider round"></span>
+                {# Toggle - Listed #}
+                <div class="mb-3"
+                     data-controller="toggle-field"
+                     data-toggle-field-checked-value="Sichtbar"
+                     data-toggle-field-unchecked-value="Unsichtbar">
+                    <label class="form-label d-flex align-items-center">
+                        <i class="fa-solid fa-eye me-2 text-danger" data-toggle-field-target="emblem"></i> Soll der Wunsch anderen Usern angezeigt werden oder arbeitest du noch daran?
                     </label>
+                    <div class="form-check form-switch">
+                        {{ form_widget(form.listed, {
+                            'attr': {
+                                'class': 'form-check-input',
+                                'data-action': 'change->toggle-field#updateLabel',
+                                'data-toggle-field-target': 'checkbox'
+                            }
+                        }) }}
+                        <label for="{{ form.listed.vars.id }}" class="form-check-label" data-toggle-field-target="label">Nein</label>
+                    </div>
+                    {{ form_errors(form.listed) }}
                 </div>
-            </div>
-        </div>
 
-        {{ form_row(form._token) }}
-
-        <div class="form-submit-area">
-            <div class="form-submit-field">
-                {{ form_widget(form.submit, {'attr': {'class': 'btn'}}) }}
-            </div>
-
-            <div class="form-submit-field">
-                <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}">
-                    <button class="btn cancel">
+                {# Submit and Cancel Buttons #}
+                <div class="d-flex justify-content-between mt-4">
+                    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-success'}, 'label': 'Ändern'}) }}
+                    <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-secondary">
                         Abbrechen
-                    </button>
-                </a>
+                    </a>
+                </div>
+
+                {{ form_row(form._token) }}
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
-
-
-
-
 {% endblock %}

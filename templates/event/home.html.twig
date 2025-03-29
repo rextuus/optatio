@@ -8,25 +8,41 @@
             Events
         </div>
         <div class="page-header-image">
-            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+            <i class="fa-solid fa-calendar-xmark fa-lg me-3 text-secondary"></i>
         </div>
     </div>
 
 
-    <div class="content-body">
-        <div class="form-submit-field" style="margin-bottom: 10px">
-            <a href="{{ path('app_home') }}">
-                <button class="btn cancel">
-                    Zurück
-                </button>
-            </a>
+    <div class="container my-5">
+        <!-- Informational Text -->
+        <div class="text-center mb-4 bg-dark p-3 rounded">
+            <p class="text-white fs-5">
+                {% if filteredEvents|length == 0 %}
+                    Hier werden alle Events von anderen Personen angezeigt, an denen du teilnehmen kannst. Momentan sind keine Events vorhanden.
+                {% else %}
+                    Hier werden alle Events von anderen Personen angezeigt, an denen du teilnehmen kannst.
+                {% endif %}
+            </p>
+        </div>
+
+
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+            <div class="col-12 col-md-auto mb-3 mb-md-0">
+                <a href="{{ path('app_home') }}" class="btn btn-outline-secondary w-100">
+                    <i class="fa-solid fa-home me-2"></i> Zurück
+                </a>
+            </div>
+            <div class="col-12 col-md-auto">
+                <a href="{{ path('app_event_create') }}" class="btn btn-success w-100">
+                    <i class="fa-solid fa-plus me-2"></i> Neues Event erstellen
+                </a>
+            </div>
         </div>
 
         {% for event in secretSantaEvents %}
             {{ component('SecretSantaComponent', { event: event, user: user }) }}
         {% endfor %}
-        {% for event in events %}
-            {{ component('EventComponent', { event: event, user: user, hasEditButton: true }) }}
-        {% endfor %}
+        {{ component('Event:EventListComponent', { events: filteredEvents, user: user }) }}
     </div>
 {% endblock %}

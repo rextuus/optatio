@@ -1,7 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EventController!{% endblock %}
+{% block title %}Event erstellen{% endblock %}
 
 {% block body %}
-    {{ form (form) }}
+    <div class="container py-5">
+
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3">Event erstellen</h1>
+            <i class="fa-solid fa-calendar-plus fa-2xl text-primary"></i>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {{ form_start(form, {'method': 'POST', 'attr': {'class': 'needs-validation'}}) }}
+
+                {# Display form-wide errors if any #}
+                {% if form_errors(form) is not empty %}
+                    <div class="alert alert-danger mb-4">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                {# Name Field #}
+                <div class="mb-3">
+                    <label for="{{ form.name.vars.id }}" class="form-label">
+                        Name des Events
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-signature text-primary"></i>
+                        </span>
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Name des Events'}}) }}
+                    </div>
+                    {{ form_errors(form.name) }}
+                </div>
+
+                {# Event Type Field #}
+                <div class="mb-3">
+                    <label for="{{ form.eventType.vars.id }}" class="form-label">
+                        Art des Events
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-list text-primary"></i>
+                        </span>
+                        {{ form_widget(form.eventType, {'attr': {'class': 'form-control', 'placeholder': 'Art des Events auswählen'}}) }}
+                    </div>
+                    {{ form_errors(form.eventType) }}
+                </div>
+
+                {# Submit Button #}
+                <div class="d-flex justify-content-between mt-4">
+                    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-success'}, 'label': 'Speichern'}) }}
+                    <a href="{{ path('app_event_list') }}" class="btn btn-secondary">
+                        Abbrechen
+                    </a>
+                </div>
+
+                {# Remove form_rest since submit button is rendered explicitly #}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

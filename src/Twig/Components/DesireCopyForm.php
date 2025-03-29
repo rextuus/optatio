@@ -2,6 +2,8 @@
 
 namespace App\Twig\Components;
 
+use App\Content\Desire\ActionType;
+use App\Content\Desire\DesireManager;
 use App\Content\DesireList\Data\DesireCopyData;
 use App\Entity\User;
 use App\Form\DesireCopyType;
@@ -14,45 +16,55 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent()]
+#[AsLiveComponent]
 class DesireCopyForm extends AbstractController
 {
     use DefaultActionTrait;
     use ComponentWithFormTrait;
 
-    #[LiveProp(writable: true)]
+    #[LiveProp(writable: true, useSerializerForHydration: true, serializationContext: ['groups' => ['live_component']])]
     public ?DesireCopyData $initialFormData = null;
 
     #[LiveProp]
     public ?User $user = null;
 
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly DesireManager $desireManager,
+    ) {
+    }
+
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(DesireCopyType::class, $this->initialFormData, ['user' => $this->user]);
+        return $this->createForm(
+            DesireCopyType::class,
+            $this->initialFormData,
+            ['user' => $this->user, 'form_data' => $this->initialFormData]
+        );
     }
 
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager)
+    public function submit(): void
     {
-        // Submit the form! If validation fails, an exception is thrown
-        // and the component is automatically re-rendered with the errors
+        $this->submitForm();
 
-//        $this->submitForm();
+        /** @var DesireCopyData $copyData */
+        $copyData = $this->getForm()->getData();
 
-        $form = $this->form;
-
-        // Perform form validation and logic
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Form is valid, process the data
-            $data = $form->getData();
-            // ... (handle the data, save to database, etc.)
-
-            // Optionally, add a flash message or handle response
-            $this->addFlash('success', 'Form saved successfully!');
-        } else {
-            // Handle form errors
-            $errors = $form->getErrors();
-            // ... (handle the errors, update UI, etc.)
-        }
+        match ($copyData->getAction()) {
+            ActionType::TEILEN => $this->desireManager->shareDesiresBetweenLists(
+                $copyData->getTo(),
+                $copyData->getDesires()
+            ),
+            ActionType::KOPIEREN => $this->desireManager->hardCopyDesiresBetweenLists(
+                $copyData->getTo(),
+                $copyData->getDesires()
+            ),
+            ActionType::VERSCHIEBEN => $this->desireManager->switchDesireBetweenLists(
+                $copyData->getFrom(),
+                $copyData->getTo(),
+                $copyData->getDesires()
+            ),
+        };
     }
 }

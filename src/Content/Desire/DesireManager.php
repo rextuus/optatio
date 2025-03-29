@@ -58,6 +58,22 @@ class DesireManager
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    public function setPriority(DesireList $desireList, Desire $desire, int $priorityValue): void
+    {
+        $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
+        if (count($priorities) !== 1) {
+            throw new Exception('No unique Priority found for desire/desireList combination');
+        }
+        $priority = $priorities[0];
+
+        $priorityData = (new PriorityData())->initFromEntity($priority);
+        $priorityData->setValue($priorityValue);
+        $this->priorityService->update($priority, $priorityData);
+    }
+
     public function increasePriority(DesireList $desireList, Desire $desire): void
     {
         $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
@@ -473,5 +489,23 @@ class DesireManager
     public function shareDesiresBetweenLists(DesireList $targetList, array $desires): void
     {
         $this->desireListService->shareDesiresBetweenLists($targetList, $desires);
+    }
+
+    /**
+     * @param array<Desire> $desires
+     */
+    public function switchDesireBetweenLists(DesireList $from, DesireList $to, array $desires): void
+    {
+        $this->entityManager->persist($from);
+        $this->entityManager->persist($to);
+        foreach ($desires as $desire) {
+            $from->removeDesire($desire);
+            $to->addDesire($desire);
+            $desire->removeDesireList($from);
+            $desire->addDesireList($to);
+            $this->entityManager->persist($desire);
+        }
+
+        $this->entityManager->flush();
     }
 }

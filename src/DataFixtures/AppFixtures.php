@@ -46,7 +46,7 @@ class AppFixtures extends Fixture
             $user = new User();
             $user->setEmail('user' . $i . '@mail.com ');
             $user->setFirstName('Peter' . $i);
-            $user->setPassword('$2y$13$tpF5lSTwDUasuUJmTm1AheHE1JQ5sy32HAVOJUMIr8DbliRe0KXWW');
+            $user->setPassword('$2y$13$tpF5lSTwDUasuUJmTm1AheHE1JQ5sy32HAVOJUMIr8DbliRe0KXWW'); // 123Katzen
             $user->setLastName('Pan' . $i);
             $user->setIsVerified(true);
             $manager->persist($user);
@@ -142,39 +142,39 @@ class AppFixtures extends Fixture
 
         $manager->flush();
 
-        $this->createSecretSantaEvent();
-
-        $user = $this->userService->findAll();
-        $ssEventData = new SecretSantaEventCreateData();
-        $ssEventData->setName('Oster Weihnachten');
-        $ssEventData->setFirstRoundName('Heilig Abend Oster');
-        $ssEventData->setSecondRoundName(null);
-
-        $ssEvent = $this->eventManager->initSecretSantaEvent($ssEventData, $user[0]);
-
-        $data = new SecretSantaEventJoinData();
-        $data->setFirstRound(true);
-        $data->setSecondRound(false);
-        $this->eventManager->addParticipantToSecretSantaEvent($user[0], $ssEvent, $data);
-
-        $data = new SecretSantaEventJoinData();
-        $data->setFirstRound(true);
-        $data->setSecondRound(false);
-        $this->eventManager->addParticipantToSecretSantaEvent($user[1], $ssEvent, $data);
-
-        $data = new SecretSantaEventJoinData();
-        $data->setFirstRound(true);
-        $data->setSecondRound(false);
-        $this->eventManager->addParticipantToSecretSantaEvent($user[3], $ssEvent, $data);
-
-        $data = new SecretSantaEventJoinData();
-        $data->setFirstRound(true);
-        $data->setSecondRound(false);
-        $this->eventManager->addParticipantToSecretSantaEvent($user[4], $ssEvent, $data);
-
-        $this->secretSantaService->addGodfather($user[4], $ssEvent);
-
-        $this->secretSantaService->triggerCalculation($ssEvent);
+//        $this->createSecretSantaEvent();
+//
+//        $user = $this->userService->findAll();
+//        $ssEventData = new SecretSantaEventCreateData();
+//        $ssEventData->setName('Oster Weihnachten');
+//        $ssEventData->setFirstRoundName('Heilig Abend Oster');
+//        $ssEventData->setSecondRoundName(null);
+//
+//        $ssEvent = $this->eventManager->initSecretSantaEvent($ssEventData, $user[0]);
+//
+//        $data = new SecretSantaEventJoinData();
+//        $data->setFirstRound(true);
+//        $data->setSecondRound(false);
+//        $this->eventManager->addParticipantToSecretSantaEvent($user[0], $ssEvent, $data);
+//
+//        $data = new SecretSantaEventJoinData();
+//        $data->setFirstRound(true);
+//        $data->setSecondRound(false);
+//        $this->eventManager->addParticipantToSecretSantaEvent($user[1], $ssEvent, $data);
+//
+//        $data = new SecretSantaEventJoinData();
+//        $data->setFirstRound(true);
+//        $data->setSecondRound(false);
+//        $this->eventManager->addParticipantToSecretSantaEvent($user[3], $ssEvent, $data);
+//
+//        $data = new SecretSantaEventJoinData();
+//        $data->setFirstRound(true);
+//        $data->setSecondRound(false);
+//        $this->eventManager->addParticipantToSecretSantaEvent($user[4], $ssEvent, $data);
+//
+//        $this->secretSantaService->addGodfather($user[4], $ssEvent);
+//
+//        $this->secretSantaService->triggerCalculation($ssEvent);
 
     }
 

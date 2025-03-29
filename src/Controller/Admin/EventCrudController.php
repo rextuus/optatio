@@ -27,6 +27,7 @@ class EventCrudController extends AbstractCrudController
             TextField::new('name'),
             ChoiceField::new('eventType')->setChoices(EventType::cases()),
             ArrayField::new('accessRoles'),
+            ArrayField::new('participants'),
         ];
     }
 }

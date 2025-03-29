@@ -1,95 +1,113 @@
-<div{{ attributes }}>
-    <div class="desire-card">
-        <div class="desire-banner {{ this.HeaderClass }}">{{ this.headerText }}</div>
-        <div class="toggle-indicator"></div>
+<div{{ attributes }} class="container-fluid">
+    <div class="card mb-3">
+        <!-- Card Header (Desire Name, Details, Priority and Action Buttons) -->
+        <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
+            <!-- Name and Priority Buttons -->
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Desire Name -->
+                <button class="btn btn-link text-white text-decoration-none p-0"
+                        style="flex: 1; min-width: 0;"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        aria-expanded="false"
+                        aria-controls="collapseDetails{{ this.desire.id }}"
+                        data-bs-target="#collapseDetails{{ this.desire.id }}">
+                    <h5 class="mb-0 clamp-text">
+                        {{ this.desire.name }}
+                    </h5>
+                </button>
 
-        <div class="desire-header">
-
-            <div class="card-toggle" onclick="toggleEventDetails(event)">
-                <div class="desire-name">{{ this.desire.name }}</div>
-            </div>
-
-            <div class="info-button-row">
-                <div class="info-row">
-                    <div class="info-tale {{ this.isExclusive() }}">
-                        <img src="{{ asset('assets/img/multiple.svg') }}" alt="Tile image">
-                    </div>
-                    <div class="info-tale {{ this.isExactly() }}">
-                        <img src="{{ asset('assets/img/exactly.svg') }}" alt="Tile image">
-                    </div>
-                </div>
-                {% if  this.checkIsResolvedByUser == false%}
-                <div class="button-row">
-                    <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
-                        <a href="{{ this.ButtonLink }}">
-                            <button {{ this.reserveDisabled }}>
-                                {{this.reserveButtonText }}
-                            </button>
+                <!-- Priority Buttons -->
+                {% if this.checkIsResolvedByUser == false %}
+                    <div class="d-flex flex-column align-items-stretch ms-3">
+                        <a href="{{ this.ButtonLink }}" class="no-uppercase btn btn-outline-light btn-sm {{ this.reserveDisabled }} {{ this.reserveButtonStyle }}">
+                            <i class="fa-solid fa-basket-shopping"></i>
+                            <span class="ms-2">{{ this.reserveButtonText }}</span>
                         </a>
-                    </div>
-                    {% if this.checkIsReservedByUser%}
-                        <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
-                            <a href="{{ this.ResolveButtonLink }}">
-                                <button {{ this.reserveDisabled }}>
-                                    Bestätigen
-                                </button>
+                        {% if this.checkIsReservedByUser %}
+                            <a href="{{ this.ResolveButtonLink }}" class="no-uppercase btn btn-outline-light btn-sm btn-success mt-2">
+                                <i class="fa-solid fa-check"></i>
+                                <span class="ms-2">Bestätigen</span>
                             </a>
-                        </div>
-                    {% endif %}
-                </div>
+                        {% endif %}
+                    </div>
                 {% endif %}
             </div>
-        </div>
-        <div class="desire-details">
-            {% if this.isExactly() %}
-                <h2>ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h2>
-            {% endif %}
 
-            <div id="imageModal" class="modal" onclick="closeModal()">
-                <span class="close">&times;</span>
-                <img class="modal-content" id="img01">
+            <div class="mt-2">
+                <small class="text-black-50">{{ this.getHeaderText() }}</small>
             </div>
-            <div class="image-container">
-                {% for image in this.desire.images %}
-                    <div class="image" onclick="showLargeImage('{{ image.cdnUrl }}')">
-                        <img src="{{ image.cdnUrl }}">
-                    </div>
+
+            <!-- Details and Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-fingerprint fa-lg {{ this.exactly }} me-3"></i>
+                    <i class="fa-solid fa-copy fa-lg {{ this.isExclusive }} me-3"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Collapse Section for Desire Details -->
+        <div id="collapseDetails{{ this.desire.id }}" class="collapse">
+            <div class="card-body">
+                {% if this.isExactly() == 'text-success' %}
+                    <h5 class="text-danger">ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h5>
+                {% endif %}
+                {% if this.getHeaderText() == 'Von jemand anderem reserviert' and this.isExclusive == 'text-success' %}
+                    <h5 class="text-danger">Zwar schon von jemand anderem reserviert, aber es darf mehrfach geschenkt werden</h5>
+                {% endif %}
+
+
+                <!-- Description -->
+                <h5 class="mt-3">Beschreibung:</h5>
+                <p>
+                    {{ this.desire.description }}
+                </p>
+                <!-- Image Section -->
+                <div class="row mt-3">
+                    {% for image in this.desire.images %}
+                        <div class="col-6 col-sm-4 col-md-3">
+                            <div role="button" onclick="showLargeImage('{{ image.cdnUrl }}')">
+                                <img src="{{ image.cdnUrl }}" class="img-thumbnail" alt="Desire Image">
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- URLs -->
+                {% for url in this.desire.urls %}
+                    <p class="mt-2">
+                        <a href="{{ url.path }}" target="_blank" class="btn btn-link">Beispiel</a>
+                    </p>
                 {% endfor %}
             </div>
 
-            {% for url in this.desire.urls %}
-                <p>
-                    <a href="{{ url.path }}" target="_blank">Beispiel</a>
-                </p>
-            {% endfor %}
-            <h3>Beschreibung:</h3>
-            <p>
-                {{ this.desire.description }}
-            </p>
+            <!-- Card Footer with Description -->
+            <div class="card-footer">
+                <p>{{ this.desire.name }}</p>
+            </div>
         </div>
     </div>
 
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img class="img-fluid" id="img01" alt="Large Image">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
 <script>
-    function toggleEventDetails(event) {
-        const eventCard = event.currentTarget.parentElement.parentElement;
-        if (!event.target.matches('.join-button')) {
-            eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
-            eventCard.classList.toggle('expanded');
-        }
-    }
-
     function showLargeImage(imageSrc) {
-        const modal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('img01');
-        modal.style.display = 'block';
-        modalImg.src = imageSrc;
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = 'none';
+        const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+        document.getElementById('img01').src = imageSrc;
+        modal.show();
     }
 </script>

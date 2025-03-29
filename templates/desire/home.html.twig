@@ -12,10 +12,35 @@
             <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
         </div>
     </div>
-    <div class="content-body">
-        {{ component('DesireCopyForm', {
-            initialFormData: initialFormData,
-            user: user,
-        }) }}
+{#    {{ component('Test') }}#}
+    <div class="content-body py-5">
+        <div class="container">
+            <!-- Description Section -->
+            <div class="description bg-dark p-4 shadow-sm rounded mb-4">
+                <h2 class="h4 mb-3 text-primary">
+                    <i class="fa-solid fa-info-circle me-2"></i> Wunsch Optionen
+                </h2>
+                <p class="mb-3">
+                    <strong>Wunsch sharen:</strong> Der Wunsch ist gleichzeitig in beiden Listen. Editierst du ihn in der einen Liste, so wird die Änderung auch in der anderen Liste angezeigt. Reserviert jemand den Wunsch in der einen Liste, so ist er auch in der anderen reserviert.
+                </p>
+                <p class="mb-3">
+                    <em>Beispiel:</em> Du möchtest einen neuen Rasierer bekommen. Dir ist egal, ob du ihn zum Geburtstag oder zum Namenstag bekommst. Aber du willst ihn nur einmal. Also sharest du ihn.
+                </p>
+                <p class="mb-0">
+                    <strong>Wunsch kopieren:</strong> Der Wunsch wird so wie er jetzt ist in die andere Liste kopiert. Ab jetzt existiert er zweimal. Änderungen in dem einen beeinflussen nicht den anderen Wunsch.
+                </p>
+            </div>
+
+            <!-- Form Component -->
+            <div class="card shadow-sm p-4 bg-white rounded">
+                {{ component('DesireCopyForm', {
+                    initialFormData: initialFormData,
+                    user: user,
+                }) }}
+            </div>
+        </div>
+
+        {{ component('DesireListComponent', {desires: masterList.desires.toArray, list: masterList, desireCount: masterList.desires|length}) }}
+
     </div>
 {% endblock %}

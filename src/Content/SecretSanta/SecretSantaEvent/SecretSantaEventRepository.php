@@ -65,7 +65,10 @@ class SecretSantaEventRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findSecretSantaEvents(?User $user = null)
+    /**
+     * @return array<SecretSantaEvent>
+     */
+    public function findSecretSantaEvents(?User $user = null): array
     {
         $qb = $this->createQueryBuilder('sse');
 

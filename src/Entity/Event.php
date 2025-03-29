@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Content\Event\EventInterface;
 use App\Content\Event\EventRepository;
 use App\Content\Event\EventType;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Event
+class Event implements EventInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -212,5 +213,10 @@ class Event
         return array_filter($participants, function($participant) use ($godFatherIds) {
             return !in_array($participant->getId(), $godFatherIds);
         });
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
     }
 }

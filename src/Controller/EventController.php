@@ -25,9 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class EventController extends AbstractController
 {
-
-
-    public function __construct(private EventManager $eventManager)
+    public function __construct(private readonly EventManager $eventManager)
     {
     }
 
@@ -37,8 +35,28 @@ class EventController extends AbstractController
         $events = $eventService->findEventsWithoutSecretSantaRounds();
         $secretSantaEvents = $secretSantaEventService->findBy([]);
 
+        $user = $this->getUser();
+
+        $filteredEvents = [];
+        $filteredSecretSantaEvents = [];
+        foreach ($events as $event) {
+            if ($event->getCreator() !== $user && !in_array($user, $event->getParticipants()->toArray())) {
+                $filteredEvents[] = $event;
+            }
+        }
+
+        foreach ($secretSantaEvents as $secretSantaEvent) {
+            if (!$secretSantaEvent->getCreator() === $user
+                && !in_array($user, $secretSantaEvent->getOverallParticipants())
+            ) {
+                $filteredSecretSantaEvents[] = $secretSantaEvent;
+            }
+        }
+
         return $this->render('event/home.html.twig', [
             'user' => $this->getUser(),
+            'filteredEvents' => $filteredEvents,
+            'filteredSecretSantaEvents' => $filteredSecretSantaEvents,
             'events' => $events,
             'secretSantaEvents' => $secretSantaEvents,
         ]);
@@ -71,7 +89,7 @@ class EventController extends AbstractController
     public function contribute(Event $event): Response
     {
         $user = $this->getUser();
-        if (!$user instanceof User){
+        if (!$user instanceof User) {
             throw new \Exception('User not found');
         }
 
@@ -79,7 +97,7 @@ class EventController extends AbstractController
         $user = $this->getUser();
 
         $roles = [];
-        if ($user instanceof User){
+        if ($user instanceof User) {
             $roles[] = $user->getAccessRoles()->toArray();
         }
 
@@ -101,7 +119,7 @@ class EventController extends AbstractController
     {
         $userDesireList = $event->getDesireLists()->first();
 
-        if ($userDesireList->getOwner() !== $this->getUser()){
+        if ($userDesireList->getOwner() !== $this->getUser()) {
             return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $userDesireList->getId()]));
         }
 
@@ -109,5 +127,16 @@ class EventController extends AbstractController
             'event' => $event,
             'userDesireList' => $userDesireList,
         ]);
+    }
+
+    private function checkUserIsParticipantOfEvent(User $user, Event $targetEvent): bool
+    {
+        return count(
+            $user->getEvents()->filter(
+                function (Event $event) use ($targetEvent) {
+                    return $event->getId() === $targetEvent->getId();
+                }
+            )
+        );
     }
 }

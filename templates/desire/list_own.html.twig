@@ -8,42 +8,43 @@
             Deine {{ list.name }}
         </div>
         <div class="page-header-image">
-            <img src="{{ asset('assets/img/heart.svg') }}" alt="Tile image">
+            <i class="fa-solid fa-heart fa-lg me-3 text-danger"></i>
         </div>
     </div>
+    <div class="container my-5"> <!-- Add container for responsive layout -->
+        <!-- Informational Text -->
+        <div class="text-center mb-4 bg-dark p-3 rounded">
+            <p class="text-white fs-5">
+                {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, dir ist egal welchen der Wünsche sich die Leute aussuchen'%}
+                {% if list.hasPriority %}
+                    {% set priority = '<span class="fw-bold text-warning">priorisiert.</span> Das bedeutet, dass du den Wunsch ganz oben gerne als erstes erfüllt haben möchtest!'%}
+                {% endif %}
+                Deine Wunschliste ist momentan {{ priority|raw }}
+            </p>
+        </div>
 
-    <div class="content-body">
-        <div class="desire-image-button">
-            {% if ssEvent is not null %}
-            <a href="{{ path('app_secret_santa_detail',  {'event': ssEvent.id}) }}">
+
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+            <div class="col-12 col-md-auto mb-3 mb-md-0">
+                {% if ssEvent is not null %}
+                    <a href="{{ path('app_secret_santa_detail', {'event': ssEvent.id}) }}" class="btn btn-outline-secondary w-100">
+                        <i class="fa-solid fa-gifts me-2"></i> Zum Event
+                    </a>
                 {% else %}
-                <a href="{{ path('app_event_detail',  {'event': event.id}) }}">
-                    {% endif %}
-                <button>
-                    <img src="{{ asset('assets/img/event.svg') }}" alt="Tile image">
-                    <div class="desire-image-button-text">Übersicht</div>
-                </button>
-            </a>
+                    <a href="{{ path('app_event_detail', {'event': event.id}) }}" class="btn btn-outline-secondary w-100">
+                        <i class="fa-solid fa-gifts me-2"></i> Zum Event
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-auto">
+                <a href="{{ path('app_desire_create', {'desireList': list.id}) }}" class="btn btn-success w-100">
+                    <i class="fa-solid fa-plus me-2"></i> Neuer Wunsch
+                </a>
+            </div>
         </div>
 
-        <div class="desire-image-button">
-            <a href="{{ path('app_desire_create',  {'desireList': list.id}) }}">
-                <button>
-                    <img src="{{ asset('assets/img/list_add.svg') }}" alt="Tile image">
-                    <div class="desire-image-button-text">Neuer Wunsch</div>
-                </button>
-            </a>
-        </div>
-
-
-        {% for desire in desires %}
-            {% if  loop.index  == 1 %}
-            {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: true, disableDown: false}) }}
-            {% elseif loop.index == desires|length  %}
-                {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: false, disableDown: true}) }}
-            {% else %}
-                {{ component('DesireComponent', { desire: desire, desireList: list, disableUp: false, disableDown: false}) }}
-            {% endif %}
-        {% endfor %}
+        <!-- Desires List -->
+        {{ component('DesireListComponent', {desires: desires, list: list, desireCount: desires|length}) }}
     </div>
 {% endblock %}

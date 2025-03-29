@@ -38,6 +38,8 @@ class DesireListData
 
     private bool $master = false;
 
+    private bool $hasPriority = false;
+
     public function getAccessRoles(): array
     {
         return $this->accessRoles;
@@ -115,6 +117,17 @@ class DesireListData
         return $this;
     }
 
+    public function hasPriority(): bool
+    {
+        return $this->hasPriority;
+    }
+
+    public function setHasPriority(bool $hasPriority): DesireListData
+    {
+        $this->hasPriority = $hasPriority;
+        return $this;
+    }
+
     public function initFromEntity(DesireList $desireList): DesireListData
     {
         $this->setDesires($desireList->getDesires()->toArray());
@@ -123,6 +136,7 @@ class DesireListData
         $this->setName($desireList->getName());
         $this->setDescription($desireList->getDescription());
         $this->setMaster($desireList->isMaster());
+        $this->setHasPriority($desireList->hasPriority());
 
         return $this;
     }

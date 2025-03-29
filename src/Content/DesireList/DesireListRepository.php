@@ -99,4 +99,22 @@ class DesireListRepository extends ServiceEntityRepository
         $qb->setParameter('owner', $user);
         $qb->andWhere($qb->expr()->eq('d.isMaster', ':isMaster'));
     }
+
+    /**
+     * @return array<DesireList>
+     */
+    public function getListForUserExcludingSelectedOne(User $user, ?DesireList $fromDesireList): array
+    {
+        $qb = $this->createQueryBuilder('d');
+        $qb->select('DISTINCT d');
+        $qb->where('d.owner = :owner');
+        $qb->setParameter('owner', $user);
+
+        if ($fromDesireList) {
+            $qb->andWhere('d.id != :fromDesireListId');
+            $qb->setParameter('fromDesireListId', $fromDesireList->getId());
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

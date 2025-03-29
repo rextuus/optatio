@@ -1,4 +1,4 @@
-import './bootstrap.js';
+import * as bootstrap from 'bootstrap';
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -17,6 +17,7 @@ import './styles/form.scss';
 import './styles/secret_santa.scss';
 import './styles/event.scss';
 import './styles/desire.scss';
+import './bootstrap.js';
 // import './styles/account-debt-overview.scss';
 // import './styles/account_landing.scss';
 // import './styles/banner.scss';

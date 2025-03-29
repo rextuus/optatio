@@ -1,61 +1,99 @@
+<div {{ attributes }} class="form-area container p-4 bg-light shadow rounded">
+    {{ form_start(form, {
+        attr: {
+            'data-action': 'live#action:prevent',
+            'data-live-action-param': 'submit',
+            'class': 'row gy-3'
+        }
+    }) }}
 
-    <div {{ attributes }} class="form-area">
-        {{ form_start(form, {
-            attr: {
-            }
-        }) }}
-
-        <div class="my-custom-class-for-errors">
-            {{ form_errors(form) }}
-        </div>
-
-        <div class="form-input-field">
-            <label class="" for="form_from">Von</label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <i class="fas fa-arrow-down"></i>
-                </div>
-                {{ form_widget(form.from, {'attr': {'class': 'form-style', 'placeholder':'From', 'id': 'form_from'}}) }}
-                {{ form_errors(form.from) }}
+    <!-- Form-Wide Errors -->
+    {% if form_errors(form) is not empty %}
+        <div class="col-12">
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                {{ form_errors(form) }}
             </div>
         </div>
+    {% endif %}
 
-
-
-        <div class="form-input-field">
-            <label class="hidden" for="form_desires"></label>
-            <div class="image-form-row">
-                <div class="image-form-row-icon">
-                    <i class="fas fa-swift"></i>
-                </div>
-                <div class="desires-list">
-                    {% for child in form.desires %}
-                        <div class="form-checkbox">
-                            {{ form_widget(child) }}
-                            {{ form_label(child) }}
-                        </div>
-                    {% endfor %}
-                </div>
-                {{ form_errors(form.desires) }}
-            </div>
+    <!-- Variante Field -->
+    <div class="col-md-6">
+        <label class="form-label" for="form_action">
+Variante
+        </label>
+        <div class="input-group">
+            <span class="input-group-text text-white">
+                <i class="fas fa-shapes text-primary"></i>
+            </span>
+            {{ form_widget(form.action, {'attr': {'class': 'form-control', 'placeholder': 'Variante auswählen', 'id': 'form_action'}}) }}
         </div>
-
-        <div class="form-input-field">
-            <label class="" for="form_to">Nach</label>
-            <div class="image-form-row">
-                <div class="image-form-row-image">
-                    <i class="fas fa-tarp"></i>
-                </div>
-                {{ form_widget(form.to, {'attr': {'class': 'form-style', 'placeholder':'To', 'id': 'form_to'}}) }}
-                {{ form_errors(form.to) }}
-            </div>
+        <div class="text-danger">
+            {{ form_errors(form.action) }}
         </div>
-
-        {{ form_row(form._token) }}
-
-        <div class="form-submit-field" style="margin-top: 15px;">
-            <button type="submit" class="btn">{{ 'Save' | trans }}</button>
-        </div>
-
-        {{ form_end(form) }}
     </div>
+
+    <!-- Von Field -->
+    <div class="col-md-6">
+        <label class="form-label" for="form_from">
+Von
+        </label>
+        <div class="input-group">
+            <span class="input-group-text text-white">
+                <i class="fas fa-arrow-down text-primary"></i>
+            </span>
+            {{ form_widget(form.from, {'attr': {'class': 'form-control', 'placeholder': 'Von', 'id': 'form_from'}}) }}
+        </div>
+        <div class="text-danger">
+            {{ form_errors(form.from) }}
+        </div>
+    </div>
+
+    <!-- Desires Field -->
+    <div class="col-12">
+        <label class="form-label">
+            <i class="fa-solid fa-list-ul me-2 text-primary"></i> Wünsche
+        </label>
+        <div class="form-check mb-3">
+            <div class="desires-list">
+                {% for child in form.desires %}
+                    <div class="form-check">
+                        {{ form_widget(child, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(child, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="text-danger">
+            {{ form_errors(form.desires) }}
+        </div>
+    </div>
+
+    <!-- Nach Field -->
+    <div class="col-md-6">
+        <label class="form-label" for="form_to">
+ Nach
+        </label>
+        <div class="input-group">
+            <span class="input-group-text text-white">
+                <i class="fa-solid fa-bullseye text-primary"></i>
+            </span>
+            {{ form_widget(form.to, {'attr': {'class': 'form-control', 'placeholder': 'Nach', 'id': 'form_to'}}) }}
+        </div>
+        <div class="text-danger">
+            {{ form_errors(form.to) }}
+        </div>
+    </div>
+
+    {{ form_row(form._token) }}
+
+    <!-- Submit Button -->
+    <div class="col-12 text-end mt-3">
+        <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Anwenden</span>
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+</div>

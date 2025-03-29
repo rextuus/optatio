@@ -1,4 +1,6 @@
 @import "variables";
+@import '~bootstrap/scss/bootstrap';
+
 body{
     background: black;
     margin: 0;
@@ -52,4 +54,68 @@ body{
     &.is-warning{
         background-color: #0ea5e9;
     }
+}
+
+//bootstrap overwrites
+.desire-card-header {
+    background-color: #ffffff !important; /* Example custom background color */
+    h5{
+        color: black;
+    }
+}
+.no-uppercase {
+    text-transform: none !important; /* Ensure it overrides Bootstrap's settings */
+}
+
+.disabled-desire-priority {
+    cursor: not-allowed;
+    pointer-events: none; /* Makes the element unclickable */
+    opacity: 0.6; /* Optional: Dim the button to indicate it's disabled */
+}
+
+//new classes since bootstrap change
+.text-truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+button.btn-link {
+    min-width: 0; /* Required for truncation to work inside flex parent */
+    text-align: left; /* Optional: Align button text left */
+}
+.clamp-text {
+    display: -webkit-box; /* Required for clamping */
+    -webkit-line-clamp: 2; /* Number of lines to display before truncating */
+    -webkit-box-orient: vertical; /* Required for clamping in webkit */
+    overflow: hidden; /* Hides overflowing content */
+    text-overflow: ellipsis; /* Adds ... at the end of the text */
+    word-break: break-word; /* Break words to prevent overflowing */
+}
+.inactive-card {
+    background-color: #f8d7da; /* Light red for inactive state */
+    border: 1px solid #f5c2c7; /* Matching border for the red theme */
+    opacity: 0.8; /* Slightly transparent to indicate inactivity */
+}
+
+.inactive-card .card-header {
+    background-color: #f5c6cb; /* Lighter color for the header */
+}
+
+.inactive-card .btn,
+.inactive-card a {
+    opacity: 0.6; /* Dim buttons/links further */
+}
+
+/* Custom style for toggle switches (active state) */
+.form-check-input:checked {
+    background-color: #28a745 !important; /* Success green */
+    border-color: #28a745 !important;
+    box-shadow: none; /* Optional: Remove the focus shadow */
+}
+
+/* Optional: Style for hover effect on the toggle switch */
+.form-check-input:checked:hover {
+    background-color: #218838 !important; /* Darker green for hover */
+    border-color: #218838 !important;
 }

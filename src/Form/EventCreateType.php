@@ -21,9 +21,13 @@ class EventCreateType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('eventType', EnumType::class, ['class' => EventType::class])
-        ;
-        $builder->add('submit', SubmitType::class, ['label' => 'Event erstellen']);
+            ->add('eventType', EnumType::class, [
+                'class' => EventType::class,
+                'choices' => array_filter(EventType::cases(), fn(EventType $type) => $type !== EventType::NONE),
+                'required' => true,
+                'placeholder' => 'Art des Events auswählen', // Optional: Custom placeholder text
+            ])
+            ->add('submit', SubmitType::class, ['label' => 'Event erstellen']);
 
     }
 

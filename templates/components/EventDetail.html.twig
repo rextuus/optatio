@@ -1,0 +1,21 @@
+<div{{ attributes }}>
+    <div class="mb-5">
+        <div class="d-flex align-items-center">
+            {% set prioText = 'Nicht Priorisiert' %}
+            {% set prioClass = 'btn-secondary' %}
+            {% if this.event.desireLists.0.hasPriority %}
+                {% set prioText = 'Priorisiert' %}
+                {% set prioClass = 'btn-success' %}
+            {% endif %}
+            <button
+                    data-action="live#action"
+                    data-live-action-param="togglePriority"
+                    class="btn {{ prioClass }} me-3">
+                <i class="fa-sort fa-solid fa-2x mb-2"></i><br><span class="no-uppercase">{{ prioText }}</span>
+            </button>
+            <a href="{{ path('app_desire_create', {'desireList': event.desireLists.0.id}) }}" class="btn btn-success">
+                <i class="fa-solid fa-plus me-2"></i> Neuer Wunsch
+            </a>
+        </div>
+    </div>
+</div>

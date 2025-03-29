@@ -38,17 +38,17 @@ final class ForeignDesireComponent
     public function isExclusive(): string
     {
         if ($this->desire->isExclusive()) {
-            return 'active';
+            return 'text-danger';
         }
-        return '';
+        return 'text-success';
     }
 
     public function isExactly(): string
     {
         if ($this->desire->isExactly()) {
-            return 'active';
+            return 'text-success';
         }
-        return '';
+        return 'text-danger';
     }
 
     public function getReserveButtonText(): string
@@ -56,10 +56,17 @@ final class ForeignDesireComponent
         if ($this->checkIsReservedByUser()){
             return 'Freigeben';
         }
-        if ($this->checkIsReservedGeneral()){
-            return 'Reservieren';
-        }
+
         return 'Reservieren';
+    }
+
+    public function getReserveButtonStyle(): string
+    {
+        if ($this->checkIsReservedByUser()){
+            return 'btn-warning';
+        }
+
+        return 'btn-success';
     }
 
     public function getHeaderText(): string
@@ -68,7 +75,7 @@ final class ForeignDesireComponent
             return 'Von dir reserviert';
         }
         if ($this->checkIsResolvedByUser()){
-            return 'Von dir besorgt ('.$this->desire->getId().')';
+            return 'Von dir besorgt';
         }
         if ($this->checkIsReservedGeneral()){
             return 'Von jemand anderem reserviert';
@@ -87,7 +94,7 @@ final class ForeignDesireComponent
             return '';
         }
         if ($this->checkIsReservedGeneral()) {
-            return 'disabled';
+            return 'disabled-desire-priority';
         }
         return '';
     }

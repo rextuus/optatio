@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Content\Event\EventInterface;
 use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventRepository;
 use App\Content\SecretSanta\SecretSantaState;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -9,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SecretSantaEventRepository::class)]
-class SecretSantaEvent
+class SecretSantaEvent implements EventInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

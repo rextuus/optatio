@@ -42,6 +42,13 @@ class DesireList implements HasAccessRoleInterface
     #[ORM\Column(type: 'boolean')]
     private ?bool $master = false;
 
+    #[ORM\Column (
+        type: Types::BOOLEAN,
+        options: [
+            'default' => false,
+        ])]
+    private bool $hasPriority = false;
+
     public function __construct()
     {
         $this->desires = new ArrayCollection();
@@ -216,6 +223,21 @@ class DesireList implements HasAccessRoleInterface
 
     public function __toString(): string
     {
-        return $this->getName();
+
+        $heart = $this->isMaster() ? ' ✨' : ' ❤️';
+
+        return $heart . ' ' . $this->getName() . ' (' . $this->getDesires()->count() . ')';
+    }
+
+    public function hasPriority(): ?bool
+    {
+        return $this->hasPriority;
+    }
+
+    public function setHasPriority(bool $hasPriority): static
+    {
+        $this->hasPriority = $hasPriority;
+
+        return $this;
     }
 }

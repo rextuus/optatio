@@ -1,0 +1,16 @@
+<div{{ attributes }} class="row">
+    {% for event in this.events %}
+        {% set disableUp = loop.index == 1 %}
+        {% set disableDown = this.events|length == loop.index %}
+        <div class="col-12 mb-3">
+            {% set randomNumber = random(0, 10000) %}
+            {{ component('Event:EventComponent', {
+                key: 'test' ~ event.id ~ randomNumber,
+                event: event,
+                user: this.user,
+                disableUp: disableUp,
+                disableDown: disableDown,
+            }) }}
+        </div>
+    {% endfor %}
+</div>

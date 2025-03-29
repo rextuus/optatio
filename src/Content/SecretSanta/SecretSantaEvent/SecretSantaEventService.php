@@ -46,7 +46,10 @@ class SecretSantaEventService
         return $this->repository->findByFirstOrSecondRound($event);
     }
 
-    public function findSecretSantaEvents(?User $user = null)
+    /**
+     * @return array<SecretSantaEvent>
+     */
+    public function findSecretSantaEvents(?User $user = null): array
     {
         return $this->repository->findSecretSantaEvents($user);
     }

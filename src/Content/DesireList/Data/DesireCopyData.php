@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Content\DesireList\Data;
 
+use App\Content\Desire\ActionType;
 use App\Entity\Desire;
 use App\Entity\DesireList;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -13,13 +15,21 @@ use App\Entity\DesireList;
  */
 class DesireCopyData
 {
+    #[Assert\NotBlank()]
     private DesireList $from;
+    #[Assert\NotBlank()]
     private DesireList $to;
 
     /**
      * @var array<Desire>
      */
+    #[Assert\Count(
+        min: 1,
+        minMessage: 'Du musst mindestens einen Wunsch auswählen!'
+    )]
     private array $desires = [];
+
+    private ActionType $action;
 
     public function getFrom(): DesireList
     {
@@ -51,6 +61,17 @@ class DesireCopyData
     public function setDesires(array $desires): DesireCopyData
     {
         $this->desires = $desires;
+        return $this;
+    }
+
+    public function getAction(): ActionType
+    {
+        return $this->action;
+    }
+
+    public function setAction(ActionType $action): DesireCopyData
+    {
+        $this->action = $action;
         return $this;
     }
 }

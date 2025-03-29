@@ -92,18 +92,6 @@ class Desire
         return $this;
     }
 
-    public function getPriority(): ?int
-    {
-        return $this->priority;
-    }
-
-    public function setPriority(int $priority): static
-    {
-        $this->priority = $priority;
-
-        return $this;
-    }
-
     public function getState(): ?DesireState
     {
         return $this->state;
@@ -313,5 +301,16 @@ class Desire
         }
 
         return $this;
+    }
+
+    public function getPriorityByList(?DesireList $list): Priority|null
+    {
+        foreach ($this->getPriorities() as $priority) {
+            if ($priority->getDesireList()->getId() === $list->getId()) {
+                return $priority;
+            }
+        }
+
+        return null;
     }
 }

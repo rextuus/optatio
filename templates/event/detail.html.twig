@@ -1,30 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wichtelrunde erstellen{% endblock %}
+{% block title %}{{ event.name }} Details{% endblock %}
 
 {% block body %}
-    <div class="ss-container">
-        <div class="page-header">
-            <div class="page-header-text">
-                {{ event.name }}
-            </div>
-            <div class="page-header-image">
-                <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
-            </div>
+    <div class="page-header">
+        <div class="page-header-text">
+            {{ event.name }}
+        </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-gifts fa-lg me-3 text-secondary"></i>
         </div>
     </div>
-    <div class="content-body">
-
-        <div class="ss-header"></div>
-
-        <div class="desire-image-button">
-            <a href="{{ path('app_desire_list',  {'desireList': userDesireList.id}) }}">
-                <button>
-                    <img src="{{ asset('assets/img/heart.svg') }}" alt="Tile image">
-                    <span class="desire-image-button-text">Zu deiner Wunschliste</span>
-                </button>
-            </a>
+    <div class="container my-5">
+        <!-- Informational Text -->
+        <div class="text-center mb-4 bg-dark p-3 rounded">
+            <p class="text-white fs-5">
+                Das hier ist dein Event: <span class="fw-bold">{{ event.name }}</span>. Momentan enthält die zugehörige Wunschliste <span class="text-success fw-bold">{{ event.desireLists.get(0).desires.count }}</span> Wünsche.
+            </p>
         </div>
+
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+            <div class="col-12 col-md-auto mb-3 mb-md-0">
+                <a href="{{ path('app_event_list') }}" class="btn btn-outline-secondary w-100">
+                    <i class="fa-solid fa-calendar-week me-2"></i> Zu den Events
+                </a>
+            </div>
+            <div class="col-12 col-md-auto">
+                <a href="{{ path('app_desire_list', {'desireList': userDesireList.id}) }}" class="btn btn-success w-100">
+                    <i class="fa-solid fa-list me-2"></i> Zur Wunschliste
+                </a>
+            </div>
+        </div>
+
+        {{ component('EventDetail', {event: event}) }}
     </div>
 
 {% endblock %}

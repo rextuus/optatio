@@ -1,0 +1,27 @@
+<div{{ attributes }} class="row">
+    <div class="text-start ms-3  bg-dark ps-2 pe-2 rounded" style="width: fit-content;">
+        <p class="text-white fs-5">
+            # {{ this.desireCount }}
+        </p>
+    </div>
+    <!-- Small line -->
+    <div class="border-bottom border-black mt-2 mx-3 mb-4" style="height: 1px;"></div>
+
+    {% for desire in this.desires %}
+        {% set disableUp = loop.index == 1 %}
+        {% set disableDown = this.desires|length == loop.index %}
+        <div class="col-12 mb-3">
+            {% set randomNumber = random(0, 10000) %}
+            {#            <div>{{ randomChar }}</div> #}
+            {{ component('DesireComponent', {
+                dataModel: 'desireCount:useless',
+                key: 'test' ~ desire.id ~ randomNumber,
+                desire: desire,
+                desireList: list,
+                current: desire.getPriorityByList(list).value,
+                disableUp: disableUp,
+                disableDown: disableDown,
+            }) }}
+        </div>
+    {% endfor %}
+</div>

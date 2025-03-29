@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Content\Desire\Data\DesireData;
 use App\Content\Desire\DesireManager;
+use App\Content\Desire\DesireService;
 use App\Content\DesireList\Data\DesireCopyData;
+use App\Content\DesireList\DesireListService;
 use App\Content\Event\EventType;
 use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
 use App\Content\SecretSanta\SecretSantaService;
@@ -27,12 +29,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class DesireController extends BaseController
 {
-
-
     public function __construct(
         private readonly DesireManager $desireManager,
         private readonly SecretSantaEventService $secretSantaService,
         private readonly AccessRoleService $accessRoleService,
+        private readonly DesireService $desireService,
+        private readonly DesireListService $desireListService,
     )
     {
     }
@@ -43,7 +45,7 @@ class DesireController extends BaseController
         $user = $this->getLoggedInUser();
         $check = $this->checkDesireListAccess($user, $desireList);
         if ($check){
-//            return $check;
+            return $check;
         }
 
         // get first event for redirect => TODO we need a param to know where we come from ugly bugly fucking
@@ -219,19 +221,34 @@ class DesireController extends BaseController
     #[Route('/home', name: 'app_desire_home')]
     public function master(Request $request): Response
     {
+        $fromDesireListId = $request->get('from');
+        $desireId = $request->get('desire');
         $user = $this->getLoggedInUser();
 
-        $masterList = $this->desireManager->getMasterListByUser($user);
+        $defaultList = $this->desireManager->getMasterListByUser($user);
+        if ($fromDesireListId){
+            $list = $this->desireListService->findBy(['id' => $fromDesireListId]);
+            if ($list !== []){
+                $defaultList = $list[0];
+            }
+        }
+
+        $desires = [];
+        if ($desireId){
+            $desires = $this->desireService->findBy(['id' => $desireId]);
+        }
+
         $otherLists = $this->desireManager->getNonMasterListsByUser($user);
 
         $data = new DesireCopyData();
-        $data->setFrom($masterList);
+        $data->setFrom($defaultList);
         $data->setTo($otherLists[0]);
-        $data->setDesires([]);
+        $data->setDesires($desires);
 
         return $this->render('desire/home.html.twig', [
             'initialFormData' => $data,
             'user' => $user,
+            'masterList' => $defaultList,
         ]);
     }
 

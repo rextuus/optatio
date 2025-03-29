@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event Dashboard{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-text">
+            Home
+        </div>
+        <div class="page-header-image">
+            <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
+        </div>
+    </div>
+
+
+    <div class="content-body">
+        <div>Willkommen bei Optatio</div>
+        Events bei denen du dabei bist
+        {% for event in secretSantaEvents %}
+            {{ component('SecretSantaComponent', { event: event, user: user }) }}
+        {% endfor %}
+        {% for event in events %}
+            {{ component('EventComponent', { event: event, user: user, hasEditButton: true }) }}
+        {% endfor %}
+
+        <div class="desire-image-button">
+            <a href="{{ path('app_event_list') }}">
+                <button>
+                    <i class="fa-solid fa-calendar-alt fa-xl" style="color: #000000;"></i>
+                    <span class="desire-image-button-text">Zu den Events</span>
+                </button>
+            </a>
+        </div>
+        <div class="desire-image-button">
+            <a href="{{ path('app_desire_home') }}">
+                <button>
+                    <i class="fa-solid fa-gifts icon fa-xl" style="color: #000000;"></i>
+                    <span class="desire-image-button-text">Zu deiner globalen Wunschliste</span>
+                </button>
+            </a>
+        </div>
+
+    </div>
+{% endblock %}
