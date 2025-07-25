@@ -10,11 +10,13 @@
             <button
                     data-action="live#action"
                     data-live-action-param="togglePriority"
-                    class="btn {{ prioClass }} me-3">
-                <i class="fa-sort fa-solid fa-2x mb-2"></i><br><span class="no-uppercase">{{ prioText }}</span>
+                    class="{{ prioClass }} no-uppercase btn btn-outline-light btn-small ">
+                <i class="fa-sort fa-solid fa-2x btn-icon-sm"></i><br>
+                <span class="btn-text">{{ prioText }}</span>
             </button>
-            <a href="{{ path('app_desire_create', {'desireList': event.desireLists.0.id}) }}" class="btn btn-success">
-                <i class="fa-solid fa-plus me-2"></i> Neuer Wunsch
+            <a href="{{ path('app_desire_create', {'desireList': event.desireLists.0.id}) }}" class="no-uppercase btn btn-success btn-small ">
+                <i class="fa-solid fa-plus btn-icon-sm"></i>
+                <span class="btn-text">Neuer Wunsch</span>
             </a>
         </div>
     </div>

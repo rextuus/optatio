@@ -11,33 +11,46 @@
             <i class="fa-solid fa-gifts fa-lg me-3 text-secondary"></i>
         </div>
     </div>
-    <div class="container my-5">
-        <!-- Informational Text -->
-        <div class="text-center mb-4 bg-dark p-3 rounded">
-            <p class="text-white fs-5">
-                Das hier ist dein Event: <span class="fw-bold">{{ event.name }}</span>. Momentan enthält die zugehörige Wunschliste <span class="text-success fw-bold">{{ event.desireLists.get(0).desires.count }}</span> Wünsche.
-            </p>
-            <p class=" mb-3 text-primary">
-                <i class="fa-solid fa-info-circle me-2"></i> Ist die Liste priorisiert, sollen die Leute jene Geschenke, die oben stehen, zuerst besorgen
-            </p>
 
-        </div>
-        <!-- Action Buttons -->
-        <div class="row mb-4">
-            <div class="col-12 col-md-auto mb-3 mb-md-0">
-                <a href="{{ path('app_home') }}" class="btn btn-outline-secondary w-100">
-                    <i class="fa-solid fa-home me-2"></i> Zurück
-                </a>
-            </div>
-            <div class="col-12 col-md-auto">
-                <a href="{{ path('app_desire_list', {'desireList': userDesireList.id}) }}" class="btn btn-success w-100">
-                    <i class="fa-solid fa-list me-2"></i> Zur Wunschliste
-                </a>
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-home btn-icon"></i>
+                        <span class="btn-text">Zurück</span>
+                    </a>
+                    <a href="{{ path('app_desire_home') }}" class="btn btn-success btn-small">
+                        <i class="fa-solid fa-list btn-icon"></i>
+                        <span class="btn-text">Zur Wunschliste</span>
+                    </a>
+                </div>
             </div>
         </div>
-        <hr class="my-5">
+    </div>
 
-        {{ component('EventDetail', {event: event}) }}
+    <div class="container my-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Informational Text -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Das hier ist dein Event: <span class="fw-bold">{{ event.name }}</span>. Momentan enthält die
+                        zugehörige Wunschliste <span
+                                class="text-success fw-bold">{{ event.desireLists.get(0).desires.count }}</span>
+                        Wünsche.
+                    </p>
+                    <p class=" mb-3 text-primary">
+                        <i class="fa-solid fa-info-circle me-2"></i> Ist die Liste priorisiert, sollen die Leute jene
+                        Geschenke, die oben stehen, zuerst besorgen
+                    </p>
+
+                </div>
+
+                {{ component('EventDetail', {event: event}) }}
+            </div>
+        </div>
     </div>
 
 {% endblock %}
