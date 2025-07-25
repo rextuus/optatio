@@ -29,52 +29,39 @@ class DesireCopyType extends AbstractType
         /** @var User $user */
         $user = $options['user'];
 
-
         /** @var DesireCopyData $formData */
         $formData = $options['form_data'];
 
         /** @var DesireList $masterList */
-        $masterList = $user->getDesireLists()->filter(function (DesireList $desireList) {
-            return $desireList->isMaster();
-        })->first();
+        $masterList = $user->getDesireLists()->filter(fn(DesireList $list) => $list->isMaster())->first();
 
         $builder->add('action', ChoiceType::class, [
             'label' => 'Aktion',
-            'choices' => ActionType::cases(), // Use all enum values
-            'choice_label' => function (?ActionType $action) {
-                return $action?->getLabel(); // Use the label from the enum
-            },
+            'choices' => ActionType::cases(),
+            'choice_label' => fn(?ActionType $action) => $action?->getLabel(),
             'required' => true,
-            'expanded' => false, // Dropdown menu
-            'multiple' => false, // Single selection
+            'expanded' => false,
+            'multiple' => false,
         ]);
 
         $builder->add('from', EntityType::class, [
             'class' => DesireList::class,
             'label' => 'Von',
             'empty_data' => $masterList,
-            'query_builder' => function (DesireListRepository $repository) use ($user) {
-                $qb = $repository->createQueryBuilder('d');
-                $qb->select('DISTINCT d');
-                $qb->where('d.owner = :owner');
-                $qb->setParameter('owner', $user);
-
-                return $qb;
-            },
+            'query_builder' => fn(DesireListRepository $repository) => $repository->createQueryBuilder('d')
+                ->select('DISTINCT d')
+                ->where('d.owner = :owner')
+                ->setParameter('owner', $user),
         ]);
 
         $builder->addDependent(
             'desires',
             ['from'],
             function (DependentField $field, ?DesireList $desireList) {
-                $choices = [];
-
-                if ($desireList) {
-                    $desires = $desireList->getDesires()->toArray();
-                    foreach ($desires as $desire) {
-                        $choices[$desire->getName()] = $desire;
-                    }
-                }
+                $choices = $desireList ? array_combine(
+                    $desireList->getDesires()->map(fn($desire) => $desire->getName())->toArray(),
+                    $desireList->getDesires()->toArray()
+                ) : [];
 
                 $field->add(ChoiceType::class, [
                     'label' => 'Wünsche',
@@ -90,34 +77,37 @@ class DesireCopyType extends AbstractType
         $builder->addDependent(
             'to',
             ['from'],
-            function (DependentField $field, ?DesireList $fromDesireList) use ($user, $builder, $formData) {
-                $queryBuilder = function (DesireListRepository $repository) use ($user, $fromDesireList) {
-                    $qb = $repository->createQueryBuilder('d');
-                    $qb->select('DISTINCT d');
-                    $qb->where('d.owner = :owner');
-                    $qb->setParameter('owner', $user);
-
-                    if ($fromDesireList) {
-                        $qb->andWhere('d.id != :fromDesireListId');
-                        $qb->setParameter('fromDesireListId', $fromDesireList->getId());
-                    }
-
-                    return $qb;
-                };
-
-                // Fetch the first value from the query builder result
+            function (DependentField $field, ?DesireList $fromDesireList) use ($user, $formData) {
+                // Fetch available DesireLists
                 $repository = $this->entityManager->getRepository(DesireList::class);
+                $lists = $repository->getListForUserExcludingSelectedOne($user, $fromDesireList);
 
-                $firstDesireList = $repository->getListForUserExcludingSelectedOne($user, $fromDesireList)[0];
-                $formData->setTo($firstDesireList);
+                // Set default value
+                $defaultToList = $lists[0] ?? null;
+                if (!$defaultToList) {
+                    throw new \LogicException('No available DesireList for the user.');
+                }
+                $formData->setTo($defaultToList);
 
-                // Set the first value as default if no value is provided
                 $field->add(EntityType::class, [
                     'class' => DesireList::class,
                     'label' => 'Nach',
-                    'query_builder' => $queryBuilder,
+                    'query_builder' => function (DesireListRepository $repository) use ($user, $fromDesireList) {
+                        $qb = $repository->createQueryBuilder('d')
+                            ->select('DISTINCT d')
+                            ->where('d.owner = :owner')
+                            ->setParameter('owner', $user);
+
+                        if ($fromDesireList) {
+                            $qb->andWhere('d.id != :fromDesireListId')
+                                ->setParameter('fromDesireListId', $fromDesireList->getId());
+                        }
+
+                        return $qb;
+                    },
                     'required' => true,
-                    'data' => $firstDesireList, // Automatically set the first DesireList
+                    'data' => $defaultToList,
+                    'choice_value' => 'id',
                 ]);
             }
         );

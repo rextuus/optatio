@@ -1,77 +1,101 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-{% endblock %}
 
 {% block title %}Wichtelrunde erstellen{% endblock %}
 
 {% block body %}
-    <div class="content-body">
-
-        <div class="simple-text-box font-size-1-2">Lade hier Bilder oder Screenshots passend zu deinem Wunsch hoch</div>
-
-        {{ form_start(form) }}
-
-        {# Hide the original file input and replace it with a camera icon #}
-        <div class="input-group mb-3">
-            <div class="custom-file">
-                <label class="custom-file-label" for="{{ form.imageFile.vars.id }}">
-                    <i class="fas fa-camera"></i> Bild hochladen
-                </label>
-                {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input'}}) }}
+        <div class="page-header">
+            <div class="page-header-text">
+                Lade Bilder hoch
+            </div>
+            <div class="page-header-image">
+                <i class="fa-solid fa-upload fa-lg me-3 text-secondary"></i>
             </div>
         </div>
 
-        {# Image preview area #}
-        <div id="image-preview" class="image-area"></div>
+    <div class="container my-5">
 
-        {{ form_widget(form.upload) }}
+        <!-- Informational Text -->
+        <div class="text-center mb-4 bg-dark p-3 rounded">
+            <p class="text-white fs-5 m-0">
+                Lade hier Bilder oder Screenshots passend zu deinem Wunsch hoch. Wenn du einen Beispiel-Link angegeben hast, suchen wir für dich auf der Seite nach passenden Bildern und fügen eines hinzu.
+            </p>
+        </div>
 
-        {{ form_end(form) }}
-        <br>
-        <div class="upload">
-            <div id="imageModal" class="modal">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <img class="modal-content" id="img01">
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+            <div class="col-12 col-md-auto mb-3 mb-md-0">
+                <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-outline-secondary w-100">
+                    <i class="fa-solid fa-list me-2"></i> Zurück Wunschliste
+                </a>
             </div>
-            <h2>Bereits hochgeladene Bilder</h2>
-            <div class="image-container">
+        </div>
 
+        <!-- Upload Form -->
+        <div class="bg-light p-4 rounded shadow-sm">
+            {{ form_start(form) }}
+
+            <!-- File Upload Input Group -->
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <label class="custom-file-label" for="{{ form.imageFile.vars.id }}">
+                        <i class="fas fa-camera"></i> Bild hochladen
+                    </label>
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input'}}) }}
+                </div>
+            </div>
+
+            <!-- Image Preview -->
+            <div id="image-preview" class="image-area"></div>
+
+            <!-- Upload Button -->
+            <div class="text-center">
+                {{ form_widget(form.upload, {'attr': {'class': 'btn btn-success'}}) }}
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+
+        <!-- Uploaded Images Section -->
+        <div class="upload mt-5">
+            <h2 class="text-center mb-4">Bereits hochgeladene Bilder</h2>
+            <div class="image-container d-flex flex-wrap justify-content-center">
                 {% for image in desire.images %}
-                    <div class="image" data-image-url="{{ path('app_desire_image_delete', {'desire': desire.id, 'image': image.id}) }}">
-                        <img src="{{ image.cdnUrl }}" onclick="showLargeImage('{{ image.cdnUrl }}')">
-                        <span class="delete-icon" onclick="deleteImage(event)"><img src="{{ asset('assets/img/trash_red.svg') }}" alt="Tile image"></span>
+                    <div class="image position-relative m-2" data-image-url="{{ path('app_desire_image_delete', {'desire': desire.id, 'image': image.id}) }}">
+                        <img src="{{ image.cdnUrl }}" class="img-thumbnail" onclick="showLargeImage('{{ image.cdnUrl }}')">
+                        <span class="delete-icon position-absolute top-0 end-0 translate-middle p-1 bg-danger rounded-circle" onclick="deleteImage(event)">
+                            <i class="fas fa-trash text-white"></i>
+                        </span>
                     </div>
                 {% endfor %}
             </div>
         </div>
 
+        <!-- Image Modal -->
+        <div id="imageModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
     </div>
 
     <script>
         function handleImagePreview(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-
                 reader.onload = function (e) {
                     const imagePreview = document.getElementById('image-preview');
-                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Selected Image" style="">`;
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Selected Image" class="img-thumbnail">`;
                 };
-
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // Event listener to trigger the image preview when a file is selected
         const imageFileInput = document.querySelector('.custom-file-input');
         if (imageFileInput) {
             imageFileInput.addEventListener('change', function () {
                 handleImagePreview(this);
             });
         }
-
 
         function showLargeImage(imageSrc) {
             const modal = document.getElementById('imageModal');
@@ -86,30 +110,17 @@
         }
 
         function deleteImage(event) {
-            const imageContainer = event.target.parentElement.parentElement;
+            const imageContainer = event.target.closest('.image');
             const imageUrl = imageContainer.getAttribute('data-image-url');
-console.log(imageUrl);
-            // Perform AJAX request to delete image
-            // Replace 'deleteImageRoute' with your actual route URL
-            fetch(imageUrl, {
-                method: 'GET',
-                // body: JSON.stringify({imageUrl}),
-                // headers: {
-                //     'Content-Type': 'application/json'
-                // }
-            })
+            fetch(imageUrl, { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
-                        // Remove the image container from the DOM on successful deletion
                         imageContainer.remove();
                     } else {
                         console.error('Failed to delete image');
                     }
                 })
-                .catch(error => {
-                    console.error('Error deleting image:', error);
-                });
+                .catch(error => console.error('Error deleting image:', error));
         }
-
     </script>
 {% endblock %}

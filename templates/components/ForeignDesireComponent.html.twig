@@ -2,20 +2,30 @@
     <div class="card mb-3">
         <!-- Card Header (Desire Name, Details, Priority and Action Buttons) -->
         <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
-            <!-- Name and Priority Buttons -->
+            <!-- Name and Image in One Line -->
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Desire Name -->
-                <button class="btn btn-link text-white text-decoration-none p-0"
-                        style="flex: 1; min-width: 0;"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        aria-expanded="false"
-                        aria-controls="collapseDetails{{ this.desire.id }}"
-                        data-bs-target="#collapseDetails{{ this.desire.id }}">
-                    <h5 class="mb-0 clamp-text">
-                        {{ this.desire.name }}
-                    </h5>
-                </button>
+                <div class="d-flex align-items-center">
+                    <!-- Image (if exists) -->
+                    {% if this.desire.images|length > 0 %}
+                        <img src="{{ this.desire.images[0].cdnUrl }}" class="rounded me-2" alt="Desire Image"
+                             style="width: 40px; height: 40px; object-fit: cover;">
+                    {% else %}
+                        <!-- Default FontAwesome Icon -->
+                        <i class="fa-solid fa-box fa-2x me-2 text-black"></i>
+                    {% endif %}
+                    <!-- Desire Name -->
+                    <button class="btn btn-link text-white text-decoration-none p-0 clamp-text"
+                            style="flex: 1; min-width: 0;"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            aria-expanded="false"
+                            aria-controls="collapseDetails{{ this.desire.id }}"
+                            data-bs-target="#collapseDetails{{ this.desire.id }}">
+                        <h5 class="mb-0 clamp-text">
+                            {{ this.desire.name }}
+                        </h5>
+                    </button>
+                </div>
 
                 <!-- Priority Buttons -->
                 {% if this.checkIsResolvedByUser == false %}

@@ -17,13 +17,16 @@
             <p class="text-white fs-5">
                 Das hier ist dein Event: <span class="fw-bold">{{ event.name }}</span>. Momentan enthält die zugehörige Wunschliste <span class="text-success fw-bold">{{ event.desireLists.get(0).desires.count }}</span> Wünsche.
             </p>
-        </div>
+            <p class=" mb-3 text-primary">
+                <i class="fa-solid fa-info-circle me-2"></i> Ist die Liste priorisiert, sollen die Leute jene Geschenke, die oben stehen, zuerst besorgen
+            </p>
 
+        </div>
         <!-- Action Buttons -->
         <div class="row mb-4">
             <div class="col-12 col-md-auto mb-3 mb-md-0">
-                <a href="{{ path('app_event_list') }}" class="btn btn-outline-secondary w-100">
-                    <i class="fa-solid fa-calendar-week me-2"></i> Zu den Events
+                <a href="{{ path('app_home') }}" class="btn btn-outline-secondary w-100">
+                    <i class="fa-solid fa-home me-2"></i> Zurück
                 </a>
             </div>
             <div class="col-12 col-md-auto">
@@ -32,6 +35,7 @@
                 </a>
             </div>
         </div>
+        <hr class="my-5">
 
         {{ component('EventDetail', {event: event}) }}
     </div>

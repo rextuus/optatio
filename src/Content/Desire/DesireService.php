@@ -10,6 +10,8 @@ use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Image;
 use App\Entity\SecretSantaEvent;
+use App\Message\DesireImageExtraction;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -17,8 +19,12 @@ use App\Entity\SecretSantaEvent;
  */
 class DesireService
 {
-    public function __construct(private readonly DesireRepository $repository, private readonly DesireFactory $factory, private UrlService $urlService)
-    {
+    public function __construct(
+        private readonly DesireRepository $repository, 
+        private readonly DesireFactory $factory, 
+        private readonly UrlService $urlService,
+        private readonly MessageBusInterface $messageBus
+    ) {
     }
 
     public function createByData(DesireData $data): Desire
@@ -47,6 +53,11 @@ class DesireService
             $this->urlService->createByData($urlData);
         }
 
+        // Dispatch a message to trigger image extraction if URLs were added
+        if ($data->getUrl1() || $data->getUrl2() || $data->getUrl3()) {
+            $this->messageBus->dispatch(new DesireImageExtraction($desire->getId()));
+        }
+
         return $desire;
     }
 
@@ -55,7 +66,10 @@ class DesireService
         $desire = $this->factory->mapData($data, $desire);
         $this->repository->save($desire);
 
+        $urlsUpdated = false;
+
         if ($data->getUrl1()) {
+            $urlsUpdated = true;
             if ($desire->getUrls()->get(0)) {
                 $url = $desire->getUrls()->get(0);
                 $urlData = (new UrlData())->initFromEntity($url);
@@ -70,6 +84,7 @@ class DesireService
         }
 
         if ($data->getUrl2()) {
+            $urlsUpdated = true;
             if ($desire->getUrls()->get(1)) {
                 $url = $desire->getUrls()->get(1);
                 $urlData = (new UrlData())->initFromEntity($url);
@@ -84,6 +99,7 @@ class DesireService
         }
 
         if ($data->getUrl3()) {
+            $urlsUpdated = true;
             if ($desire->getUrls()->get(2)) {
                 $url = $desire->getUrls()->get(2);
                 $urlData = (new UrlData())->initFromEntity($url);
@@ -96,6 +112,12 @@ class DesireService
                 $this->urlService->createByData($urlData);
             }
         }
+
+        // Dispatch a message to trigger image extraction if URLs were updated
+        if ($urlsUpdated) {
+            $this->messageBus->dispatch(new DesireImageExtraction($desire->getId()));
+        }
+
         return $desire;
     }
 

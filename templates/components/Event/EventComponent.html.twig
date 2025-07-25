@@ -1,18 +1,19 @@
 <div{{ attributes }} class="container-fluid">
-    <div class="card mb-3">
-        <!-- Card Header (Desire Name, Details, Priority and Action Buttons) -->
-        <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
+    <div class="card mb-3 shadow rounded">
+        <!-- Card Header (Desire Name, Details, Priority, and Action Buttons) -->
+        <div class="card-header bg-primary text-white d-flex flex-column justify-content-center desire-card-header">
             <!-- Name and Priority Buttons -->
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Desire Name -->
-                <button class="btn btn-link text-white text-decoration-none p-0"
+                <!-- Desire Name with Icon -->
+                <button class="btn btn-link text-white text-decoration-none p-0 d-flex align-items-center"
                         style="flex: 1; min-width: 0;"
                         type="button"
                         data-bs-toggle="collapse"
                         aria-expanded="false"
                         aria-controls="collapseDetails{{ this.event.id }}"
                         data-bs-target="#collapseDetails{{ this.event.id }}">
-                    <h5 class="mb-0 clamp-text">
+                    <h5 class="mb-0 clamp-text d-flex align-items-center">
+                        <i class="fa-solid fa-star me-2"></i> <!-- Added Icon -->
                         {{ this.event.name }}
                     </h5>
                 </button>
@@ -43,31 +44,42 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Subtitle or Header Info -->
             <div class="mt-2">
-                <small class="text-black-50">{{ this.getHeaderText() }}</small>
+                <small class="text-light fst-italic">
+                    <i class="fa-solid fa-info-circle me-2"></i>{{ this.getHeaderText() }}
+                </small>
             </div>
         </div>
 
+        <!-- Collapsible Details Section -->
         <div id="collapseDetails{{ this.event.id }}" class="collapse">
             <div class="card-body">
-                <p class="fw-bold">{{ this.event.name }}</p>
+                <p class="fw-bold text-primary">
+                    <i class="fa-solid fa-circle-info me-2"></i>{{ this.event.name }}
+                </p>
                 <!-- Event Details -->
-                <p class="mt-3">Details:</p>
+                <p class="mt-3 text-dark">Details:</p>
                 <ul class="list-group list-group-flush">
                     <!-- Creator -->
-                    <li class="list-group-item"><strong>Ersteller:</strong> {{ event.creator.fullName }}</li>
+                    <li class="list-group-item">
+                        <strong><i class="fa-solid fa-user me-2"></i>Ersteller:</strong> {{ event.creator.fullName }}
+                    </li>
 
                     <!-- Event Type -->
-                    <li class="list-group-item"><strong>Typ:</strong> {{ event.eventType.value }}</li>
+                    <li class="list-group-item">
+                        <strong><i class="fa-solid fa-tags me-2"></i>Typ:</strong> {{ event.eventType.value }}
+                    </li>
 
                     <!-- Participants Count -->
                     <li class="list-group-item">
-                        <strong>Teilnehmer:</strong> {{ event.participants|length }}
+                        <strong><i class="fa-solid fa-users me-2"></i>Teilnehmer:</strong> {{ event.participants|length }}
                     </li>
 
                     <!-- Open to Join -->
                     <li class="list-group-item">
-                        <strong>Offen zur Teilnahme:</strong>
+                        <strong><i class="fa-solid fa-unlock me-2"></i>Offen zur Teilnahme:</strong>
                         {% set open = 'bg-danger' %}
                         {% set openText = 'Nein' %}
                         {% if this.event.openToJoin %}
@@ -79,8 +91,12 @@
                 </ul>
             </div>
 
+            <!-- Card Footer -->
             <div class="card-footer text-muted">
-                <p><strong>Eingetragen Wünsche:</strong> {{ event.desireLists.first.desires|length }}</p>
+                <p>
+                    <strong><i class="fa-solid fa-box-open me-1"></i>Eingetragene Wünsche:</strong> 
+                    {{ event.desireLists.first.desires|length }}
+                </p>
             </div>
         </div>
     </div>

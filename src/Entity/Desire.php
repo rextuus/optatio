@@ -53,6 +53,9 @@ class Desire
     #[ORM\OneToMany(mappedBy: 'desire', targetEntity: Image::class)]
     private Collection $images;
 
+    #[ORM\OneToMany(mappedBy: 'desire', targetEntity: ExtractedDesireImageCollection::class)]
+    private Collection $extractedDesireImageCollections;
+
     public function __construct()
     {
         $this->reservers = new ArrayCollection();
@@ -61,6 +64,7 @@ class Desire
         $this->priorities = new ArrayCollection();
         $this->urls = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->extractedDesireImageCollections = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -312,5 +316,35 @@ class Desire
         }
 
         return null;
+    }
+
+    /**
+     * @return Collection<int, ExtractedDesireImageCollection>
+     */
+    public function getExtractedDesireImageCollections(): Collection
+    {
+        return $this->extractedDesireImageCollections;
+    }
+
+    public function addExtractedDesireImageCollection(ExtractedDesireImageCollection $collection): static
+    {
+        if (!$this->extractedDesireImageCollections->contains($collection)) {
+            $this->extractedDesireImageCollections->add($collection);
+            $collection->setDesire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExtractedDesireImageCollection(ExtractedDesireImageCollection $collection): static
+    {
+        if ($this->extractedDesireImageCollections->removeElement($collection)) {
+            // set the owning side to null (unless already changed)
+            if ($collection->getDesire() === $this) {
+                $collection->setDesire(null);
+            }
+        }
+
+        return $this;
     }
 }

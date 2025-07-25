@@ -10,6 +10,7 @@ use App\Form\DesireCopyType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -44,19 +45,21 @@ class DesireCopyForm extends AbstractController
     }
 
     #[LiveAction]
-    public function submit(): void
+    public function submit(): RedirectResponse
     {
-        $this->submitForm();
+        $this->submitForm(false);
 
         /** @var DesireCopyData $copyData */
         $copyData = $this->getForm()->getData();
 
         match ($copyData->getAction()) {
             ActionType::TEILEN => $this->desireManager->shareDesiresBetweenLists(
+                $copyData->getFrom(),
                 $copyData->getTo(),
                 $copyData->getDesires()
             ),
             ActionType::KOPIEREN => $this->desireManager->hardCopyDesiresBetweenLists(
+                $copyData->getFrom(),
                 $copyData->getTo(),
                 $copyData->getDesires()
             ),
@@ -66,5 +69,7 @@ class DesireCopyForm extends AbstractController
                 $copyData->getDesires()
             ),
         };
+
+        return $this->redirect($this->generateUrl('app_desire_home'));
     }
 }

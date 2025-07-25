@@ -1,10 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Content\DesireList;
 
 use App\Content\Desire\Data\DesireData;
+use App\Content\Desire\DesireFactory;
 use App\Content\DesireList\Data\DesireListData;
+use App\Content\Priority\Data\PriorityData;
+use App\Content\Priority\NoPriorityException;
+use App\Content\Priority\PriorityService;
+use App\Content\Priority\ToMuchPrioritiesException;
 use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Event;
@@ -17,8 +23,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class DesireListService
 {
-    public function __construct(private readonly DesireListRepository $repository, private readonly DesireListFactory $factory)
-    {
+    public function __construct(
+        private readonly DesireListRepository $repository,
+        private readonly DesireListFactory $factory,
+        private readonly PriorityService $priorityService,
+    ) {
     }
 
     public function createByData(DesireListData $data): DesireList
@@ -75,8 +84,25 @@ class DesireListService
     {
         foreach ($desires as $desire) {
             $this->addDesireToList($desire, $targetList, false);
+
+            try {
+                $this->priorityService->getUniquePriorityByList($targetList, $desire);
+            } catch (NoPriorityException $e) {
+                $this->storePriority($targetList, $desire);
+            } catch (ToMuchPrioritiesException $e) {
+            }
         }
 
         $this->repository->save($targetList);
+    }
+
+    private function storePriority(DesireList $desireList, Desire $desire): void
+    {
+        $priorityData = new PriorityData();
+        $priorityData->setValue($this->priorityService->getHighestPriorityByList($desireList));
+        $priorityData->setDesireList($desireList);
+        $priorityData->setDesire($desire);
+
+        $this->priorityService->createByData($priorityData, false);
     }
 }

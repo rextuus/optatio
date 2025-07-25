@@ -79,6 +79,10 @@ class AccessRoleService
     {
         $event = $desireList->getEvents()->first();
 
+        if (!$event && $desireList->isMaster() && $user === $desireList->getOwner()) {
+            return true;
+        }
+
         $userIsPartOfEvent = $this->checkUserIsParticipantOfEvent($user, $event);
         if (!$userIsPartOfEvent){
             return false;

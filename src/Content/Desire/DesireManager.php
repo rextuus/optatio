@@ -7,6 +7,7 @@ namespace App\Content\Desire;
 use App\Content\Desire\Data\DesireData;
 use App\Content\DesireList\Data\DesireListData;
 use App\Content\DesireList\DesireListService;
+use App\Content\DesireList\Relation\DesireListRelationService;
 use App\Content\Image\ImageService;
 use App\Content\Priority\Data\PriorityData;
 use App\Content\Priority\PriorityService;
@@ -42,6 +43,7 @@ class DesireManager
         private readonly ReservationService $reservationService,
         private readonly ImageService $imageService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly DesireListRelationService $desireListRelationService,
     ) {
     }
 
@@ -63,11 +65,7 @@ class DesireManager
      */
     public function setPriority(DesireList $desireList, Desire $desire, int $priorityValue): void
     {
-        $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
-        if (count($priorities) !== 1) {
-            throw new Exception('No unique Priority found for desire/desireList combination');
-        }
-        $priority = $priorities[0];
+        $priority = $this->priorityService->getUniquePriorityByList($desireList, $desire);;
 
         $priorityData = (new PriorityData())->initFromEntity($priority);
         $priorityData->setValue($priorityValue);
@@ -76,11 +74,7 @@ class DesireManager
 
     public function increasePriority(DesireList $desireList, Desire $desire): void
     {
-        $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
-        if (count($priorities) !== 1) {
-            throw new Exception('No unique Priority found for desire/desireList combination');
-        }
-        $priority = $priorities[0];
+        $priority = $this->priorityService->getUniquePriorityByList($desireList, $desire);;
 
         $priorityData = (new PriorityData())->initFromEntity($priority);
         $priorityData->setValue($priority->getValue() + 1);
@@ -89,11 +83,7 @@ class DesireManager
 
     public function decreasePriority(DesireList $desireList, Desire $desire): void
     {
-        $priorities = $this->priorityService->findBy(['desireList' => $desireList, 'desire' => $desire]);
-        if (count($priorities) !== 1) {
-            throw new Exception('No unique Priority found for desire/desireLists combination');
-        }
-        $priority = $priorities[0];
+        $priority = $this->priorityService->getUniquePriorityByList($desireList, $desire);;
 
         $priorityData = (new PriorityData())->initFromEntity($priority);
         $priorityData->setValue($priority->getValue() - 1);
@@ -415,12 +405,18 @@ class DesireManager
         $desire = $this->desireService->createByData($data);
         $this->desireListService->addDesireToList($desire, $desireList, $save);
 
+        $this->storePriority($desireList, $desire);
+        $this->entityManager->flush();
+    }
+
+    private function storePriority(DesireList $desireList, Desire $desire): void
+    {
         $priorityData = new PriorityData();
         $priorityData->setValue($this->priorityService->getHighestPriorityByList($desireList));
         $priorityData->setDesireList($desireList);
         $priorityData->setDesire($desire);
 
-        $this->priorityService->createByData($priorityData);
+        $this->priorityService->createByData($priorityData, false);
     }
 
     public function updateDesire(DesireData $data, Desire $desire)
@@ -437,7 +433,7 @@ class DesireManager
     public function createMasterListForUser(User $user): DesireList
     {
         $data = new DesireListData();
-        $data->setName('Globale Wunschliste ' . $user->getFirstName());
+        $data->setName($user->getFirstName() . 's Globale Wunschliste');
         $data->setDescription('Verwende diese Liste um deine Wünsche zentral zu verwalten. Du kannst jeden Wunsch in beliebig viele Listen übernehmen oder kopieren.');
         $data->setOwner($user);
         $data->setEvents([]);
@@ -472,12 +468,18 @@ class DesireManager
     /**
      * @param array<Desire> $desires
      */
-    public function hardCopyDesiresBetweenLists(DesireList $targetList, array $desires): void
+    public function hardCopyDesiresBetweenLists(DesireList $sourceList, DesireList $targetList, array $desires): void
     {
         foreach ($desires as $desire) {
             $data = (new DesireData())->initFromEntity($desire);
 
-            $this->storeDesire($data, $targetList, false);
+            // Create a new desire in the target list
+            $newDesire = $this->desireService->createByData($data);
+            $this->desireListService->addDesireToList($newDesire, $targetList, false);
+            $this->storePriority($targetList, $newDesire);
+
+            // Record the relation
+            $this->desireListRelationService->recordCopiedDesire($sourceList, $targetList, $desire);
         }
 
         $this->entityManager->flush();
@@ -486,9 +488,14 @@ class DesireManager
     /**
      * @param array<Desire> $desires
      */
-    public function shareDesiresBetweenLists(DesireList $targetList, array $desires): void
+    public function shareDesiresBetweenLists(DesireList $sourceList, DesireList $targetList, array $desires): void
     {
         $this->desireListService->shareDesiresBetweenLists($targetList, $desires);
+
+        // Record the relations
+        foreach ($desires as $desire) {
+            $this->desireListRelationService->recordSharedDesire($sourceList, $targetList, $desire);
+        }
     }
 
     /**
@@ -504,6 +511,11 @@ class DesireManager
             $desire->removeDesireList($from);
             $desire->addDesireList($to);
             $this->entityManager->persist($desire);
+
+            $this->storePriority($to, $desire);
+
+            // Record the relation
+            $this->desireListRelationService->recordMovedDesire($from, $to, $desire);
         }
 
         $this->entityManager->flush();

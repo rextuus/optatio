@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .image-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .image-card:hover {
+            transform: scale(1.03);
+        }
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        .image-card .btn {
+            width: 100%;
+        }
+        .collection-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .collection-section h3 {
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Automatisch extrahierte Bilder{% endblock %}
+
+{% block body %}
+    <div class="content-body">
+        <h1>Automatisch extrahierte Bilder</h1>
+        <p class="simple-text-box font-size-1-2">Hier siehst du alle Bilder, die automatisch aus den URLs deines Wunsches extrahiert wurden. Wähle ein Bild aus, um es als Hauptbild für deinen Wunsch zu verwenden.</p>
+
+        <div id="imageModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
+
+        {% if collections|length > 0 %}
+            {% for collection in collections %}
+                <div class="collection-section">
+                    <h3>Bilder von URL: {{ collection.url|length > 50 ? collection.url|slice(0, 50) ~ '...' : collection.url }}</h3>
+                    <div class="image-container">
+                        {% for image in collection.images %}
+                            {% if image.url is defined %}
+                                <div class="image-card">
+                                    <img src="{{ image.url }}" alt="Extrahiertes Bild" onclick="showLargeImage('{{ image.url }}')">
+                                    <a href="{{ path('app_desire_select_extracted_image', {'desireList': desireList.id, 'desire': desire.id, 'imageUrl': image.url}) }}" class="btn btn-primary">
+                                        <i class="fas fa-check"></i> Auswählen
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                Es wurden noch keine Bilder automatisch extrahiert. Füge URLs zu deinem Wunsch hinzu, um automatische Bildextraktion zu starten.
+            </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Zurück zur Wunschliste
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function showLargeImage(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('img01');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+    </script>
+{% endblock %}

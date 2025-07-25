@@ -3,10 +3,15 @@
 namespace App\Twig\Components;
 
 use App\Content\Desire\DesireManager;
+use App\Content\Desire\DesireRepository;
+use App\Content\DesireList\Relation\DesireListRelationFactory;
+use App\Content\DesireList\Relation\DesireListRelationRepository;
+use App\Content\DesireList\Relation\DesireListRelationType;
 use App\Content\Priority\Data\PriorityChangeData;
 use App\Content\Priority\Data\PriorityChangeType;
 use App\Entity\Desire;
 use App\Entity\DesireList;
+use App\Entity\DesireListRelation;
 use App\Entity\Priority;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +24,8 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+
+use function PHPUnit\Framework\matches;
 
 #[AsLiveComponent]
 final class DesireComponent extends AbstractController
@@ -47,9 +54,13 @@ final class DesireComponent extends AbstractController
     #[LiveProp]
     public ?PriorityChangeData $initialFormData = null;
 
+    #[LiveProp]
+    public ?DesireListRelation $desireListRelation = null;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly DesireManager $desireManager
+        private readonly DesireManager $desireManager,
+        private readonly DesireListRelationRepository $desireListRelationRepository,
     ) {
     }
 
@@ -157,5 +168,80 @@ final class DesireComponent extends AbstractController
             return 'text-secondary';
         }
         return 'text-success';
+    }
+
+    public function getRelationIcon(): string
+    {
+        $relationIcon = '';
+
+        $relationType = $this->getDesireListRelationType();
+        if ($relationType !== null) {
+            match ($relationType) {
+                DesireListRelationType::SHARED => $relationIcon = '<i class="fa-solid fa-arrows-spin text-warning fa-lg"></i>',
+                DesireListRelationType::COPIED => $relationIcon = '<i class="fa-solid fa-arrows-left-right text-warning fa-lg"></i>',
+                DesireListRelationType::MOVED => $relationIcon = '<i class="fa-solid fa-arrow-circle-right text-warning fa-lg"></i>',
+            };
+        }
+
+        return $relationIcon;
+    }
+
+    public function getRelationInfo(): ?string
+    {
+        $relation = $this->getRelation();
+
+        if ($relation === null) {
+            return null;
+        }
+
+        $message = null;
+        if ($relation->getRelationType() === DesireListRelationType::SHARED) {
+            $message = sprintf(
+                'Du hast diesen Wunsch geteilt aus der Liste %s. Änderst du ihn hier, wird er auch dort geändert.',
+                $relation->getSourceList()->getName()
+            );
+        }
+
+        if ($relation->getRelationType() === DesireListRelationType::COPIED) {
+            $message = sprintf(
+                'Du hast diesen Wunsch kopiert aus der Liste %s. Änderungen beeinflussen nur diese Variante',
+                $relation->getSourceList()->getName()
+            );
+        }
+
+        if ($relation->getRelationType() === DesireListRelationType::MOVED) {
+            $message = sprintf(
+                'Du hast diesen Wunsch aus der Liste %s hierher verschoben',
+                $relation->getSourceList()->getName()
+            );
+        }
+
+        return $message;
+    }
+
+    private function getDesireListRelationType(): ?DesireListRelationType
+    {
+        return $this->getRelation()?->getRelationType();
+    }
+
+    private function getRelation(): ?DesireListRelation
+    {
+        if ($this->desireListRelation !== null){
+            return $this->desireListRelation;
+        }
+
+        $relations = $this->desireListRelationRepository->getRelationsForDesireAndTargetList(
+            $this->desire,
+            $this->desireList
+        );
+
+        if (count($relations) > 0) {
+            $relation = $relations[array_key_first($relations)];
+            $this->desireListRelation = $relation;
+
+            return $relation;
+        }
+
+        return null;
     }
 }

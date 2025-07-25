@@ -5,6 +5,11 @@ namespace App\Controller;
 use App\Content\Desire\Data\DesireData;
 use App\Content\Desire\DesireManager;
 use App\Content\Desire\DesireService;
+use App\Content\Desire\ImageExtraction\ExtractedDesireImageCollectionRepository;
+use App\Content\Desire\ImageExtraction\PicsExtractionState;
+use App\Content\Image\Data\ImageCreateData;
+use App\Content\Image\Data\ImageData;
+use App\Content\Image\ImageService;
 use App\Content\DesireList\Data\DesireCopyData;
 use App\Content\DesireList\DesireListService;
 use App\Content\Event\EventType;
@@ -35,6 +40,8 @@ class DesireController extends BaseController
         private readonly AccessRoleService $accessRoleService,
         private readonly DesireService $desireService,
         private readonly DesireListService $desireListService,
+        private readonly ExtractedDesireImageCollectionRepository $extractedDesireImageCollectionRepository,
+        private readonly ImageService $imageService,
     )
     {
     }
@@ -44,8 +51,12 @@ class DesireController extends BaseController
     {
         $user = $this->getLoggedInUser();
         $check = $this->checkDesireListAccess($user, $desireList);
-        if ($check){
+        if ($check !== null){
             return $check;
+        }
+
+        if ($desireList->isMaster()){
+            return $this->redirect($this->generateUrl('app_desire_home', ['from' => $desireList->getId()]));
         }
 
         // get first event for redirect => TODO we need a param to know where we come from ugly bugly fucking
@@ -218,8 +229,20 @@ class DesireController extends BaseController
         return $this->json([true]);
     }
 
-    #[Route('/home', name: 'app_desire_home')]
+    #[Route('/master', name: 'app_desire_home')]
     public function master(Request $request): Response
+    {
+        $user = $this->getLoggedInUser();
+
+        $defaultList = $this->desireManager->getMasterListByUser($user);
+
+        return $this->render('desire/home.html.twig', [
+            'masterList' => $defaultList,
+        ]);
+    }
+
+    #[Route('/switch', name: 'app_desire_switch')]
+    public function switch(Request $request): Response
     {
         $fromDesireListId = $request->get('from');
         $desireId = $request->get('desire');
@@ -240,12 +263,17 @@ class DesireController extends BaseController
 
         $otherLists = $this->desireManager->getNonMasterListsByUser($user);
 
+        $showForm = false;
         $data = new DesireCopyData();
         $data->setFrom($defaultList);
-        $data->setTo($otherLists[0]);
+        if (array_key_exists(0, $otherLists)){
+            $data->setTo($otherLists[0]);
+            $showForm = true;
+        }
         $data->setDesires($desires);
 
-        return $this->render('desire/home.html.twig', [
+        return $this->render('desire/switch.html.twig', [
+            'showForm' => $showForm,
             'initialFormData' => $data,
             'user' => $user,
             'masterList' => $defaultList,
@@ -258,5 +286,51 @@ class DesireController extends BaseController
             return null;
         }
         return $this->redirect($this->generateUrl('app_event_list'));
+    }
+
+    #[Route('/extracted-images/{desireList}/{desire}', name: 'app_extracted_desire_images')]
+    public function viewExtractedImages(DesireList $desireList, Desire $desire): Response
+    {
+        $user = $this->getLoggedInUser();
+        if ($desire->getOwner() !== $user) {
+            return $this->redirect($this->generateUrl('app_event_list', []));
+        }
+
+        // Get all extracted image collections for this desire
+        $collections = $this->extractedDesireImageCollectionRepository->findByDesire($desire->getId());
+
+        // Filter to only include completed collections
+        $completedCollections = array_filter($collections, function($collection) {
+            return $collection->getStatus() === PicsExtractionState::DONE;
+        });
+
+        return $this->render('desire/extracted_images.html.twig', [
+            'desire' => $desire,
+            'desireList' => $desireList,
+            'collections' => $completedCollections,
+        ]);
+    }
+
+    #[Route('/select-extracted-image/{desireList}/{desire}/{imageUrl}', name: 'app_desire_select_extracted_image', requirements: ['imageUrl' => '.+'])]
+    public function selectExtractedImage(DesireList $desireList, Desire $desire, string $imageUrl): Response
+    {
+        $user = $this->getLoggedInUser();
+        if ($desire->getOwner() !== $user) {
+            return $this->redirect($this->generateUrl('app_event_list', []));
+        }
+
+        // Create a new image entity
+        $imageData = new ImageCreateData();
+        $imageData->setOwner($user);
+        $imageData->setDesire($desire);
+        $imageData->setFilePath($imageUrl);
+        $imageData->setCdnUrl($imageUrl);
+
+        // Create the image
+        $this->imageService->createByData($imageData);
+
+        // Redirect back to the desire list
+        $this->addFlash('success', 'Das Bild wurde erfolgreich als Hauptbild für deinen Wunsch ausgewählt.');
+        return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));
     }
 }

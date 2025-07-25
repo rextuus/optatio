@@ -17,10 +17,20 @@
             <h4 class="mb-0">Willkommen bei Optatio</h4>
         </div>
 
-        <!-- Participated Events Section -->
+        <!-- Own Events Section -->
         <div class="mt-4">
-            <h5 class="mb-3">Deine Events</h5>
-            {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
+            <h5 class="mb-3">
+                <i class="fa-solid fa-calendar-days me-2 text-secondary"></i>
+                Deine Events
+            </h5>
+            {% if ownEvents is empty %}
+                <div class="alert alert-info text-center d-flex align-items-center">
+                    <i class="fa-solid fa-info-circle me-2"></i>
+                    <span>Du hast noch keine Events erstellt.</span>
+                </div>
+            {% else %}
+                {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
+            {% endif %}
             <div class="row">
                 {% for event in secretSantaEvents %}
                     <div class="col-md-6 col-lg-4 mb-4">
@@ -30,10 +40,21 @@
             </div>
         </div>
 
-        <!-- Other Events Section -->
+        <!-- Participating Events Section -->
         <div class="mt-4">
-            <h5 class="mb-3">Events bei denen du dabei bist</h5>
-            {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
+            <h5 class="mb-3">
+                <i class="fa-solid fa-users me-2 text-secondary"></i>
+                Events bei denen du dabei bist
+            </h5>
+
+            {% if participatingEvents is empty %}
+                <div class="alert alert-info text-center d-flex align-items-center">
+                    <i class="fa-solid fa-info-circle me-2"></i>
+                    <span>Du nimmst derzeit an keinen Events teil.</span>
+                </div>
+            {% else %}
+                {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
+            {% endif %}
         </div>
 
         <!-- Buttons Section -->
@@ -44,7 +65,7 @@
                     <span>Zu den Events</span>
                 </a>
                 <a href="{{ path('app_desire_home') }}" class="btn btn-outline-success d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-gifts"></i>
+                    <i class="fa-solid fa-globe"></i>
                     <span>Zu deiner globalen Wunschliste</span>
                 </a>
             </div>

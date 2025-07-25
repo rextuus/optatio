@@ -4,18 +4,28 @@
         <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
             <!-- Name and Priority Buttons -->
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Desire Name -->
-                <button class="btn btn-link text-white text-decoration-none p-0"
-                        style="flex: 1; min-width: 0;"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        aria-expanded="false"
-                        aria-controls="collapseDetails{{ this.desire.id }}"
-                        data-bs-target="#collapseDetails{{ this.desire.id }}">
-                    <h5 class="mb-2 clamp-text">
-                        {{ this.desire.name }}
-                    </h5>
-                </button>
+                <div class="d-flex align-items-center">
+                    <!-- Image or Default Icon -->
+                    {% if this.desire.images|length > 0 %}
+
+                        <!-- Display First Image if Available -->
+                        <img src="{{ this.desire.images[0].cdnUrl }}" class="rounded me-2" alt="Desire Image"
+                             style="width: 40px; height: 40px; object-fit: cover;">
+                    {% else %}
+                        <!-- Default FontAwesome Icon -->
+                        <i class="fa-solid fa-box fa-2x me-2 text-black"></i>
+                    {% endif %}
+                    <!-- Desire Name -->
+                    <button class="btn btn-link text-white text-decoration-none p-0 clamp-text"
+                            style="flex: 1; min-width: 0;"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            aria-expanded="false"
+                            aria-controls="collapseDetails{{ this.desire.id }}"
+                            data-bs-target="#collapseDetails{{ this.desire.id }}">
+                        <h5 class="mb-2 clamp-text">{{ this.desire.name }}</h5>
+                    </button>
+                </div>
 
                 <!-- Priority Button Group -->
                 <div class="d-flex flex-column align-items-center ms-3 mt-4">
@@ -36,18 +46,16 @@
                         }) }}
                         {{ form_end(form) }}
                     </div>
-                    <!-- Second Row: Up and Down Buttons -->
 
+                    <!-- Second Row: Up and Down Buttons -->
                     <div class="btn-group mt-2">
-                        <button
-                                data-action="click->live#action"
+                        <button data-action="click->live#action"
                                 data-live-action-param="move"
                                 data-live-direction-param="up"
                                 class="btn btn-outline-light btn-sm {{ this.getDisableUp }}">
                             <i class="fa-solid fa-arrow-up {{ this.up }}"></i>
                         </button>
-                        <button
-                                data-action="click->live#action"
+                        <button data-action="click->live#action"
                                 data-live-action-param="move"
                                 data-live-direction-param="down"
                                 class="btn btn-outline-light btn-sm {{ this.getDisableDown }}">
@@ -61,19 +69,21 @@
             <div class="d-flex align-items-center">
                 <i class="fa-solid fa-fingerprint fa-lg {{ this.exactly }} me-3"></i>
                 <i class="fa-solid fa-copy fa-lg {{ this.exclusive }} me-3"></i>
-                <i class="fa-solid fa-eye fa-lg {{ this.active }}"></i>
+                <i class="fa-solid fa-eye fa-lg {{ this.active }} me-3"></i>
+                {{ this.relationIcon()|raw }}
             </div>
-
-
-
         </div>
 
         <!-- Collapsible Details Section -->
         <div id="collapseDetails{{ this.desire.id }}" class="collapse">
             <div class="card-body">
+                {% set realtionInfo = this.getRelationInfo %}
+                {% if realtionInfo is not null %}
+                    <h5 class="text-warning">{{ realtionInfo }}</h5>
+                {% endif %}
+
                 {% if this.isExactly() %}
-                    <h5 class="text-danger">Du hast angegeben, dass du nur das Produkt aus dem Beispiel
-                        akzeptierst!</h5>
+                    <h5 class="text-danger">Du hast angegeben, dass du nur das Produkt aus dem Beispiel akzeptierst!</h5>
                 {% endif %}
 
                 <!-- Description -->
@@ -111,7 +121,11 @@
                        class="btn btn-secondary m-1">
                         <i class="fa-solid fa-camera"></i>
                     </a>
-                    <a href="{{ path('app_desire_home', {'from': this.desireList.id, 'desire': this.desire.id}, false) }}"
+                    <a href="{{ path('app_extracted_desire_images', {'desireList': this.desireList.id, 'desire': this.desire.id}) }}"
+                       class="btn btn-secondary m-1">
+                        <i class="fa-solid fa-images"></i>
+                    </a>
+                    <a href="{{ path('app_desire_switch', {'from': this.desireList.id, 'desire': this.desire.id}, false) }}"
                        class="btn btn-secondary m-1">
                         <i class="fa-solid fa-shuffle"></i>
                     </a>
