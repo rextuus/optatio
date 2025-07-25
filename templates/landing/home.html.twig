@@ -11,63 +11,73 @@
             <i class="fa-solid fa-home fa-lg me-3 text-secondary"></i>
         </div>
     </div>
-    <div class="container py-5">
-        <!-- Welcome Section -->
-        <div class="alert alert-primary text-center" role="alert">
-            <h4 class="mb-0">Willkommen bei Optatio</h4>
-        </div>
 
-        <!-- Own Events Section -->
-        <div class="mt-4">
-            <h5 class="mb-3">
-                <i class="fa-solid fa-calendar-days me-2 text-secondary"></i>
-                Deine Events
-            </h5>
-            {% if ownEvents is empty %}
-                <div class="alert alert-info text-center d-flex align-items-center">
-                    <i class="fa-solid fa-info-circle me-2"></i>
-                    <span>Du hast noch keine Events erstellt.</span>
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_event_list') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-calendar-alt btn-icon"></i>
+                        <span class="btn-text">Zu den Events</span>
+                    </a>
+                    <a href="{{ path('app_desire_home') }}" class="btn btn-light btn-small">
+                        <i class="fa-solid fa-globe btn-icon"></i>
+                        <span class="btn-text">Zu deiner globalen Wunschliste</span>
+                    </a>
                 </div>
-            {% else %}
-                {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
-            {% endif %}
-            <div class="row">
-                {% for event in secretSantaEvents %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        {{ component('SecretSantaComponent', { event: event, user: user }) }}
-                    </div>
-                {% endfor %}
             </div>
         </div>
+    </div>
 
-        <!-- Participating Events Section -->
-        <div class="mt-4">
-            <h5 class="mb-3">
-                <i class="fa-solid fa-users me-2 text-secondary"></i>
-                Events bei denen du dabei bist
-            </h5>
 
-            {% if participatingEvents is empty %}
-                <div class="alert alert-info text-center d-flex align-items-center">
-                    <i class="fa-solid fa-info-circle me-2"></i>
-                    <span>Du nimmst derzeit an keinen Events teil.</span>
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Welcome Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Willkommen bei Optatio</h4>
                 </div>
-            {% else %}
-                {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
-            {% endif %}
-        </div>
 
-        <!-- Buttons Section -->
-        <div class="mt-5 text-center">
-            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                <a href="{{ path('app_event_list') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-calendar-alt"></i>
-                    <span>Zu den Events</span>
-                </a>
-                <a href="{{ path('app_desire_home') }}" class="btn btn-outline-success d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-globe"></i>
-                    <span>Zu deiner globalen Wunschliste</span>
-                </a>
+                <!-- Participating Events Section -->
+                <div class="mt-4">
+                    <h5 class="mb-3">
+                        <i class="fa-solid fa-users me-2 text-secondary"></i>
+                        Events bei denen du dabei bist
+                    </h5>
+
+                    {% if participatingEvents is empty and participatingSecretSantaEvents is empty %}
+                        <div class="alert alert-info text-center d-flex align-items-center">
+                            <i class="fa-solid fa-info-circle me-2"></i>
+                            <span>Du nimmst derzeit an keinen Events teil.</span>
+                            <a href="{{ path('app_event_list') }}" class="btn btn-outline-dark btn-small">
+                                <i class="fa-solid fa-calendar-alt btn-icon"></i>
+                                <span class="btn-text">Zu den Events</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
+                        {{ component('Event:SecretSantaEventListComponent', { events: participatingSecretSantaEvents, user: user }) }}
+                    {% endif %}
+                </div>
+
+                <!-- Own Events Section -->
+                <div class="mt-4">
+                    <h5 class="mb-3">
+                        <i class="fa-solid fa-calendar-days me-2 text-secondary"></i>
+                        Deine Events
+                    </h5>
+                    {% if ownEvents is empty and ownSecretSantaEvents is empty %}
+                        <div class="alert alert-info text-center d-flex align-items-center">
+                            <i class="fa-solid fa-info-circle me-2"></i>
+                            <span>Du hast noch keine Events erstellt.</span>
+                        </div>
+                    {% else %}
+                        {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
+                        {{ component('Event:SecretSantaEventListComponent', { events: ownSecretSantaEvents, user: user }) }}
+                    {% endif %}
+                </div>
+
             </div>
         </div>
     </div>

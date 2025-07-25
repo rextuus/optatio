@@ -28,11 +28,11 @@ class EventManager
 {
 
     public function __construct(
-        private EventService $eventService,
-        private DesireManager $desireManager,
-        private UserService $userService,
-        private SecretSantaEventService $secretSantaEventService,
-        private DesireListService $desireListService
+        private readonly EventService $eventService,
+        private readonly DesireManager $desireManager,
+        private readonly UserService $userService,
+        private readonly SecretSantaEventService $secretSantaEventService,
+        private readonly DesireListService $desireListService
     )
     {
 

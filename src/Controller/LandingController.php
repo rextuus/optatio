@@ -43,7 +43,7 @@ class LandingController extends AbstractController
             if ($secretSantaEvent->getCreator() === $user){
                 $ownSecretSantaEvents[] = $secretSantaEvent;
             }
-            if (in_array($user, $secretSantaEvent->getOverallParticipants())){
+            if (in_array($user, $secretSantaEvent->getOverallParticipants()) && $secretSantaEvent->getFirstRound()->getCreator() !== $user ){
                 $participatingSecretSantaEvents[] = $secretSantaEvent;
             }
         }
