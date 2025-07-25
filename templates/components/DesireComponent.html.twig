@@ -1,7 +1,7 @@
-<div{{ attributes }} class="container-fluid">
-    <div class="card mb-3 {{ this.isListed }}">
+<div{{ attributes }} class="container-fluid p-0">
+    <div class="card mb-3 border-black {{ this.isListed }}">
         <!-- Card Header -->
-        <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
+        <div class="card-header bg-primary d-flex flex-column bg-body-secondary desire-card-header">
             <!-- Name and Priority Buttons -->
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
@@ -76,7 +76,7 @@
 
         <!-- Collapsible Details Section -->
         <div id="collapseDetails{{ this.desire.id }}" class="collapse">
-            <div class="card-body">
+            <div class="card-body bg-body-secondary">
                 {% set realtionInfo = this.getRelationInfo %}
                 {% if realtionInfo is not null %}
                     <h5 class="text-warning">{{ realtionInfo }}</h5>

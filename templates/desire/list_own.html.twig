@@ -11,40 +11,52 @@
             <i class="fa-solid fa-heart fa-lg me-3 text-danger"></i>
         </div>
     </div>
-    <div class="container my-5"> <!-- Add container for responsive layout -->
-        <!-- Informational Text -->
-        <div class="text-center mb-4 bg-dark p-3 rounded">
-            <p class="text-white fs-5">
-                {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, dir ist egal welchen der Wünsche sich die Leute aussuchen'%}
-                {% if list.hasPriority %}
-                    {% set priority = '<span class="fw-bold text-warning">priorisiert.</span> Das bedeutet, dass du den Wunsch ganz oben gerne als erstes erfüllt haben möchtest!'%}
-                {% endif %}
-                Deine Wunschliste ist momentan {{ priority|raw }}
-            </p>
-        </div>
 
-
-        <!-- Action Buttons -->
-        <div class="row mb-4">
-            <div class="col-12 col-md-auto mb-3 mb-md-0">
-                {% if ssEvent is not null %}
-                    <a href="{{ path('app_secret_santa_detail', {'event': ssEvent.id}) }}" class="btn btn-outline-secondary w-100">
-                        <i class="fa-solid fa-gifts me-2"></i> Zum Event
+    <!-- Action Buttons -->
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    {% if ssEvent is not null %}
+                        <a href="{{ path('app_secret_santa_detail', {'event': ssEvent.id}) }}"
+                           class="btn btn-outline-dark btn-small">
+                            <i class="fa-solid fa-house btn-icon"></i>
+                            <span class="btn-text">Übersicht</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_home') }}" class="btn btn-outline-dark btn-small">
+                            <i class="fa-solid fa-house btn-icon"></i>
+                            <span class="btn-text">Zu deiner Home-Area</span>
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('app_desire_create', {'desireList': list.id}) }}"
+                       class="btn btn-success btn-small">
+                        <i class="fa-solid fa-plus btn-icon"></i>
+                        <span class="btn-text">Neuer Wunsch</span>
                     </a>
-                {% else %}
-                    <a href="{{ path('app_event_detail', {'event': event.id}) }}" class="btn btn-outline-secondary w-100">
-                        <i class="fa-solid fa-gifts me-2"></i> Zum Event
-                    </a>
-                {% endif %}
-            </div>
-            <div class="col-12 col-md-auto">
-                <a href="{{ path('app_desire_create', {'desireList': list.id}) }}" class="btn btn-success w-100">
-                    <i class="fa-solid fa-plus me-2"></i> Neuer Wunsch
-                </a>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Desires List -->
-        {{ component('DesireListComponent', {desires: desires, list: list, desireCount: desires|length}) }}
+    <div class="container my-2"> <!-- Add container for responsive layout -->
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Informational Text -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, dir ist egal welchen der Wünsche sich die Leute aussuchen' %}
+                        {% if list.hasPriority %}
+                            {% set priority = '<span class="fw-bold text-warning">priorisiert.</span> Das bedeutet, dass du den Wunsch ganz oben gerne als erstes erfüllt haben möchtest!' %}
+                        {% endif %}
+                        Deine Wunschliste ist momentan {{ priority|raw }}
+                    </p>
+                </div>
+
+                <!-- Desires List -->
+                {{ component('DesireListComponent', {desires: desires, list: list, desireCount: desires|length}) }}
+            </div>
+        </div>
     </div>
 {% endblock %}

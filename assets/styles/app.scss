@@ -58,7 +58,7 @@ body{
 
 //bootstrap overwrites
 .desire-card-header {
-    background-color: #ffffff !important; /* Example custom background color */
+    //background-color: #bcbcbc !important; /* Example custom background color */
     h5{
         color: black;
     }
@@ -91,6 +91,8 @@ button.btn-link {
     overflow: hidden; /* Hides overflowing content */
     text-overflow: ellipsis; /* Adds ... at the end of the text */
     word-break: break-word; /* Break words to prevent overflowing */
+    font-size: 0.5rem; /* Make text smaller */
+    line-height: 1.2;  /* Ensure the text has proper vertical spacing */
 }
 .inactive-card {
     background-color: #f8d7da; /* Light red for inactive state */
@@ -118,4 +120,27 @@ button.btn-link {
 .form-check-input:checked:hover {
     background-color: #218838 !important; /* Darker green for hover */
     border-color: #218838 !important;
+}
+
+
+//bootstrap overwries
+.btn-small {
+    display: flex;           /* Flexbox for alignment */
+    align-items: center;     /* Center items vertically */
+    justify-content: center; /* Center items horizontally (optional) */
+    gap: 0.25rem;            /* Add space between icon and text */
+    padding: 0.25rem 0.5rem; /* Adjust button padding */
+
+    .btn-icon {
+        font-size: 1rem; /* Keep the icon size larger */
+    }
+
+    .btn-icon-sm {
+        font-size: 0.8rem; /* Keep the icon size larger */
+    }
+
+    .btn-text {
+        font-size: 0.5rem; /* Make text smaller */
+        line-height: 1.2;  /* Ensure the text has proper vertical spacing */
+    }
 }

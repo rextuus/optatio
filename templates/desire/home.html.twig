@@ -12,34 +12,45 @@
             <i class="fa-solid fa-globe fa-lg me-3 text-secondary"></i>
         </div>
     </div>
-{#    {{ component('Test') }}#}
-    <div class="content-body py-5">
-            <!-- Informational Text -->
-            <div class="text-center mb-4 bg-dark p-3 rounded">
-                <p class="text-white fs-6">
-                    Das ist deine globale Wunschliste. Du kannst sie das ganze Jahr über verwenden um dir Wünsche zu merken. Du kannst Wünsche aus ihr in andere Wunschlisten (z.B. deine Geburtstagslist) kopieren oder verschieben.
-                </p>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="row mb-4">
-                <div class="col-12 col-md-auto mb-3 mb-md-0">
-                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary w-100">
-                        <i class="fa-solid fa-home me-2"></i> Zurück
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-home btn-icon"></i>
+                        <span class="btn-text">Zurück</span>
                     </a>
-                </div>
-                <div class="col-12 col-md-auto mb-3 mb-md-0">
-                    <a href="{{ path('app_desire_create', {'desireList': masterList.id}) }}" class="btn btn-success w-100">
-                        <i class="fa-solid fa-plus me-2"></i> Neuer Wunsch
+                    <a href="{{ path('app_desire_create', {'desireList': masterList.id}) }}" class="btn btn-success btn-small">
+                        <i class="fa-solid fa-plus btn-icon"></i>
+                        <span class="btn-text">Neuer Wunsch</span>
                     </a>
-                </div>
-                <div class="col-12 col-md-auto">
-                    <a href="{{ path('app_desire_switch') }}" class="btn btn-primary w-100">
-                        <i class="fa-solid fa-shuffle me-2"></i> Wünsche switchen
+                    <a href="{{ path('app_desire_switch') }}" class="btn btn-primary btn-small">
+                        <i class="fa-solid fa-shuffle btn-icon"></i>
+                        <span class="btn-text">Wünsche switchen</span>
                     </a>
                 </div>
             </div>
-
-            {{ component('DesireListComponent', {desires: masterList.desires.toArray, list: masterList, desireCount: masterList.desires|length}) }}
         </div>
+    </div>
+
+
+
+    {#    {{ component('Test') }} #}
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Informational Text -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class=" fs-6">
+                        Das ist deine globale Wunschliste. Du kannst sie das ganze Jahr über verwenden um dir Wünsche zu
+                        merken. Du kannst Wünsche aus ihr in andere Wunschlisten (z.B. deine Geburtstagsliste) kopieren
+                        oder verschieben.
+                    </p>
+                </div>
+                {{ component('DesireListComponent', {desires: masterList.desires.toArray, list: masterList, desireCount: masterList.desires|length}) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

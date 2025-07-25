@@ -1,13 +1,13 @@
-<div{{ attributes }} class="container-fluid">
+<div{{ attributes }} class="container-fluid p-0">
     <div class="card mb-3">
         <!-- Card Header (Desire Name, Details, Priority and Action Buttons) -->
-        <div class="card-header bg-primary text-white d-flex flex-column desire-card-header">
+        <div class="card-header bg-primary d-flex flex-column bg-body-secondary desire-card-header">
             <!-- Name and Image in One Line -->
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <!-- Image (if exists) -->
                     {% if this.desire.images|length > 0 %}
-                        <img src="{{ this.desire.images[0].cdnUrl }}" class="rounded me-2" alt="Desire Image"
+                        <img src="{{ this.desire.images[0].cdnUrl }}" class="rounded me-2 " alt="Desire Image"
                              style="width: 40px; height: 40px; object-fit: cover;">
                     {% else %}
                         <!-- Default FontAwesome Icon -->
@@ -30,14 +30,14 @@
                 <!-- Priority Buttons -->
                 {% if this.checkIsResolvedByUser == false %}
                     <div class="d-flex flex-column align-items-stretch ms-3">
-                        <a href="{{ this.ButtonLink }}" class="no-uppercase btn btn-outline-light btn-sm {{ this.reserveDisabled }} {{ this.reserveButtonStyle }}">
-                            <i class="fa-solid fa-basket-shopping"></i>
-                            <span class="ms-2">{{ this.reserveButtonText }}</span>
+                        <a href="{{ this.ButtonLink }}" class="no-uppercase btn btn-outline-light btn-small {{ this.reserveDisabled }} {{ this.reserveButtonStyle }}">
+                            <i class="fa-solid fa-basket-shopping btn-icon-sm"></i>
+                            <span class="btn-text">{{ this.reserveButtonText }}</span>
                         </a>
                         {% if this.checkIsReservedByUser %}
-                            <a href="{{ this.ResolveButtonLink }}" class="no-uppercase btn btn-outline-light btn-sm btn-success mt-2">
-                                <i class="fa-solid fa-check"></i>
-                                <span class="ms-2">Bestätigen</span>
+                            <a href="{{ this.ResolveButtonLink }}" class="no-uppercase btn btn-outline-light btn-success btn-small">
+                                <i class="fa-solid fa-check btn-icon-sm"></i>
+                                <span class="btn-text">Bestätigen</span>
                             </a>
                         {% endif %}
                     </div>
@@ -59,7 +59,7 @@
 
         <!-- Collapse Section for Desire Details -->
         <div id="collapseDetails{{ this.desire.id }}" class="collapse">
-            <div class="card-body">
+            <div class="card-body bg-body-secondary">
                 {% if this.isExactly() == 'text-success' %}
                     <h5 class="text-danger">ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h5>
                 {% endif %}

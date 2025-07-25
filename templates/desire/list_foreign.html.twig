@@ -13,50 +13,62 @@
         </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="container my-5">
-        <!-- Informational Text -->
-        <div class="text-center mb-4 bg-dark p-3 rounded">
-            <p class="text-white fs-5">
-                {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, du kannst die aussuchen was du magst'%}
-                {% if list.hasPriority %}
-                    {% set priority = '<span class="fw-bold text-warning">priorisiert.</span> Das bedeutet, der Ersteller hätte am liebsten das Geschenk ganz oben!'%}
-                {% endif %}
-                Diese Wunschliste ist momentan {{ priority|raw }}
-            </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="row mb-4">
-            <div class="col-12 col-md-auto mb-3 mb-md-0">
-                {% if ssEvent is not null %}
-                    <a href="{{ path('app_secret_santa_detail', {'event': ssEvent.id}) }}" class="btn btn-outline-secondary w-100">
-                        <i class="fa-solid fa-house me-2"></i> Übersicht
-                    </a>
-                {% else %}
-                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary w-100">
-                        <i class="fa-solid fa-house me-2"></i> Zu deiner Home-Area
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Empty List Section -->
-        {% if desires|length == 0 %}
-            <div class="alert alert-warning" role="alert">
-                <h5 class="alert-heading">Keine Wünsche vorhanden</h5>
-                <p>Fändest du es wäre ein cooles Feature, wenn du über Email oder WhatsApp benachrichtigt wirst, sobald die Person hier etwas einträgt?</p>
-                <p>Wenn ja, gib das als Feedback an die Entwickler der WH-Company weiter. Und pack nen Bündel Scheine dazu...</p>
-            </div>
-        {% endif %}
-
-        <!-- Desires List -->
-        <div class="row">
-            {% for desire in desires %}
-                <div class="col-12 mb-3">
-                    {{ component('ForeignDesireComponent', { desire: desire, desireList: list, currentUser: currentUser }) }}
+    <!-- Action Buttons -->
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <div class="d-flex justify-content-start gap-2">
+                    {% if ssEvent is not null %}
+                        <a href="{{ path('app_secret_santa_detail', {'event': ssEvent.id}) }}" class="btn btn-outline-dark btn-small">
+                            <i class="fa-solid fa-house btn-icon"></i>
+                            <span class="btn-text">Übersicht</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_home') }}" class="btn btn-outline-dark btn-small">
+                            <i class="fa-solid fa-house btn-icon"></i>
+                            <span class="btn-text">Zu deiner Home-Area</span>
+                        </a>
+                    {% endif %}
                 </div>
-            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container my-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Informational Text -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, du kannst die aussuchen was du magst' %}
+                        {% if list.hasPriority %}
+                            {% set priority = '<span class="fw-bold text-warning">priorisiert.</span> Das bedeutet, der Ersteller hätte am liebsten das Geschenk ganz oben!' %}
+                        {% endif %}
+                        Diese Wunschliste ist momentan {{ priority|raw }}
+                    </p>
+                </div>
+
+                <!-- Empty List Section -->
+                {% if desires|length == 0 %}
+                    <div class="alert alert-warning" role="alert">
+                        <h5 class="alert-heading">Keine Wünsche vorhanden</h5>
+                        <p>Fändest du es wäre ein cooles Feature, wenn du über Email oder WhatsApp benachrichtigt wirst,
+                            sobald die Person hier etwas einträgt?</p>
+                        <p>Wenn ja, gib das als Feedback an die Entwickler der WH-Company weiter. Und pack nen Bündel
+                            Scheine dazu...</p>
+                    </div>
+                {% endif %}
+
+                <!-- Desires List -->
+                <div class="row">
+                    {% for desire in desires %}
+                        <div class="col-12 mb-3">
+                            {{ component('ForeignDesireComponent', { desire: desire, desireList: list, currentUser: currentUser }) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
