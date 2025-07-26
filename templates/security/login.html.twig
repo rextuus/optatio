@@ -3,66 +3,98 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <div class="tab-nav">
-        <button class="tab-button active" data-tab="tab-1" data-name="Login"
-                data-image="{{ asset('assets/img/login.svg') }}"></button>
-        <button class="tab-button link" data-tab="tab-2" data-name="Registrieren" data-link="{{ path('app_register') }}"
-                data-image="{{ asset('assets/img/registration.svg') }}"></button>
-    </div>
-
     <div class="page-header">
         <div class="page-header-text">
             Login
         </div>
         <div class="page-header-image">
-            <img src="{{ asset('assets/img/login.svg') }}" alt="Tile image">
+            <i class="fa-solid fa-sign-in-alt fa-lg me-3 text-secondary"></i>
         </div>
     </div>
 
-
-    <div class="content-body">
-        <div id="tab-1" class="tab active">
-
-
-            <div class="simple-text-box font-size-1-2">Willkommen zurück {{ last_username }}</div>
-
-            {% if error %}
-                <div class="form-errors">Invalide Username Passwort Kombination</div>
-            {% endif %}
-
-            <div class="form-area">
-                <form action="{{ path('app_login') }}" method="post">
-                    <div class="form-input-field">
-                        <label class="hidden" for="username">Email:</label>
-                        <div class="image-form-row">
-                            <div class="image-form-row-image">
-                                <img src="{{ asset('assets/img/person.svg') }}" alt="Tile image">
-                            </div>
-                            <input class="form-style" type="text" id="username" name="_username"
-                                   value="{{ last_username }}" placeholder="Username">
-                        </div>
-                    </div>
-
-                    <div class="form-input-field">
-                        <label class="hidden" for="password">Password:</label>
-                        <div class="image-form-row">
-                            <div class="image-form-row-image">
-                                <img src="{{ asset('assets/img/password.svg') }}" alt="Tile image">
-                            </div>
-                            <input class="form-style" type="password" id="password" name="_password"
-                                   placeholder="Passwort">
-                        </div>
-                    </div>
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-
-                    <button class="btn" type="submit">login</button>
-                </form>
-            </div>
-            <div class="has-mb-m has-mt-l">
-{#                <a class="default-button decline undecorated-link-text" href="{{ path('app_forgot_password_request') }}">Passwort vergessen?</a>#}
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-user-plus btn-icon"></i>
+                        <span class="btn-text">Registrieren</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Welcome Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Willkommen bei Optatio</h4>
+                </div>
+
+                {% if error %}
+                    <div class="alert alert-danger text-center mb-4">
+                        <i class="fa-solid fa-exclamation-circle me-2"></i>
+                        <span>Invalide Username Passwort Kombination</span>
+                    </div>
+                {% endif %}
+
+                <!-- Login Form -->
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <form action="{{ path('app_login') }}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-user"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="username" name="_username"
+                                           value="{{ last_username }}" placeholder="Username" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Passwort</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="_password"
+                                           placeholder="Passwort" required
+                                    {{ stimulus_controller('symfony/ux-toggle-password/toggle-password', {
+                                        visibleLabel: 'Show',
+                                        visibleIcon: '<i class="fa-solid fa-eye"></i>',
+                                        hiddenLabel: 'Hide',
+                                        hiddenIcon: '<i class="fa-solid fa-eye-slash"></i>',
+                                        buttonClasses: ['toggle-password-button'],
+                                    }) }}
+
+                                    >
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa-solid fa-sign-in-alt me-2"></i>
+                                    Login
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="text-center mt-3">
+                             <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none">
+                                <i class="fa-solid fa-question-circle me-1"></i>
+                                Passwort vergessen?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

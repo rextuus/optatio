@@ -22,9 +22,10 @@ class RegistrationFormType extends AbstractType
                 RepeatedType::class,
                 [
                     'type' => PasswordType::class,
+//                    'toggle' => true,
                     'required' => true,
-                    'first_options' => ['label' => ' '],
-                    'second_options' => ['label' => ' ', 'data' => ['class']],
+                    'first_options' => ['label' => ' ', 'toggle' => true],
+                    'second_options' => ['label' => ' ',  'toggle' => true, 'data' => ['class']],
                 ]
             )
             ->add('email', EmailType::class)

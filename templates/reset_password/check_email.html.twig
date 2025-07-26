@@ -1,10 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Password Reset Email Sent{% endblock %}
+{% block title %}Email zum Zurücksetzen des Passworts gesendet{% endblock %}
 
 {% block body %}
-    <p>
-        Falls ein Account mit dieser Mailadresse bei uns existiert senden wir einen Link dorthin der in 1 Stunde abläuft.
-    </p>
-    <p>Falls du keine Mail erhalten hast checke deinen Spam-Ordner oder fordere den link erneut an: <a href="{{ path('app_forgot_password_request') }}">Neuen Link anfordern</a>.</p>
+    <div class="page-header">
+        <div class="page-header-text">
+            Email gesendet
+        </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-envelope-circle-check fa-lg me-3 text-secondary"></i>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-arrow-left btn-icon"></i>
+                        <span class="btn-text">Zurück zum Login</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Header Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Email zum Zurücksetzen des Passworts gesendet</h4>
+                </div>
+
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Falls ein Account mit dieser Mailadresse bei uns existiert senden wir einen Link dorthin der in 1 Stunde abläuft.
+                    </p>
+                </div>
+
+                <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-info-circle me-2"></i>
+                        <span>Falls du keine Mail erhalten hast checke deinen Spam-Ordner oder fordere den Link erneut an:</span>
+                    </div>
+                    <a href="{{ path('app_forgot_password_request') }}" class="btn btn-outline-primary btn-small ms-md-2 mt-2 mt-md-0">
+                        <i class="fa-solid fa-paper-plane btn-icon"></i>
+                        <span class="btn-text">Neuen Link anfordern</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

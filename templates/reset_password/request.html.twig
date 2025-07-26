@@ -1,21 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}Passwort zurücksetzen{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Passwort zurücksetzen</h1>
-
-    {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Gib hier deine Email-Adresse ein. Wir senden dir einen Link zum Zurücksetzen deines Passwortes
-            </small>
+    <div class="page-header">
+        <div class="page-header-text">
+            Passwort zurücksetzen
         </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-key fa-lg me-3 text-secondary"></i>
+        </div>
+    </div>
 
-        <button class="btn btn-primary">Passwort Zurücksetzen</button>
-    {{ form_end(requestForm) }}
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-arrow-left btn-icon"></i>
+                        <span class="btn-text">Zurück zum Login</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Header Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Passwort zurücksetzen</h4>
+                </div>
+
+                {% for flash_error in app.flashes('reset_password_error') %}
+                    <div class="alert alert-danger text-center mb-4" role="alert">
+                        <i class="fa-solid fa-exclamation-circle me-2"></i>
+                        <span>{{ flash_error }}</span>
+                    </div>
+                {% endfor %}
+
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Gib hier deine Email-Adresse ein. Wir senden dir einen Link zum Zurücksetzen deines Passwortes.
+                    </p>
+                </div>
+
+                <!-- Reset Password Request Form -->
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        {{ form_start(requestForm) }}
+                            <div class="mb-3">
+                                <label for="{{ requestForm.email.vars.id }}" class="form-label">Email-Adresse</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </span>
+                                    {{ form_widget(requestForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Deine Email-Adresse'}}) }}
+                                </div>
+                                <div class="form-text text-muted">
+                                    {{ form_errors(requestForm.email) }}
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa-solid fa-paper-plane me-2"></i>
+                                    Passwort zurücksetzen
+                                </button>
+                            </div>
+                        {{ form_end(requestForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
