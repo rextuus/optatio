@@ -3,17 +3,43 @@
 {% block title %}Event erstellen{% endblock %}
 
 {% block body %}
-    <div class="container py-5">
-
-        <!-- Page Header -->
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3">Event erstellen</h1>
-            <i class="fa-solid fa-calendar-plus fa-2xl text-primary"></i>
+    <div class="page-header">
+        <div class="page-header-text">
+            Event erstellen
         </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-plus fa-lg me-3 text-secondary"></i>
+        </div>
+    </div>
 
-        <!-- Form Card -->
-        <div class="card shadow-sm">
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_event_list') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-arrow-left btn-icon"></i>
+                        <span class="btn-text">Zurück</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
             <div class="card-body">
+                <!-- Header Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Neues Event erstellen</h4>
+                </div>
+                
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Erstelle hier ein neues Event und lade andere Personen ein, daran teilzunehmen.
+                    </p>
+                </div>
+
                 {{ form_start(form, {'method': 'POST', 'attr': {'class': 'needs-validation'}}) }}
 
                 {# Display form-wide errors if any #}
@@ -30,7 +56,7 @@
                     </label>
                     <div class="input-group">
                         <span class="input-group-text">
-                            <i class="fa-solid fa-signature text-primary"></i>
+                            <i class="fa-solid fa-signature"></i>
                         </span>
                         {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Name des Events'}}) }}
                     </div>
@@ -44,7 +70,7 @@
                     </label>
                     <div class="input-group">
                         <span class="input-group-text">
-                            <i class="fa-solid fa-list text-primary"></i>
+                            <i class="fa-solid fa-list"></i>
                         </span>
                         {{ form_widget(form.eventType, {'attr': {'class': 'form-control', 'placeholder': 'Art des Events auswählen'}}) }}
                     </div>
@@ -53,8 +79,14 @@
 
                 {# Submit Button #}
                 <div class="d-flex justify-content-between mt-4">
-                    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-success'}, 'label': 'Speichern'}) }}
-                    <a href="{{ path('app_event_list') }}" class="btn btn-secondary">
+                    <div>
+                        {{ form_widget(form.submit, {
+                            'attr': {'class': 'btn btn-success'},
+                            'label': '<i class="fa-solid fa-save me-2"></i>Speichern'|raw
+                        }) }}
+                    </div>
+                    <a href="{{ path('app_event_list') }}" class="btn btn-outline-dark">
+                        <i class="fa-solid fa-times me-2"></i>
                         Abbrechen
                     </a>
                 </div>

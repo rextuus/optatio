@@ -21,7 +21,7 @@
                         <i class="fa-solid fa-home btn-icon"></i>
                         <span class="btn-text">Zurück</span>
                     </a>
-                    <a href="{{ path('app_desire_home') }}" class="btn btn-success btn-small">
+                    <a href="{{ path('app_desire_list', {desireList: event.desireLists.first.id}) }}" class="btn btn-success btn-small">
                         <i class="fa-solid fa-list btn-icon"></i>
                         <span class="btn-text">Zur Wunschliste</span>
                     </a>

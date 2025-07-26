@@ -74,9 +74,9 @@ class EventController extends AbstractController
             /** @var EventCreateData $data */
             $data = $form->getData();
 
-            $this->eventManager->initBirthdayEvent($data, $this->getUser());
+            $event = $this->eventManager->initBirthdayEvent($data, $this->getUser());
 
-            return $this->redirect($this->generateUrl('app_event_list', []));
+            return $this->redirect($this->generateUrl('app_event_detail', ['event' => $event->getId()]));
         }
 
         return $this->render('event/create.html.twig', [
