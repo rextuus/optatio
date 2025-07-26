@@ -2,6 +2,23 @@
 
 {% block title %}Event Dashboard{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Custom styling for non-active tabs */
+    #eventTabs .nav-link:not(.active) {
+        color: #6c757d; /* Bootstrap secondary color */
+        background-color: #f8f9fa; /* Light gray background */
+        border-color: #dee2e6 #dee2e6 #fff;
+    }
+    
+    #eventTabs .nav-link:not(.active):hover {
+        color: #495057; /* Darker text on hover */
+        border-color: #e9ecef #e9ecef #dee2e6;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
     <div class="page-header">
         <div class="page-header-text">
@@ -39,43 +56,85 @@
                     <h4 class="">Willkommen bei Optatio</h4>
                 </div>
 
-                <!-- Participating Events Section -->
-                <div class="mt-4">
-                    <h5 class="mb-3">
-                        <i class="fa-solid fa-users me-2 text-secondary"></i>
-                        Events bei denen du dabei bist
-                    </h5>
-
-                    {% if participatingEvents is empty and participatingSecretSantaEvents is empty %}
-                        <div class="alert alert-info text-center d-flex align-items-center">
-                            <i class="fa-solid fa-info-circle me-2"></i>
-                            <span>Du nimmst derzeit an keinen Events teil.</span>
-                            <a href="{{ path('app_event_list') }}" class="btn btn-outline-dark btn-small">
-                                <i class="fa-solid fa-calendar-alt btn-icon"></i>
-                                <span class="btn-text">Zu den Events</span>
-                            </a>
-                        </div>
-                    {% else %}
-                        {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
-                        {{ component('Event:SecretSantaEventListComponent', { events: participatingSecretSantaEvents, user: user }) }}
-                    {% endif %}
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Nimm an Events teil, um auf Wunschlisten zuzugreifen, oder erstelle eigene Events
+                    </p>
                 </div>
 
-                <!-- Own Events Section -->
-                <div class="mt-4">
-                    <h5 class="mb-3">
-                        <i class="fa-solid fa-calendar-days me-2 text-secondary"></i>
-                        Deine Events
-                    </h5>
-                    {% if ownEvents is empty and ownSecretSantaEvents is empty %}
-                        <div class="alert alert-info text-center d-flex align-items-center">
-                            <i class="fa-solid fa-info-circle me-2"></i>
-                            <span>Du hast noch keine Events erstellt.</span>
+                <!-- Bootstrap Tabs -->
+                <ul class="nav nav-tabs d-flex flex-row mb-3" id="eventTabs" role="tablist">
+                    <li class="nav-item flex-fill text-center" role="presentation">
+                        <button class="nav-link w-100" id="participating-tab" data-bs-toggle="tab" data-bs-target="#participating-events" 
+                                type="button" role="tab" aria-controls="participating-events" aria-selected="false">
+                            <i class="fa-solid fa-check me-2"></i>
+                            <span class="d-none d-md-inline">Events bei denen du dabei bist</span>
+                            <span class="d-inline d-md-none">Angemeldet</span>
+                        </button>
+                    </li>
+                    <li class="nav-item flex-fill text-center" role="presentation">
+                        <button class="nav-link w-100" id="own-tab" data-bs-toggle="tab" data-bs-target="#own-events" 
+                                type="button" role="tab" aria-controls="own-events" aria-selected="false">
+                            <i class="fa-solid fa-user me-2"></i>
+                            <span class="d-none d-md-inline">Deine Events</span>
+                            <span class="d-inline d-md-none">Eigene</span>
+                        </button>
+                    </li>
+                    <li class="nav-item flex-fill text-center" role="presentation">
+                        <button class="nav-link active w-100" id="bookmark-tab" data-bs-toggle="tab" data-bs-target="#bookmark-events" 
+                                type="button" role="tab" aria-controls="bookmark-events" aria-selected="true">
+                            <i class="fa-solid fa-bookmark me-2"></i>
+                            <span class="d-none d-md-inline">Lesezeichen</span>
+                            <span class="d-inline d-md-none">Lesezeichen</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="eventTabsContent">
+                    <!-- Participating Events Tab -->
+                    <div class="tab-pane fade" id="participating-events" role="tabpanel" aria-labelledby="participating-tab">
+                        {% if participatingEvents is empty and participatingSecretSantaEvents is empty %}
+                            <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center">
+                                <div class="d-flex align-items-center mb-2 mb-md-0">
+                                    <i class="fa-solid fa-info-circle me-2"></i>
+                                    <span>Du nimmst derzeit an keinen Events teil.</span>
+                                </div>
+                                <a href="{{ path('app_event_list') }}" class="btn btn-outline-dark btn-small ms-md-2">
+                                    <i class="fa-solid fa-calendar-alt btn-icon"></i>
+                                    <span class="btn-text">Zu den Events</span>
+                                </a>
+                            </div>
+                        {% else %}
+                            {{ component('Event:EventListComponent', { events: participatingEvents, user: user }) }}
+                            {{ component('Event:SecretSantaEventListComponent', { events: participatingSecretSantaEvents, user: user }) }}
+                        {% endif %}
+                    </div>
+
+                    <!-- Own Events Tab -->
+                    <div class="tab-pane fade" id="own-events" role="tabpanel" aria-labelledby="own-tab">
+                        {% if ownEvents is empty and ownSecretSantaEvents is empty %}
+                            <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa-solid fa-info-circle me-2"></i>
+                                    <span>Du hast noch keine Events erstellt.</span>
+                                </div>
+                            </div>
+                        {% else %}
+                            {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
+                            {{ component('Event:SecretSantaEventListComponent', { events: ownSecretSantaEvents, user: user }) }}
+                        {% endif %}
+                    </div>
+
+                    <!-- Bookmark Tab -->
+                    <div class="tab-pane fade show active" id="bookmark-events" role="tabpanel" aria-labelledby="bookmark-tab">
+                        <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-info-circle me-2"></i>
+                                <span>TBD - Diese Funktion wird in Kürze verfügbar sein.</span>
+                            </div>
                         </div>
-                    {% else %}
-                        {{ component('Event:EventListComponent', { events: ownEvents, user: user }) }}
-                        {{ component('Event:SecretSantaEventListComponent', { events: ownSecretSantaEvents, user: user }) }}
-                    {% endif %}
+                    </div>
                 </div>
 
             </div>
