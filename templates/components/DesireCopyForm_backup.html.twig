@@ -1,0 +1,73 @@
+<div {{ attributes }} class="form-area">
+    {{ form_start(form, {
+        attr: {
+            'data-action': 'live#action:prevent',
+            'data-live-action-param': 'submit'
+        }
+    }) }}
+
+    <div class="my-custom-class-for-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    <div class="form-input-field">
+        <label class="" for="form_from">Variante</label>
+        <div class="image-form-row">
+            <div class="image-form-row-image">
+{#                <i class="fas fa-arrow-down"></i>#}
+            </div>
+            {{ form_widget(form.action, {'attr': {'class': 'form-style', 'placeholder':'From', 'id': 'form_from'}}) }}
+            {{ form_errors(form.action) }}
+        </div>
+    </div>
+    <div class="form-input-field">
+
+    </div>
+
+    <div class="form-input-field">
+        <label class="" for="form_from">Von</label>
+        <div class="image-form-row">
+            <div class="image-form-row-image">
+                <i class="fas fa-arrow-down fa-xl" style="color: #9a9996;"></i>
+            </div>
+            {{ form_widget(form.from, {'attr': {'class': 'form-style', 'placeholder':'From', 'id': 'form_from'}}) }}
+            {{ form_errors(form.from) }}
+        </div>
+    </div>
+
+
+    <div class="form-input-field">
+        <label class="hidden" for="form_desires"></label>
+        <div class="image-form-row">
+            <div class="image-form-row-icon p-2">
+{#                <i class="fa-solid fa-heart fa-2x"></i>#}
+            </div>
+            <div class="desires-list">
+                {% for child in form.desires %}
+                    <div class="form-checkbox">
+                        {{ form_widget(child) }}
+                        {{ form_label(child) }}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ form_errors(form.desires) }}
+        </div>
+    </div>
+
+    <div class="form-input-field">
+        <label class="" for="form_to">Nach</label>
+        <div class="image-form-row">
+            <i class="fa-solid fa-bullseye fa-2x" style="color: #9a9996;"></i>
+            {{ form_widget(form.to, {'attr': {'class': 'form-style', 'placeholder':'To', 'id': 'form_to'}}) }}
+            {{ form_errors(form.to) }}
+        </div>
+    </div>
+
+    {{ form_row(form._token) }}
+
+            <div class="form-submit-field" style="margin-top: 15px;">
+                <button type="submit" class="btn">Anwenden</button>
+            </div>
+
+    {{ form_end(form) }}
+</div>

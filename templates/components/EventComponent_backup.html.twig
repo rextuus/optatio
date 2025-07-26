@@ -1,0 +1,61 @@
+<div{{ attributes }}>
+    <div class="event-card">
+        <div class="event-banner"></div>
+        <div class="toggle-indicator"></div>
+        <div class="event-header">
+
+            <div class="card-toggle" onclick="toggleEventDetails(event)">
+                <h3 class="event-name">{{ event.name }}</h3>
+            </div>
+
+            <div class="button-row">
+
+                {% if this.event.openToJoin and not this.isUserParticipant %}
+                    <div class="event-card-button">
+                        <a href="{{ path('app_event_join', {'event': event.id}) }}">
+                            <button class="join-button">
+                                Teilnehmen
+                            </button>
+                        </a>
+                    </div>
+                    {% else %}
+                        <div class="event-card-button">
+                            <a href="{{ path('app_event_detail', {'event': event.id}) }}">
+                                <button class="join-button">
+                                    Zum Event
+                                </button>
+                            </a>
+                        </div>
+                {% endif %}
+
+
+                {% if this.canEdit %}
+                    <div class="event-card-button">
+                        <a href="{{ path('app_event_join', {'event': event.id}) }}">
+                            <button class="join-button" style="margin-left: 3px" id="contributeButton{{ event.id }}">
+                                <i class="fa-solid fa-gears"></i>
+                                Edit
+                            </button>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="event-details">
+            <p><strong>Erstellt:</strong> missing</p>
+            <p><strong>State:</strong> {{ event.openToJoin }}</p>
+            <p><strong>Creator:</strong> {{ event.creator.firstName }}</p>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleEventDetails(event) {
+        const eventCard = event.currentTarget.parentElement.parentElement;
+        if (!event.target.matches('.join-button')) {
+            eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
+            eventCard.classList.toggle('expanded');
+        }
+    }
+</script>

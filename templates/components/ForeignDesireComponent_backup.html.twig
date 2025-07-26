@@ -1,0 +1,95 @@
+<div{{ attributes }}>
+    <div class="desire-card">
+        <div class="desire-banner {{ this.HeaderClass }}">{{ this.headerText }}</div>
+        <div class="toggle-indicator"></div>
+
+        <div class="desire-header">
+
+            <div class="card-toggle" onclick="toggleEventDetails(event)">
+                <div class="desire-name">{{ this.desire.name }}</div>
+            </div>
+
+            <div class="info-button-row">
+                <div class="info-row">
+                    <div class="info-tale {{ this.isExclusive() }}">
+                        <img src="{{ asset('assets/img/multiple.svg') }}" alt="Tile image">
+                    </div>
+                    <div class="info-tale {{ this.isExactly() }}">
+                        <img src="{{ asset('assets/img/exactly.svg') }}" alt="Tile image">
+                    </div>
+                </div>
+                {% if  this.checkIsResolvedByUser == false%}
+                <div class="button-row">
+                    <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
+                        <a href="{{ this.ButtonLink }}">
+                            <button {{ this.reserveDisabled }}>
+                                {{this.reserveButtonText }}
+                            </button>
+                        </a>
+                    </div>
+                    {% if this.checkIsReservedByUser%}
+                        <div class="desire-card-reserve-button {{ this.reserveDisabled }}">
+                            <a href="{{ this.ResolveButtonLink }}">
+                                <button {{ this.reserveDisabled }}>
+                                    Bestätigen
+                                </button>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="desire-details">
+            {% if this.isExactly() %}
+                <h2>ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h2>
+            {% endif %}
+
+            <div id="imageModal" class="modal" onclick="closeModal()">
+                <span class="close">&times;</span>
+                <img class="modal-content" id="img01">
+            </div>
+            <div class="image-container">
+                {% for image in this.desire.images %}
+                    <div class="image" onclick="showLargeImage('{{ image.cdnUrl }}')">
+                        <img src="{{ image.cdnUrl }}">
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% for url in this.desire.urls %}
+                <p>
+                    <a href="{{ url.path }}" target="_blank">Beispiel</a>
+                </p>
+            {% endfor %}
+            <h3>Beschreibung:</h3>
+            <p>
+                {{ this.desire.description }}
+            </p>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    function toggleEventDetails(event) {
+        const eventCard = event.currentTarget.parentElement.parentElement;
+        if (!event.target.matches('.join-button')) {
+            eventCard.querySelector('.toggle-indicator').classList.toggle('expanded');
+            eventCard.classList.toggle('expanded');
+        }
+    }
+
+    function showLargeImage(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('img01');
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
+    }
+</script>
