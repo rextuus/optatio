@@ -20,6 +20,14 @@
 
                 <!-- Buttons -->
                 <div class="d-flex flex-column align-items-stretch ms-3">
+                    <button
+                            data-action="live#action"
+                            data-live-action-param="toggleBookmark"
+                            class=" no-uppercase btn btn-bg-light btn-small ">
+                        <i class="fa-bookmark fa-solid fa-2x btn-icon-sm {{ this.bookMarkStateClass }}"></i><br>
+                        <span class="btn-text"></span>
+                    </button>
+
                     {% if this.canEdit %}
                         <a href="{{ path('app_event_join', {'event': event.id}) }}"
                            class="no-uppercase btn btn-light btn-small ">
@@ -36,7 +44,7 @@
                         {% endif %}
                         {% if this.isUserParticipant %}
                             <a href="{{ path('app_event_detail', {'event': event.id}) }}"
-                               class="no-uppercase btn btn-outline-light btn-sm btn-light btn-small">
+                               class="no-uppercase btn btn-sm btn-light btn-small">
                                 <i class="fa-solid fa-eye btn-icon-sm"></i>
                                 <span class="btn-text">Zum Event</span>
                             </a>

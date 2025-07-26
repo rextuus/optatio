@@ -21,7 +21,7 @@ class BookmarkService
         $bookmark = new EventBookmark();
         $bookmark->setOwner($user);
         $bookmark->setEvent($event);
-        $bookmark->setSecreSantaEvent($secretSantaEvent);
+        $bookmark->setSecretSantaEvent($secretSantaEvent);
 
         $this->bookmarkRepository->save($bookmark);
 
@@ -38,6 +38,15 @@ class BookmarkService
      */
     public function getBookmarksForUser(User $user): array
     {
-        return $this->bookmarkRepository->findBy(['user' => $user]);
+        return $this->bookmarkRepository->findBy(['owner' => $user]);
+    }
+
+    public function userHasBookmarkForEvent(User $user, Event|SecretSantaEvent $event): ?EventBookmark
+    {
+        if ($event instanceof SecretSantaEvent){
+            return $this->bookmarkRepository->findOneBy(['owner' => $user, 'secretSantaEvent' => $event]);
+        }
+
+        return $this->bookmarkRepository->findOneBy(['owner' => $user, 'event' => $event]);
     }
 }

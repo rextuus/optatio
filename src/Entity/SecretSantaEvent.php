@@ -53,7 +53,7 @@ class SecretSantaEvent implements EventInterface
     /**
      * @var Collection<int, EventBookmark>
      */
-    #[ORM\OneToMany(mappedBy: 'SecreSantaEvent', targetEntity: EventBookmark::class)]
+    #[ORM\OneToMany(mappedBy: 'secretSantaEvent', targetEntity: EventBookmark::class)]
     private Collection $eventBookmarks;
 
     public function __construct()
@@ -284,7 +284,7 @@ class SecretSantaEvent implements EventInterface
     {
         if (!$this->eventBookmarks->contains($eventBookmark)) {
             $this->eventBookmarks->add($eventBookmark);
-            $eventBookmark->setSecreSantaEvent($this);
+            $eventBookmark->setSecretSantaEvent($this);
         }
 
         return $this;
@@ -294,8 +294,8 @@ class SecretSantaEvent implements EventInterface
     {
         if ($this->eventBookmarks->removeElement($eventBookmark)) {
             // set the owning side to null (unless already changed)
-            if ($eventBookmark->getSecreSantaEvent() === $this) {
-                $eventBookmark->setSecreSantaEvent(null);
+            if ($eventBookmark->getSecretSantaEvent() === $this) {
+                $eventBookmark->setSecretSantaEvent(null);
             }
         }
 

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Event;
 
+use App\Content\Bookmark\BookmarkService;
 use App\Content\Desire\DesireService;
 use App\Content\Event\EventManager;
-use App\Entity\Desire;
-use App\Entity\Event;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent()]
@@ -19,11 +21,32 @@ class SecretSantaEventComponent extends AbstractController
 {
     use DefaultActionTrait;
 
-    public User $user;
-    public SecretSantaEvent $event;
+    #[LiveProp]
+    public ?User $user = null;
 
-    public function __construct(private readonly DesireService $desireService)
+    #[LiveProp]
+    public ?SecretSantaEvent $event = null;
+
+    public function __construct(
+        private readonly DesireService $desireService,
+        private readonly BookmarkService $bookmarkService
+    )
     {
+    }
+
+    #[LiveAction]
+    public function toggleBookmark(): RedirectResponse
+    {
+        $bookmark = $this->bookmarkService->userHasBookmarkForEvent($this->user, $this->event);
+        if ($bookmark !== null){
+            $this->bookmarkService->deleteBookmark($bookmark);
+
+            return $this->redirect($this->generateUrl('app_home'));
+        }
+
+        $this->bookmarkService->createBookmark($this->user, null, $this->event);
+
+        return $this->redirect($this->generateUrl('app_home'));
     }
 
 
@@ -73,5 +96,14 @@ class SecretSantaEventComponent extends AbstractController
     public function getTotalDesireCount(): int
     {
         return count($this->desireService->getAllDesiresForSecretSantaEvent($this->event));
+    }
+
+    public function getBookmarkStateClass(): string
+    {
+        if ($this->bookmarkService->userHasBookmarkForEvent($this->user, $this->event)){
+            return 'text-success';
+        }
+
+        return 'text-dark';
     }
 }

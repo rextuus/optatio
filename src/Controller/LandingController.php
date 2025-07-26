@@ -2,11 +2,7 @@
 
 namespace App\Controller;
 
-use App\Content\Desire\ChatGPT;
-use App\Content\Desire\GeminiAIService;
 use App\Content\Desire\ImageExtraction\ExtractPicsApiService;
-use App\Content\Desire\ImageScraperService;
-use App\Content\Desire\OpenAIService;
 use App\Content\Event\EventService;
 use App\Content\SecretSanta\SecretSantaEvent\SecretSantaEventService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,6 +44,18 @@ class LandingController extends AbstractController
             }
         }
 
+        $bookmarks = $user->getEventBookmarks();
+
+        $bookmarkedEvents = [];
+        $bookmarkedSecretSantaEvents = [];
+        foreach ($bookmarks as $bookmark){
+            if ($bookmark->getSecretSantaEvent() !== null){
+                $bookmarkedSecretSantaEvents[] = $bookmark->getSecretSantaEvent();
+            }else{
+                $bookmarkedEvents[] = $bookmark->getEvent();
+            }
+        }
+
         return $this->render('landing/home.html.twig', [
             'user' => $this->getUser(),
             'ownEvents' => $ownEvents,
@@ -56,6 +64,8 @@ class LandingController extends AbstractController
             'participatingSecretSantaEvents' => $participatingSecretSantaEvents,
             'events' => $events,
             'secretSantaEvents' => $secretSantaEvents,
+            'bookmarkedEvents' => $bookmarkedEvents,
+            'bookmarkedSecretSantaEvents' => $bookmarkedSecretSantaEvents
         ]);
     }
 
