@@ -13,71 +13,88 @@
             </div>
         </div>
 
-    <div class="container my-5">
-
-        <!-- Informational Text -->
-        <div class="text-center mb-4 bg-dark p-3 rounded">
-            <p class="text-white fs-5 m-0">
-                Lade hier Bilder oder Screenshots passend zu deinem Wunsch hoch. Wenn du einen Beispiel-Link angegeben hast, suchen wir für dich auf der Seite nach passenden Bildern und fügen eines hinzu.
-            </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="row mb-4">
-            <div class="col-12 col-md-auto mb-3 mb-md-0">
-                <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-outline-secondary w-100">
-                    <i class="fa-solid fa-list me-2"></i> Zurück Wunschliste
-                </a>
-            </div>
-        </div>
-
-        <!-- Upload Form -->
-        <div class="bg-light p-4 rounded shadow-sm">
-            {{ form_start(form) }}
-
-            <!-- File Upload Input Group -->
-            <div class="input-group mb-3">
-                <div class="custom-file">
-                    <label class="custom-file-label" for="{{ form.imageFile.vars.id }}">
-                        <i class="fas fa-camera"></i> Bild hochladen
-                    </label>
-                    {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input'}}) }}
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-list btn-icon"></i>
+                        <span class="btn-text">Zurück zur Wunschliste</span>
+                    </a>
                 </div>
             </div>
-
-            <!-- Image Preview -->
-            <div id="image-preview" class="image-area"></div>
-
-            <!-- Upload Button -->
-            <div class="text-center">
-                {{ form_widget(form.upload, {'attr': {'class': 'btn btn-success'}}) }}
-            </div>
-
-            {{ form_end(form) }}
-        </div>
-
-        <!-- Uploaded Images Section -->
-        <div class="upload mt-5">
-            <h2 class="text-center mb-4">Bereits hochgeladene Bilder</h2>
-            <div class="image-container d-flex flex-wrap justify-content-center">
-                {% for image in desire.images %}
-                    <div class="image position-relative m-2" data-image-url="{{ path('app_desire_image_delete', {'desire': desire.id, 'image': image.id}) }}">
-                        <img src="{{ image.cdnUrl }}" class="img-thumbnail" onclick="showLargeImage('{{ image.cdnUrl }}')">
-                        <span class="delete-icon position-absolute top-0 end-0 translate-middle p-1 bg-danger rounded-circle" onclick="deleteImage(event)">
-                            <i class="fas fa-trash text-white"></i>
-                        </span>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Image Modal -->
-        <div id="imageModal" class="modal">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <img class="modal-content" id="img01">
         </div>
     </div>
 
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Header Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Bilder hochladen</h4>
+                </div>
+                
+                <!-- Informational Text -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Lade hier Bilder oder Screenshots passend zu deinem Wunsch hoch. Wenn du einen Beispiel-Link angegeben hast, suchen wir für dich auf der Seite nach passenden Bildern und fügen eines hinzu.
+                    </p>
+                </div>
+
+                <!-- Upload Form -->
+                <div class="mb-4">
+                    {{ form_start(form) }}
+
+                    <!-- File Upload Input Group -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="fas fa-camera"></i>
+                        </span>
+                        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="image-preview" class="image-area mb-3"></div>
+
+                    <!-- Upload Button -->
+                    <div class="d-grid">
+                        {{ form_widget(form.upload, {'attr': {'class': 'btn btn-success'}}) }}
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Uploaded Images Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Bereits hochgeladene Bilder</h4>
+                </div>
+                
+                <div class="image-container d-flex flex-wrap justify-content-center">
+                    {% for image in desire.images %}
+                        <div class="image position-relative m-2" data-image-url="{{ path('app_desire_image_delete', {'desire': desire.id, 'image': image.id}) }}">
+                            <img src="{{ image.cdnUrl }}" class="img-thumbnail" onclick="showLargeImage('{{ image.cdnUrl }}')">
+                            <span class="delete-icon position-absolute top-0 end-0 translate-middle p-1 bg-danger rounded-circle" onclick="deleteImage(event)">
+                                <i class="fas fa-trash text-white"></i>
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
     <script>
         function handleImagePreview(input) {
             if (input.files && input.files[0]) {
@@ -90,7 +107,7 @@
             }
         }
 
-        const imageFileInput = document.querySelector('.custom-file-input');
+        const imageFileInput = document.querySelector('input[type="file"]');
         if (imageFileInput) {
             imageFileInput.addEventListener('change', function () {
                 handleImagePreview(this);

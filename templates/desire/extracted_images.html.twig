@@ -3,40 +3,41 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .image-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
         .image-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            width: 200px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
         .image-card:hover {
             transform: scale(1.03);
         }
         .image-card img {
-            width: 100%;
             height: 150px;
             object-fit: cover;
-            border-radius: 3px;
-            margin-bottom: 10px;
         }
-        .image-card .btn {
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
             width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
         }
-        .collection-section {
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
+        #imageModal .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
         }
-        .collection-section h3 {
-            margin-bottom: 15px;
+        #imageModal .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 {% endblock %}
@@ -44,44 +45,85 @@
 {% block title %}Automatisch extrahierte Bilder{% endblock %}
 
 {% block body %}
-    <div class="content-body">
-        <h1>Automatisch extrahierte Bilder</h1>
-        <p class="simple-text-box font-size-1-2">Hier siehst du alle Bilder, die automatisch aus den URLs deines Wunsches extrahiert wurden. Wähle ein Bild aus, um es als Hauptbild für deinen Wunsch zu verwenden.</p>
-
-        <div id="imageModal" class="modal">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <img class="modal-content" id="img01">
+    <div class="page-header">
+        <div class="page-header-text">
+            Extrahierte Bilder
         </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-images fa-lg me-3 text-secondary"></i>
+        </div>
+    </div>
 
-        {% if collections|length > 0 %}
-            {% for collection in collections %}
-                <div class="collection-section">
-                    <h3>Bilder von URL: {{ collection.url|length > 50 ? collection.url|slice(0, 50) ~ '...' : collection.url }}</h3>
-                    <div class="image-container">
-                        {% for image in collection.images %}
-                            {% if image.url is defined %}
-                                <div class="image-card">
-                                    <img src="{{ image.url }}" alt="Extrahiertes Bild" onclick="showLargeImage('{{ image.url }}')">
-                                    <a href="{{ path('app_desire_select_extracted_image', {'desireList': desireList.id, 'desire': desire.id, 'imageUrl': image.url}) }}" class="btn btn-primary">
-                                        <i class="fas fa-check"></i> Auswählen
-                                    </a>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-list btn-icon"></i>
+                        <span class="btn-text">Zurück zur Wunschliste</span>
+                    </a>
                 </div>
-            {% endfor %}
-        {% else %}
-            <div class="alert alert-info">
-                Es wurden noch keine Bilder automatisch extrahiert. Füge URLs zu deinem Wunsch hinzu, um automatische Bildextraktion zu starten.
             </div>
-        {% endif %}
-
-        <div class="mt-4">
-            <a href="{{ path('app_desire_list', {'desireList': desireList.id}) }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Zurück zur Wunschliste
-            </a>
         </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Header Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Automatisch extrahierte Bilder</h4>
+                </div>
+                
+                <!-- Informational Text -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <p class="fs-6">
+                        Hier siehst du alle Bilder, die automatisch aus den URLs deines Wunsches extrahiert wurden. Wähle ein Bild aus, um es als Hauptbild für deinen Wunsch zu verwenden.
+                    </p>
+                </div>
+
+                <!-- Image Collections -->
+                {% if collections|length > 0 %}
+                    {% for collection in collections %}
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Bilder von URL: {{ collection.url|length > 50 ? collection.url|slice(0, 50) ~ '...' : collection.url }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                    {% for image in collection.images %}
+                                        {% if image.url is defined %}
+                                            <div class="card image-card" style="width: 200px;">
+                                                <img src="{{ image.url }}" class="card-img-top" alt="Extrahiertes Bild" onclick="showLargeImage('{{ image.url }}')">
+                                                <div class="card-body p-2">
+                                                    <a href="{{ path('app_desire_select_extracted_image', {'desireList': desireList.id, 'desire': desire.id, 'imageUrl': image.url}) }}" class="btn btn-primary w-100">
+                                                        <i class="fas fa-check me-2"></i> Auswählen
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-info-circle me-2"></i>
+                            <span>Es wurden noch keine Bilder automatisch extrahiert. Füge URLs zu deinem Wunsch hinzu, um automatische Bildextraktion zu starten.</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="img01">
     </div>
 
     <script>

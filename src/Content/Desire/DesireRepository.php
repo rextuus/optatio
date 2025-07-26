@@ -33,6 +33,25 @@ class DesireRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return array<Desire>
+     */
+    public function findDesiresWithUrlsAndNoExtractedImages(): array
+    {
+        $qb = $this->createQueryBuilder('d');
+
+        $qb->join('d.urls', 'u')
+            ->leftJoin('d.extractedDesireImageCollections', 'e')
+            ->where($qb->expr()->isNotNull('u.id'))
+            ->andWhere($qb->expr()->isNull('e.id'))
+            ->distinct() // Prevent duplicates
+            ->select('d')
+            ->setMaxResults(20);
+
+        return $qb->getQuery()->getResult();
+    }
+
+
 //    /**
 //     * @return Desire[] Returns an array of Desire objects
 //     */

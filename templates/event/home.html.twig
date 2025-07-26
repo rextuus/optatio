@@ -44,7 +44,7 @@
                     </p>
                 </div>
 
-                {{ component('Event:SecretSantaEventListComponent', { events: secretSantaEvents, user: user }) }}
+                {{ component('Event:SecretSantaEventListComponent', { events: filteredSecretSantaEvents, user: user }) }}
                 {{ component('Event:EventListComponent', { events: filteredEvents, user: user }) }}
             </div>
         </div>

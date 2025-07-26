@@ -52,7 +52,7 @@ class DesireService
 
         // Dispatch a message to trigger image extraction if URLs were added
         if ($data->getUrl1() || $data->getUrl2() || $data->getUrl3()) {
-            $this->messageBus->dispatch(new DesireImageExtraction($desire->getId()));
+            $this->initImageFromUrlExtraction($desire);
         }
 
         return $desire;
@@ -118,6 +118,11 @@ class DesireService
         return $desire;
     }
 
+    public function initImageFromUrlExtraction(Desire $desire): void
+    {
+        $this->messageBus->dispatch(new DesireImageExtraction($desire->getId()));
+    }
+
     /**
      * @return Desire[]
      */
@@ -143,5 +148,13 @@ class DesireService
     public function getAllDesiresForSecretSantaEvent(SecretSantaEvent $event, bool $firstRound = true)
     {
         return $this->repository->getAllDesiresForSecretSantaEvent($event, $firstRound);
+    }
+
+    /**
+     * @return array<Desire>
+     */
+    public function getDesiresForImageExtraction(): array
+    {
+        return $this->repository->findDesiresWithUrlsAndNoExtractedImages();
     }
 }

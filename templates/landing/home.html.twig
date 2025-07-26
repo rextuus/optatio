@@ -38,6 +38,10 @@
                         <i class="fa-solid fa-calendar-alt btn-icon"></i>
                         <span class="btn-text">Zu den Events</span>
                     </a>
+                    <a href="{{ path('app_event_create') }}" class="btn btn-outline-dark btn-small ms-md-2">
+                        <i class="fa-solid fa-plus btn-icon"></i>
+                        <span class="btn-text">Event erstellen</span>
+                    </a>
                     <a href="{{ path('app_desire_home') }}" class="btn btn-light btn-small">
                         <i class="fa-solid fa-globe btn-icon"></i>
                         <span class="btn-text">Zu deiner globalen Wunschliste</span>
@@ -116,6 +120,12 @@
 
                     <!-- Own Events Tab -->
                     <div class="tab-pane fade" id="own-events" role="tabpanel" aria-labelledby="own-tab">
+                        <div class="mb-3">
+                            <a href="{{ path('app_event_create') }}" class="btn btn-outline-dark btn-small ms-md-2">
+                                <i class="fa-solid fa-calendar-alt btn-icon"></i>
+                                <span class="btn-text">Event erstellen</span>
+                            </a>
+                        </div>
                         {% if ownEvents is empty and ownSecretSantaEvents is empty %}
                             <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center">
                                 <div class="d-flex align-items-center">
