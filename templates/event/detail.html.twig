@@ -30,10 +30,14 @@
         </div>
     </div>
 
-    <div class="container my-2">
+    <div class="container py-2">
         <div class="card shadow">
             <div class="card-body">
                 <!-- Informational Text -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">{{ event.name }} Details</h4>
+                </div>
+                
                 <div class="text-center mb-4 bg-body-secondary p-3 rounded">
                     <p class="fs-6">
                         Das hier ist dein Event: <span class="fw-bold">{{ event.name }}</span>. Momentan enthält die
@@ -41,11 +45,13 @@
                                 class="text-success fw-bold">{{ event.desireLists.get(0).desires.count }}</span>
                         Wünsche.
                     </p>
-                    <p class=" mb-3 text-primary">
-                        <i class="fa-solid fa-info-circle me-2"></i> Ist die Liste priorisiert, sollen die Leute jene
-                        Geschenke, die oben stehen, zuerst besorgen
-                    </p>
-
+                </div>
+                
+                <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-info-circle me-2"></i>
+                        <span>Ist die Liste priorisiert, sollen die Leute jene Geschenke, die oben stehen, zuerst besorgen</span>
+                    </div>
                 </div>
 
                 {{ component('EventDetail', {event: event}) }}

@@ -3,170 +3,166 @@
 {% block title %}Wichtelrunde erstellen{% endblock %}
 
 {% block body %}
-    <div class="ss-container">
-        <div class="ss-banner"></div>
-
-        <div class="page-header">
-            <div class="page-header-text">
-                {{ event.name }}
-            </div>
-            <div class="page-header-image">
-                <img src="{{ asset('assets/img/registration.svg') }}" alt="Tile image">
-            </div>
+    <div class="page-header">
+        <div class="page-header-text">
+            {{ event.name }}
         </div>
-        <div class="content-body">
-
-            <div class="ss-header"></div>
-
-            <div class="ss-participant-header">
-                <div class="ss-participant-header-header">Info</div>
-                <div class="ss-participant-header-rounds">
-                    <div class="ss-participant-header-col">
-                        <div class="ss-participant-header-round">
-                            <img src="{{ asset('assets/img/tree.svg') }}" alt="Tile image">
-                            <div class="ss-participant-header-amount">{{ statistic.firstRoundRetrieved }}/{{ event.firstRound.participants|length }}</div>
-                        </div>
-
-                        {% if event.isDoubleRound %}
-                        <div class="ss-participant-header-round">
-                            <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
-                            <div class="ss-participant-header-amount">{{ statistic.secondRoundRetrieved }}/{{ event.secondRound.participants|length }}</div>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="ss-participant-header-col">
-                        <div class="ss-participant-header-round">
-                            <img src="{{ asset('assets/img/gift.svg') }}" alt="Tile image">
-                            <div class="ss-participant-header-amount">{{ statistic.desiresTotal }}</div>
-                            <span class="ss-participant-header-round-text">Wünsche insgesamt</span>
-                        </div>
-
-                        <div class="ss-participant-header-round">
-                            <img src="{{ asset('assets/img/reserve.svg') }}" alt="Tile image">
-                            <div class="ss-participant-header-amount">{{ statistic.desiresReserved }}</div>
-                            <span class="ss-participant-header-round-text">Reservierungen insgesamt</span>
-                        </div>
-
-                        <div class="ss-participant-header-round">
-                            <img src="{{ asset('assets/img/grinch.svg') }}" alt="Tile image">
-                            <div class="ss-participant-header-amount">{{ statistic.userWithoutDesires }}</div>
-                            <span class="ss-participant-header-round-text">Grinches ohne Wünsche</span>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="simple-text-box font-size-1-2">{{ stateText|raw }}</div>
-
-            {% if showPick %}
-                {{ component('SecretSantaPickComponent', { secret: secret, secretSantaEvent: event, currentUser: user, firstRound: showFirstRoundPick}) }}
-            {% endif %}
-
-            {% if firstRoundList is not null %}
-                {#                <div class="desire-create-button"> #}
-                {#                    <a href="{{ path('app_desire_list', {'desireList': firstRoundList.id}) }}"> #}
-                {#                        <button> #}
-                {#                            {{ firstRoundList.owner.firstName }}'s Wunschliste #}
-                {#                        </button> #}
-                {#                    </a> #}
-                {#                </div> #}
-
-                <div class="desire-image-button">
-                    <a href="{{ path('app_desire_list', {'desireList': firstRoundList.id}) }}">
-                        <button>
-                            <img src="{{ asset('assets/img/tree.svg') }}" alt="Tile image">
-                            <span class="desire-image-button-text">{{ firstRoundList.owner.firstName }}'s Wunschliste</span>
-                        </button>
-                    </a>
-                </div>
-            {% endif %}
-
-            {% if secondRoundList is not null %}
-                {#                <div class="desire-create-button"> #}
-                {#                    <a href="{{ path('app_desire_list', {'desireList': secondRoundList.id}) }}"> #}
-                {#                        <button> #}
-                {#                            {{ secondRoundList.owner.firstName }}'s Wunschliste #}
-                {#                        </button> #}
-                {#                    </a> #}
-                {#                </div> #}
-
-                <div class="desire-image-button">
-                    <a href="{{ path('app_desire_list', {'desireList': secondRoundList.id}) }}">
-                        <button>
-                            <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
-                            <span class="desire-image-button-text">Zu {{ secondRoundList.owner.firstName }}'s Wunschliste</span>
-                        </button>
-                    </a>
-                </div>
-            {% endif %}
-
-            {% if godFatherDesireLists is not null %}
-                {% for godFatherDesireList in godFatherDesireLists %}
-                    <div class="desire-image-button">
-                        <a href="{{ path('app_desire_list', {'desireList': godFatherDesireList.id}) }}">
-                            <button>
-                                <img src="{{ asset('assets/img/santa.svg') }}" alt="Tile image">
-                                <span class="desire-image-button-text">Zu {{ godFatherDesireList.owner.firstName }}'s Wunschliste</span>
-                            </button>
-                        </a>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            {#            <div class="desire-create-button"> #}
-            {#                <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}"> #}
-            {#                    <button> #}
-            {#                        Zu deiner Wunschliste #}
-            {#                    </button> #}
-            {#                </a> #}
-            {#            </div> #}
-
-            <div class="desire-image-button">
-                <a href="{{ path('app_desire_list',  {'desireList': ownList.id}) }}">
-                    <button>
-                        <img src="{{ asset('assets/img/heart.svg') }}" alt="Tile image">
-                        <span class="desire-image-button-text">Zu deiner Wunschliste</span>
-                    </button>
-                </a>
-            </div>
-
-            {#            <div class="desire-create-button"> #}
-            {#                <a href="{{ path('app_exclusion_create', {'event': event.id}) }}"> #}
-            {#                    <button> #}
-            {#                        Personen ausschließen #}
-            {#                    </button> #}
-            {#                </a> #}
-            {#            </div> #}
-
-            {% if event.state.value == 'open' %}
-            <div class="desire-image-button">
-                <a href="{{ path('app_exclusion_create', {'event': event.id}) }}">
-                    <button>
-                        <img src="{{ asset('assets/img/stop.svg') }}" alt="Tile image">
-                        <span class="desire-image-button-text">Personen ausschließen</span>
-                    </button>
-                </a>
-            </div>
-            {% endif %}
-
-            {% if isOwner %}
-                <div class="desire-image-button">
-                    <a href="{{ path('app_secret_santa_admin', {'event': event.id}) }}">
-                        <button>
-                            <i class="fa-solid fa-gears"></i>
-                            <span class="desire-image-button-text">Event Einstellungen</span>
-                        </button>
-                    </a>
-                </div>
-            {% endif %}
-
-
+        <div class="page-header-image">
+            <i class="fa-solid fa-gift fa-lg me-3 text-secondary"></i>
         </div>
     </div>
 
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-home btn-icon"></i>
+                        <span class="btn-text">Zurück</span>
+                    </a>
+                    <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}" class="btn btn-success btn-small">
+                        <i class="fa-solid fa-list btn-icon"></i>
+                        <span class="btn-text">Zu deiner Wunschliste</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Event Info Header -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Wichtelrunde: {{ event.name }}</h4>
+                </div>
+                
+                <!-- Statistics Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Info</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <!-- First Column - Rounds -->
+                            <div class="col-md-6">
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center p-2 border rounded">
+                                        <img src="{{ asset('assets/img/tree.svg') }}" alt="Tree" class="me-3" style="width: 32px;">
+                                        <div class="fs-5">{{ statistic.firstRoundRetrieved }}/{{ event.firstRound.participants|length }}</div>
+                                    </div>
 
+                                    {% if event.isDoubleRound %}
+                                    <div class="d-flex align-items-center p-2 border rounded">
+                                        <img src="{{ asset('assets/img/santa.svg') }}" alt="Santa" class="me-3" style="width: 32px;">
+                                        <div class="fs-5">{{ statistic.secondRoundRetrieved }}/{{ event.secondRound.participants|length }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Second Column - Statistics -->
+                            <div class="col-md-6">
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center p-2 border rounded">
+                                        <img src="{{ asset('assets/img/gift.svg') }}" alt="Gift" class="me-3" style="width: 32px;">
+                                        <div>
+                                            <div class="fs-5">{{ statistic.desiresTotal }}</div>
+                                            <div class="text-muted">Wünsche insgesamt</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center p-2 border rounded">
+                                        <img src="{{ asset('assets/img/reserve.svg') }}" alt="Reserve" class="me-3" style="width: 32px;">
+                                        <div>
+                                            <div class="fs-5">{{ statistic.desiresReserved }}</div>
+                                            <div class="text-muted">Reservierungen insgesamt</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center p-2 border rounded">
+                                        <img src="{{ asset('assets/img/grinch.svg') }}" alt="Grinch" class="me-3" style="width: 32px;">
+                                        <div>
+                                            <div class="fs-5">{{ statistic.userWithoutDesires }}</div>
+                                            <div class="text-muted">Grinches ohne Wünsche</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- State Text -->
+                <div class="alert alert-info mb-4">
+                    {{ stateText|raw }}
+                </div>
+
+                <!-- Secret Santa Pick Component -->
+                {% if showPick %}
+                    <div class="mb-4">
+                        {{ component('SecretSantaPickComponent', { secret: secret, secretSantaEvent: event, currentUser: user, firstRound: showFirstRoundPick}) }}
+                    </div>
+                {% endif %}
+                
+                <!-- Action Buttons -->
+                <div class="row g-3 mb-4">
+                    {% if firstRoundList is not null %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{{ path('app_desire_list', {'desireList': firstRoundList.id}) }}" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 p-3">
+                            <img src="{{ asset('assets/img/tree.svg') }}" alt="Tree" style="width: 24px;">
+                            <span>{{ firstRoundList.owner.firstName }}'s Wunschliste</span>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if secondRoundList is not null %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{{ path('app_desire_list', {'desireList': secondRoundList.id}) }}" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 p-3">
+                            <img src="{{ asset('assets/img/santa.svg') }}" alt="Santa" style="width: 24px;">
+                            <span>Zu {{ secondRoundList.owner.firstName }}'s Wunschliste</span>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if godFatherDesireLists is not null %}
+                        {% for godFatherDesireList in godFatherDesireLists %}
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ path('app_desire_list', {'desireList': godFatherDesireList.id}) }}" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 p-3">
+                                <img src="{{ asset('assets/img/santa.svg') }}" alt="Santa" style="width: 24px;">
+                                <span>Zu {{ godFatherDesireList.owner.firstName }}'s Wunschliste</span>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{{ path('app_desire_list', {'desireList': ownList.id}) }}" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2 p-3">
+                            <img src="{{ asset('assets/img/heart.svg') }}" alt="Heart" style="width: 24px;">
+                            <span>Zu deiner Wunschliste</span>
+                        </a>
+                    </div>
+
+                    {% if event.state.value == 'open' %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{{ path('app_exclusion_create', {'event': event.id}) }}" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 p-3">
+                            <img src="{{ asset('assets/img/stop.svg') }}" alt="Stop" style="width: 24px;">
+                            <span>Personen ausschließen</span>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if isOwner %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{{ path('app_secret_santa_admin', {'event': event.id}) }}" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2 p-3">
+                            <i class="fa-solid fa-gears fa-lg"></i>
+                            <span>Event Einstellungen</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
