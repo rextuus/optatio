@@ -112,7 +112,7 @@ class DesireService
 
         // Dispatch a message to trigger image extraction if URLs were updated
         if ($urlsUpdated) {
-            $this->messageBus->dispatch(new DesireImageExtraction($desire->getId()));
+            $this->initImageFromUrlExtraction($desire);
         }
 
         return $desire;
