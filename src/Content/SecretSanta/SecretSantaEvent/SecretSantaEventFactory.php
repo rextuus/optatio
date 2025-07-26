@@ -6,10 +6,7 @@ namespace App\Content\SecretSanta\SecretSantaEvent;
 use App\Content\SecretSanta\SecretSantaEvent\Data\SecretSantaEventData;
 use App\Entity\SecretSantaEvent;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class SecretSantaEventFactory
 {
     public function createByData(SecretSantaEventData $data): SecretSantaEvent

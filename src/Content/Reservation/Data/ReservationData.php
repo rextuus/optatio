@@ -8,10 +8,7 @@ use App\Entity\Desire;
 use App\Entity\Reservation;
 use App\Entity\User;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class ReservationData
 {
     private Desire $desire;

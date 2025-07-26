@@ -7,10 +7,7 @@ use App\Content\Desire\DesireState;
 use App\Entity\Desire;
 use App\Entity\User;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class DesireData
 {
     private User $owner;

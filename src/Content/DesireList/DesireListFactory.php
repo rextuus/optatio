@@ -6,10 +6,7 @@ namespace App\Content\DesireList;
 use App\Content\DesireList\Data\DesireListData;
 use App\Entity\DesireList;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class DesireListFactory
 {
     public function createByData(DesireListData $data): DesireList

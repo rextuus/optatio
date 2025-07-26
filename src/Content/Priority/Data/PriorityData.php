@@ -7,10 +7,7 @@ use App\Entity\Desire;
 use App\Entity\DesireList;
 use App\Entity\Priority;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class PriorityData
 {
     private Desire $desire;

@@ -9,10 +9,7 @@ use App\Entity\Event;
 use App\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class EventService
 {
     public function __construct(private readonly EventRepository $repository, private readonly EventFactory $factory)

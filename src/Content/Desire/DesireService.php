@@ -13,10 +13,7 @@ use App\Entity\SecretSantaEvent;
 use App\Message\DesireImageExtraction;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class DesireService
 {
     public function __construct(

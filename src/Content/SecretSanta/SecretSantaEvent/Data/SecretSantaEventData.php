@@ -8,10 +8,7 @@ use App\Entity\Event;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class SecretSantaEventData
 {
     private string $name;

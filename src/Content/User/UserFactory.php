@@ -7,10 +7,7 @@ use App\Content\User\Data\UserRegistrationData;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class UserFactory
 {
     public function __construct(private UserPasswordHasherInterface $passwordEncoder)

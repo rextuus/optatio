@@ -6,10 +6,7 @@ namespace App\Content\Event;
 use App\Content\Event\Data\EventData;
 use App\Entity\Event;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class EventFactory
 {
     public function createByData(EventData $data): Event

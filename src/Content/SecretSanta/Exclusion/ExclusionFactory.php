@@ -6,10 +6,7 @@ namespace App\Content\SecretSanta\Exclusion;
 use App\Content\SecretSanta\Exclusion\Data\ExclusionData;
 use App\Entity\Exclusion;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class ExclusionFactory
 {
     public function createByData(ExclusionData $data): Exclusion

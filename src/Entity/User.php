@@ -79,6 +79,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
     #[ORM\ManyToMany(targetEntity: SecretSantaEvent::class, mappedBy: 'godFathers')]
     private Collection $godFatherEvents;
 
+    /**
+     * @var Collection<int, EventBookmark>
+     */
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: EventBookmark::class)]
+    private Collection $eventBookmarks;
+
     public function __construct()
     {
         $this->desires = new ArrayCollection();
@@ -93,6 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
         $this->receivingSecrets = new ArrayCollection();
         $this->accessRoles = new ArrayCollection();
         $this->godFatherEvents = new ArrayCollection();
+        $this->eventBookmarks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -537,5 +544,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, HasAcce
     public function __toString(): string
     {
         return $this->getFullName();
+    }
+
+    /**
+     * @return Collection<int, EventBookmark>
+     */
+    public function getEventBookmarks(): Collection
+    {
+        return $this->eventBookmarks;
+    }
+
+    public function addEventBookmark(EventBookmark $eventBookmark): static
+    {
+        if (!$this->eventBookmarks->contains($eventBookmark)) {
+            $this->eventBookmarks->add($eventBookmark);
+            $eventBookmark->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventBookmark(EventBookmark $eventBookmark): static
+    {
+        if ($this->eventBookmarks->removeElement($eventBookmark)) {
+            // set the owning side to null (unless already changed)
+            if ($eventBookmark->getOwner() === $this) {
+                $eventBookmark->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }

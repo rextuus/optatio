@@ -9,10 +9,7 @@ use App\Entity\Secret;
 use App\Entity\User;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class SecretCalculatorTest extends TestCase
 {
     private SecretCalculator $calculator;

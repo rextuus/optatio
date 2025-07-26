@@ -44,11 +44,18 @@ class Event implements EventInterface
     #[ORM\ManyToMany(targetEntity: DesireList::class, mappedBy: 'events')]
     private Collection $desireLists;
 
+    /**
+     * @var Collection<int, EventBookmark>
+     */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: EventBookmark::class)]
+    private Collection $eventBookmarks;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->secrets = new ArrayCollection();
         $this->desireLists = new ArrayCollection();
+        $this->eventBookmarks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,5 +225,35 @@ class Event implements EventInterface
     public function __toString(): string
     {
         return $this->name ?? '';
+    }
+
+    /**
+     * @return Collection<int, EventBookmark>
+     */
+    public function getEventBookmarks(): Collection
+    {
+        return $this->eventBookmarks;
+    }
+
+    public function addEventBookmark(EventBookmark $eventBookmark): static
+    {
+        if (!$this->eventBookmarks->contains($eventBookmark)) {
+            $this->eventBookmarks->add($eventBookmark);
+            $eventBookmark->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventBookmark(EventBookmark $eventBookmark): static
+    {
+        if ($this->eventBookmarks->removeElement($eventBookmark)) {
+            // set the owning side to null (unless already changed)
+            if ($eventBookmark->getEvent() === $this) {
+                $eventBookmark->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }

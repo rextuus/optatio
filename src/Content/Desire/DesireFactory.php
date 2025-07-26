@@ -6,10 +6,7 @@ namespace App\Content\Desire;
 use App\Content\Desire\Data\DesireData;
 use App\Entity\Desire;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class DesireFactory
 {
     public function createByData(DesireData $data): Desire

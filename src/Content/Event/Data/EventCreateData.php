@@ -6,10 +6,7 @@ namespace App\Content\Event\Data;
 use App\Content\Event\EventType;
 use Symfony\Component\VarDumper\Cloner\Data;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class EventCreateData
 {
     private string $name;

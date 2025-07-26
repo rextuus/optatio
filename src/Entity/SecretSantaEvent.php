@@ -50,12 +50,19 @@ class SecretSantaEvent implements EventInterface
     #[ORM\OneToMany(mappedBy: 'secretSantaEvent', targetEntity: SecretBackup::class)]
     private Collection $secretBackups;
 
+    /**
+     * @var Collection<int, EventBookmark>
+     */
+    #[ORM\OneToMany(mappedBy: 'SecreSantaEvent', targetEntity: EventBookmark::class)]
+    private Collection $eventBookmarks;
+
     public function __construct()
     {
         $this->exclusions = new ArrayCollection();
         $this->secrets = new ArrayCollection();
         $this->godFathers = new ArrayCollection();
         $this->secretBackups = new ArrayCollection();
+        $this->eventBookmarks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -259,6 +266,36 @@ class SecretSantaEvent implements EventInterface
             // set the owning side to null (unless already changed)
             if ($secretBackup->getSecretSantaEvent() === $this) {
                 $secretBackup->setSecretSantaEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventBookmark>
+     */
+    public function getEventBookmarks(): Collection
+    {
+        return $this->eventBookmarks;
+    }
+
+    public function addEventBookmark(EventBookmark $eventBookmark): static
+    {
+        if (!$this->eventBookmarks->contains($eventBookmark)) {
+            $this->eventBookmarks->add($eventBookmark);
+            $eventBookmark->setSecreSantaEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventBookmark(EventBookmark $eventBookmark): static
+    {
+        if ($this->eventBookmarks->removeElement($eventBookmark)) {
+            // set the owning side to null (unless already changed)
+            if ($eventBookmark->getSecreSantaEvent() === $this) {
+                $eventBookmark->setSecreSantaEvent(null);
             }
         }
 

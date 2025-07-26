@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace App\Content\User\Data;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class UserRegistrationData
 {
     private string $userName;

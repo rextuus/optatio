@@ -9,10 +9,7 @@ use App\Entity\SecretSantaEvent;
 use App\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class SecretSantaEventService
 {
     public function __construct(private readonly SecretSantaEventRepository $repository, private readonly SecretSantaEventFactory $factory)

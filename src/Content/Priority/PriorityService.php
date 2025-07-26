@@ -9,10 +9,7 @@ use App\Entity\DesireList;
 use App\Entity\Priority;
 use Exception;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class PriorityService
 {
     public function __construct(private readonly PriorityRepository $repository, private readonly PriorityFactory $factory)

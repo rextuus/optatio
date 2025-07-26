@@ -7,10 +7,7 @@ use App\Content\Event\EventType;
 use App\Entity\Event;
 use App\Entity\User;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class EventData
 {
     private string $name;

@@ -6,10 +6,7 @@ namespace App\Content\SecretSanta\SecretSantaEvent\Data;
 use App\Content\SecretSanta\SecretSantaState;
 use App\Entity\User;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class SecretSantaEventCreateData
 {
     private string $name;

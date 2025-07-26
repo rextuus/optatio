@@ -6,10 +6,7 @@ namespace App\Content\Reservation;
 use App\Content\Reservation\Data\ReservationData;
 use App\Entity\Reservation;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class ReservationService
 {
     public function __construct(private readonly ReservationRepository $repository, private readonly ReservationFactory $factory)

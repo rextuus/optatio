@@ -10,10 +10,7 @@ use App\Entity\Event;
 use App\Entity\User;
 use Doctrine\Common\Collections\Collection;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class DesireListData
 {
     private User $owner;

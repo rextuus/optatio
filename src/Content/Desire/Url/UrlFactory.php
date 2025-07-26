@@ -6,10 +6,7 @@ namespace App\Content\Desire\Url;
 use App\Content\Desire\Url\Data\UrlData;
 use App\Entity\Url;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class UrlFactory
 {
     public function createByData(UrlData $data): Url

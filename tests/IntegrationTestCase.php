@@ -9,10 +9,7 @@ use Nelmio\Alice\Loader\NativeLoader;
 use Nelmio\Alice\ObjectSet;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-/**
- * @author Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
- * @license 2023 DocCheck Community GmbH
- */
+
 class IntegrationTestCase extends WebTestCase
 {
     /**
