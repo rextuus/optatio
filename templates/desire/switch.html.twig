@@ -9,61 +9,79 @@
             Wünsche verschieben
         </div>
         <div class="page-header-image">
-            <i class="fa-solid fa-shuffle fa-lg me-3"></i>
+            <i class="fa-solid fa-shuffle fa-lg me-3 text-secondary"></i>
         </div>
     </div>
 {#    {{ component('Test') }}#}
-    <div class="container py-3">
-            <!-- Action Buttons -->
-            <div class="row mb-4">
-                <div class="col-12 col-md-auto mb-3 mb-md-0">
-                    <a href="{{ path('app_desire_home') }}" class="btn btn-outline-secondary w-100">
-                        <i class="fa-solid fa-globe me-2"></i> Zurück
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_desire_home') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-globe btn-icon"></i>
+                        <span class="btn-text">Zurück</span>
                     </a>
                 </div>
             </div>
-
-
-            {% if showForm %}
-            <!-- Form Component -->
-            <div class="card shadow-sm p-4 bg-white rounded mb-4">
-                {{ component('DesireCopyForm', {
-                    initialFormData: initialFormData,
-                    user: user,
-                }) }}
-            </div>
-
-            <!-- Description Section -->
-            <div class="description bg-dark p-4 shadow-sm rounded ">
-                <h2 class="h4 mb-3 text-primary">
-                    <i class="fa-solid fa-info-circle me-2"></i> Optionen
-                </h2>
-                <p class="mb-3">
-                    <strong>Wunsch teilen:</strong> Der Wunsch ist gleichzeitig in beiden Listen. Editierst du ihn in der einen Liste, so wird die Änderung auch in der anderen Liste angezeigt. Reserviert jemand den Wunsch in der einen Liste, so ist er auch in der anderen reserviert.
-                </p>
-                <p class="mb-3">
-                    <em>Beispiel:</em> Du möchtest einen neuen Rasierer bekommen. Dir ist egal, ob du ihn zum Geburtstag oder zum Namenstag bekommst. Aber du willst ihn nur einmal. Also sharest du ihn.
-                </p>
-                <hr class="text-light">
-                <p class="mb-3">
-                    <strong>Wunsch kopieren:</strong> Der Wunsch wird so wie er jetzt ist in die andere Liste kopiert. Ab jetzt existiert er zweimal. Änderungen in dem einen beeinflussen nicht den anderen Wunsch.
-                </p>
-                <p class="mb-3">
-                    <em>Beispiel:</em> Du möchtest neue Einwegrasierer bekommen. Dir ist egal, ob du ihn zum Geburtstag oder zum Namenstag bekommst. Aber du kannst die Teile ohne Problem auch mehrfach gebrauchen. Also kopierst du ihn.
-                </p>
-                <hr class="text-light">
-                <p class="mb-0">
-                    <strong>Wunsch verschieben:</strong> Der Wunsch wird von der einen in die andere Liste verschoben. Ab jetzt existiert er nur in der als Ziel ausgewählten Liste.
-                </p>
-            </div>
-
-            {% else %}
-                <h2 class="h4 mb-3 text-primary">
-                    <i class="fa-solid fa-question-circle me-2"></i> Weshalb steht hier nichts?
-                </h2>
-                <p class="mb-3">
-                    Du bist momentan für kein Event angemeldet und hast keine Wunschlisten. Melde dich hier für ein Event an oder erstelle ein eigenes.
-                </p>
-            {% endif %}
         </div>
+    </div>
+    
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Header Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Wünsche zwischen Listen verschieben</h4>
+                </div>
+
+                {% if showForm %}
+                <!-- Form Component -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {{ component('DesireCopyForm', {
+                            initialFormData: initialFormData,
+                            user: user,
+                        }) }}
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="text-center mb-4 bg-body-secondary p-3 rounded">
+                    <h5 class="mb-3">
+                        <i class="fa-solid fa-info-circle me-2"></i> Optionen
+                    </h5>
+                    <div class="text-start">
+                        <p class="mb-3">
+                            <strong>Wunsch teilen:</strong> Der Wunsch ist gleichzeitig in beiden Listen. Editierst du ihn in der einen Liste, so wird die Änderung auch in der anderen Liste angezeigt. Reserviert jemand den Wunsch in der einen Liste, so ist er auch in der anderen reserviert.
+                        </p>
+                        <p class="mb-3">
+                            <em>Beispiel:</em> Du möchtest einen neuen Rasierer bekommen. Dir ist egal, ob du ihn zum Geburtstag oder zum Namenstag bekommst. Aber du willst ihn nur einmal. Also sharest du ihn.
+                        </p>
+                        <hr>
+                        <p class="mb-3">
+                            <strong>Wunsch kopieren:</strong> Der Wunsch wird so wie er jetzt ist in die andere Liste kopiert. Ab jetzt existiert er zweimal. Änderungen in dem einen beeinflussen nicht den anderen Wunsch.
+                        </p>
+                        <p class="mb-3">
+                            <em>Beispiel:</em> Du möchtest neue Einwegrasierer bekommen. Dir ist egal, ob du ihn zum Geburtstag oder zum Namenstag bekommst. Aber du kannst die Teile ohne Problem auch mehrfach gebrauchen. Also kopierst du ihn.
+                        </p>
+                        <hr>
+                        <p class="mb-0">
+                            <strong>Wunsch verschieben:</strong> Der Wunsch wird von der einen in die andere Liste verschoben. Ab jetzt existiert er nur in der als Ziel ausgewählten Liste.
+                        </p>
+                    </div>
+                </div>
+
+                {% else %}
+                <!-- Error Message Section -->
+                <div class="alert alert-info text-center d-flex flex-column flex-md-row align-items-center justify-content-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-question-circle me-2"></i>
+                        <span>Du bist momentan für kein Event angemeldet und hast keine Wunschlisten. Melde dich hier für ein Event an oder erstelle ein eigenes.</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

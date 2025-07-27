@@ -29,6 +29,11 @@
                     </button>
 
                     {% if this.canEdit %}
+                        <a href="{{ path('app_desire_list', {'desireList': event.desireLists.first.id}) }}"
+                           class="no-uppercase btn btn-outline-success btn-small mb-1">
+                            <i class="fa-solid fa-list btn-icon-sm"></i>
+                            <span class="btn-text">Liste</span>
+                        </a>
                         <a href="{{ path('app_event_join', {'event': event.id}) }}"
                            class="no-uppercase btn btn-light btn-small ">
                             <i class="fa-solid fa-gears btn-icon-sm"></i>

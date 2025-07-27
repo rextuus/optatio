@@ -27,7 +27,7 @@ class EventCreateType extends AbstractType
                 'required' => true,
                 'placeholder' => 'Art des Events auswählen', // Optional: Custom placeholder text
             ])
-            ->add('submit', SubmitType::class, ['label' => 'Event erstellen']);
+            ->add('submit', SubmitType::class, ['label' => 'Event erstellen', 'label_html' => true]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
