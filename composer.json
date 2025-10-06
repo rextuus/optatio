@@ -53,7 +53,9 @@
         "symfonycasts/dynamic-forms": "^0.1.2",
         "symfonycasts/reset-password-bundle": "^1.23",
         "symfonycasts/verify-email-bundle": "^1.14",
-        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/cssinliner-extra": "^3.21",
+        "twig/extra-bundle": "^3.21",
+        "twig/inky-extra": "^3.21",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {

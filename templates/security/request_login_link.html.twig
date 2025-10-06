@@ -1,0 +1,94 @@
+{# templates/security/magic_login.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Magic Login{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-text">
+            Login
+        </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-sign-in-alt fa-lg me-3 text-secondary"></i>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-user-plus btn-icon"></i>
+                        <span class="btn-text">Registrieren</span>
+                    </a>
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-key btn-icon"></i>
+                        <span class="btn-text">Normaler Login</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Welcome Section -->
+                <div class="text-center mb-4 border border-secondary p-3 rounded" role="alert">
+                    <h4 class="">Willkommen bei Optatio</h4>
+                </div>
+
+                {# Show any flash error if you set one in the controller when email not found, etc. #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} text-center mb-4">
+                            <i class="fa-solid fa-exclamation-circle me-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <!-- Magic Login Form (styled like the normal login) -->
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <form action="{{ path('app_magic_login') }}" method="POST" novalidate>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-Mail</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </span>
+                                    <input type="email"
+                                           class="form-control"
+                                           id="email"
+                                           name="email"
+                                           value="{{ app.request.get('email') }}"
+                                           placeholder="name@example.com"
+                                           required
+                                           autofocus>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('magic_login') }}">
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa-solid fa-envelope-open-text me-2"></i>
+                                    Send Login Link
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none">
+                                <i class="fa-solid fa-question-circle me-1"></i>
+                                Passwort vergessen?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

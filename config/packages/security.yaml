@@ -22,6 +22,9 @@ security:
                 login_path: app_login
                 enable_csrf: true
                 success_handler: App\Security\CustomAuthenticationSuccessHandler
+            login_link:
+              check_route: login_check
+              signature_properties: [ 'id' ]
 
             logout:
                 path: app_logout

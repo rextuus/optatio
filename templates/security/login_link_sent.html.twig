@@ -1,0 +1,47 @@
+{# templates/security/magic_login_success.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Login-Link Gesendet{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="page-header-text">
+            Login
+        </div>
+        <div class="page-header-image">
+            <i class="fa-solid fa-sign-in-alt fa-lg me-3 text-secondary"></i>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow bg-secondary">
+            <div class="card-body bg-secondary">
+                <div class="d-flex justify-content-start gap-2">
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-user-plus btn-icon"></i>
+                        <span class="btn-text">Registrieren</span>
+                    </a>
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-dark btn-small">
+                        <i class="fa-solid fa-key btn-icon"></i>
+                        <span class="btn-text">Normaler Login</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-2">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <div class="border border-secondary p-4 rounded bg-light">
+                    <i class="fa-solid fa-envelope-circle-check fa-3x text-success mb-3"></i>
+                    <h4 class="mb-3">Login-Link Gesendet</h4>
+                    <p class="lead mb-0">
+                        Du solltest in Kürze eine E-Mail mit deinem Login-Link erhalten.
+                        <br>Überprüfe auch deinen Spam-Ordner, falls du nichts findest.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
