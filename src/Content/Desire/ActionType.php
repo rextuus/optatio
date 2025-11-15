@@ -6,9 +6,9 @@ namespace App\Content\Desire;
 
 enum ActionType: string
 {
-    case TEILEN = 'teilen';
-    case KOPIEREN = 'kopieren';
     case VERSCHIEBEN = 'verschieben';
+    case KOPIEREN = 'kopieren';
+    case TEILEN = 'teilen';
 
     public function getLabel(): string
     {
