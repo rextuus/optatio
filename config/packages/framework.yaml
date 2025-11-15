@@ -19,6 +19,9 @@ framework:
     php_errors:
         log: true
 
+    router:
+      default_uri: 'https://optation.wh-company.de/index.php'
+
 when@test:
     framework:
         test: true
