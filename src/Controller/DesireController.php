@@ -164,6 +164,7 @@ class DesireController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var DesireData $data */
             $data = $form->getData();
+            $data->setExclusive(!$data->isExclusive());
             $data->setOwner($this->getUser());
 
             $this->desireManager->storeDesire($data, $desireList);
@@ -185,6 +186,7 @@ class DesireController extends BaseController
         }
 
         $data = (new DesireData())->initFromEntity($desire);
+        $data->setExclusive(!$desire->isExclusive());
 
         $urls = $desire->getUrls();
         if ($urls->get(0)){
@@ -205,6 +207,7 @@ class DesireController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var DesireData $data */
             $data = $form->getData();
+            $data->setExclusive(!$data->isExclusive());
 
             $this->desireManager->updateDesire($data, $desire);
             return $this->redirect($this->generateUrl('app_desire_list', ['desireList' => $desireList->getId()]));

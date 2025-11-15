@@ -27,28 +27,19 @@ final class ForeignDesireComponent
 
     }
 
-    public function isActive(): string
+    public function isActive(): bool
     {
-        if ($this->desire->isListed()) {
-            return 'active';
-        }
-        return '';
+        return $this->desire->isListed();
     }
 
-    public function isExclusive(): string
+    public function isExclusive(): bool
     {
-        if ($this->desire->isExclusive()) {
-            return 'text-danger';
-        }
-        return 'text-success';
+        return $this->desire->isExclusive();
     }
 
-    public function isExactly(): string
+    public function isExactly(): bool
     {
-        if ($this->desire->isExactly()) {
-            return 'text-success';
-        }
-        return 'text-danger';
+        return $this->desire->isExactly();
     }
 
     public function getReserveButtonText(): string

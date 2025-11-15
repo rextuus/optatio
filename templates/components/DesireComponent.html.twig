@@ -67,9 +67,17 @@
 
             <!-- Icons (Left Upper Corner) -->
             <div class="d-flex align-items-center">
-                <i class="fa-solid fa-fingerprint fa-lg {{ this.exactly }} me-3"></i>
-                <i class="fa-solid fa-copy fa-lg {{ this.exclusive }} me-3"></i>
-                <i class="fa-solid fa-eye fa-lg {{ this.active }} me-3"></i>
+                {% if this.exactly %}
+                    <i class="fa-solid fa-fingerprint fa-lg me-3"></i>
+                {% endif %}
+                {% if not this.exclusive %}
+                    <i class="fa-solid fa-copy fa-lg me-3"></i>
+                {% endif %}
+                {% if this.active %}
+                    <i class="fa-solid fa-eye fa-lg me-3"></i>
+                {% else %}
+                    <i class="fa-solid fa-eye-slash fa-lg me-3"></i>
+                {% endif %}
                 {{ this.relationIcon()|raw }}
             </div>
         </div>

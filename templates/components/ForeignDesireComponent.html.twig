@@ -51,8 +51,12 @@
             <!-- Details and Action Buttons -->
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div class="d-flex align-items-center">
-                    <i class="fa-solid fa-fingerprint fa-lg {{ this.exactly }} me-3"></i>
-                    <i class="fa-solid fa-copy fa-lg {{ this.isExclusive }} me-3"></i>
+                    {% if this.exactly %}
+                        <i class="fa-solid fa-fingerprint fa-lg me-3"></i>
+                    {% endif %}
+                    {% if not this.exclusive %}
+                        <i class="fa-solid fa-copy fa-lg me-3"></i>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -63,7 +67,7 @@
                 {% if this.isExactly() == 'text-success' %}
                     <h5 class="text-danger">ACHTUNG! Es sollte bitte exakt das Produkt aus dem Beispiellink sein!</h5>
                 {% endif %}
-                {% if this.getHeaderText() == 'Von jemand anderem reserviert' and this.isExclusive == 'text-success' %}
+                {% if this.getHeaderText() == 'Von jemand anderem reserviert' and not this.isExclusive %}
                     <h5 class="text-danger">Zwar schon von jemand anderem reserviert, aber es darf mehrfach geschenkt werden</h5>
                 {% endif %}
 

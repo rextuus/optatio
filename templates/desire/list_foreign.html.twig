@@ -41,12 +41,31 @@
                 <!-- Informational Text -->
                 <div class="text-center mb-4 bg-body-secondary p-3 rounded">
                     <p class="fs-6">
-                        {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, du kannst die aussuchen was du magst' %}
+                        {% set priority = '<span class="fw-bold text-warning">nicht priorisiert.</span> Das bedeutet, du kannst dir aussuchen was du magst' %}
                         {% if list.hasPriority %}
                             {% set priority = '<span class="fw-bold text-warning">priorisiert.</span> Das bedeutet, der Ersteller hätte am liebsten das Geschenk ganz oben!' %}
                         {% endif %}
                         Diese Wunschliste ist momentan {{ priority|raw }}
                     </p>
+
+                    {% set legend = [
+                        {
+                            icon: 'fa-solid fa-fingerprint',
+                            label: 'Exakt das Produkt aus dem Beispiellink'
+                        },
+                        {
+                            icon: 'fa-solid fa-copy',
+                            label: 'Darf mehrfach geschenkt werden'
+                        }
+                    ] %}
+                    <h6 class="text-start">Legende:</h6>
+                    <ul class="text-start list-unstyled">
+                        {% for entry in legend %}
+                            <li class="mb-1">
+                                <i class="{{ entry.icon }} fa-lg me-3"></i>{{ entry.label }}
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
 
                 <!-- Empty List Section -->
