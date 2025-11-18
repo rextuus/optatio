@@ -28,8 +28,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[IsGranted('ROLE_USER')]
 class SecretSantaController extends BaseController
 {
-    public function __construct(private SecretSantaService $secretSantaService, private EventManager $eventManager, private DesireManager $desireManager)
-    {
+    public function __construct(
+        private SecretSantaService $secretSantaService,
+        private EventManager $eventManager,
+        private DesireManager $desireManager
+    ) {
     }
 
     #[Route('/create', name: 'app_secret_santa_create')]
@@ -236,8 +239,9 @@ class SecretSantaController extends BaseController
         if ($isGodfather){
             $godFatherDesireLists = [];
             foreach ($event->getOverallParticipants() as $participant){
-                if ($participant->getId() !== $this->getUser()->getId()){
-                    $godFatherDesireLists[] = $this->desireManager->getDesireListForSecretSantaEvent($participant, $event);
+                $list = $this->desireManager->getDesireListForSecretSantaEvent($participant, $event);
+                if ($participant->getId() !== $this->getUser()->getId() && !array_key_exists($list->getId(), $godFatherDesireLists)){
+                    $godFatherDesireLists[$list->getId()] = $list;
                 }
             }
         }
@@ -260,6 +264,7 @@ class SecretSantaController extends BaseController
             'statistic' => $resolvedSecretsFirstRound,
             'isOwner' => $this->checkUserIsOwnerOfSecretSantaEvent($participant, $event),
             'godFatherDesireLists' => $godFatherDesireLists,
+            'isGodfather' => $isGodfather,
         ]);
     }
 

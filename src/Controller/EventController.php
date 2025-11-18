@@ -46,9 +46,8 @@ class EventController extends AbstractController
         }
 
         foreach ($secretSantaEvents as $secretSantaEvent) {
-            if (!$secretSantaEvent->getCreator() === $user
-                && !in_array($user, $secretSantaEvent->getOverallParticipants())
-            ) {
+            $overallParticipants = $secretSantaEvent->getOverallParticipants();
+            if ($overallParticipants === [] || !in_array($user, $overallParticipants)) {
                 $filteredSecretSantaEvents[] = $secretSantaEvent;
             }
         }

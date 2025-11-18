@@ -69,6 +69,7 @@ class DesireListService
     public function addDesireToList(Desire $desire, DesireList $desireList, bool $save = true): void
     {
         $desireList->addDesire($desire);
+        $desire->addDesireList($desireList);
         if ($save) {
             $this->repository->save($desireList);
         }

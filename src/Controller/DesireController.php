@@ -285,9 +285,20 @@ class DesireController extends BaseController
 
     private function checkDesireListAccess(User $user, DesireList $desireList): ?Response
     {
-        if ($this->accessRoleService->checkDesireListAccess($user, $desireList)){
+        $event = $desireList->getEvents()->first();
+        $hasAccess = $this->accessRoleService->checkDesireListAccess($user, $desireList, $event);
+
+        if (!$hasAccess && $event->getEventType() === EventType::SECRET_SANTA){
+            if ($desireList->getEvents()->containsKey(1)){
+                $event = $desireList->getEvents()->get(1);
+                $hasAccess = $this->accessRoleService->checkDesireListAccess($user, $desireList, $event);
+            }
+        }
+//dd();
+        if ($hasAccess){
             return null;
         }
+
         return $this->redirect($this->generateUrl('app_event_list'));
     }
 

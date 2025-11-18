@@ -35,7 +35,7 @@
                 </div>
             </div>
         </div>
-        {% if event.state == 'open' %}
+        {% if event.state.value == 'open' %}
         {{ form(form) }}
         {% endif %}
     </div>

@@ -72,17 +72,43 @@ class AccessRoleService
         $this->entityManager->flush();
     }
 
-    public function checkDesireListAccess(User $user, DesireList $desireList): bool
+    public function checkDesireListAccess(User $user, DesireList $desireList, Event $event): bool
     {
-        $event = $desireList->getEvents()->first();
+        $debug = sprintf(
+            'User %s (%s) is trying to access List %s (%s) of owner %s (%s) and event %s (%s)',
+            $user->getId(),
+            $user->getFullName(),
+            $desireList->getId(),
+            $desireList->getName(),
+            $desireList->getOwner()->getId(),
+            $desireList->getOwner()->getFullName(),
+            $event->getId(),
+            $event->getName()
+        );
+        dump($debug);
+//        $event = $desireList->getEvents()->first();
 
+        // maste list has no event attached. So we only need to check if the user is the owner
         if (!$event && $desireList->isMaster() && $user === $desireList->getOwner()) {
             return true;
         }
 
+        dump('List is belonging to event: ' . $event->getId() . '');
+        if ($desireList->getEvents()->count() > 1){
+            $debug = sprintf(
+                "List %s (%s) is shared between %s events:\n%s",
+                $desireList->getId(),
+                $desireList->getName(),
+                $desireList->getEvents()->count(),
+                implode('|', $desireList->getEvents()->map(function (Event $event){return $event->getId();})->toArray())
+            );
+
+            dump($debug);
+        }
+
         $userIsPartOfEvent = $this->checkUserIsParticipantOfEvent($user, $event);
         if (!$userIsPartOfEvent){
-            return false;
+//            return false;
         }
 
         $desireListIdents = $desireList->getAccessRoles()->map(
@@ -102,15 +128,22 @@ class AccessRoleService
         }
 
         // check if user has access via secret
-        $secretIdent = 'secretIdent';
+        $secretIdents = [];
         $ownerId = -1;
+        $eventIsSame = false;
         foreach ($desireListIdents as $ident){
             preg_match('~' . self::REGEX_FOR_SECRET . '~', $ident, $matches);
             if ($matches) {
-                $secretIdent = $matches[0];
+                $secretIdents[] = $matches[0];
                 $ownerId = $matches[1];
+                $eventId = $matches[2];
+                if (!$eventIsSame){
+                    $eventIsSame = (int) $eventId === $event->getId();
+                }
             }
         }
+        dump('Event: ' . $event->getId() );
+        dump('Event found: ' . $eventIsSame );
 
         $userId = -2;
         foreach ($userIdents as $ident){
@@ -120,11 +153,22 @@ class AccessRoleService
             }
         }
 
+        $debug = sprintf(
+            "DesirelistIdents:\n%s\n\nUserIdents:\n%s",
+            implode('|', $desireListIdents),
+            implode('|', $userIdents)
+        );
+        dump($debug);
+
         $userIsOwner = $ownerId === $userId;
-        $userIsSecret = in_array($secretIdent, $userIdents);
+        $userIsSecret = count(array_intersect($secretIdents, $userIdents)) > 0;
+        dump('Is owner: ' . (int) $userIsOwner);
+        dump('Is secret: ' . (int) $userIsSecret);
+        dump('Is same event: ' . (int) $eventIsSame);
 
         $shared = array_intersect($desireListIdents, $userIdents);
-        if (count($shared) && ($userIsOwner || $userIsSecret) > 0){
+
+        if (count($shared) > 0 && ($userIsOwner || ($userIsSecret && $eventIsSame))){
             return true;
         }
 

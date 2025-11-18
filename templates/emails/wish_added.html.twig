@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Neuer Wunsch!</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 24px;
+            border-radius: 8px;
+        }
+        .title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .content {
+            background: white;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .footer {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="title">👋 Hallo {{ user.firstname }}!</h2>
+    <p class="subtitle"><strong>{{ creator }}</strong> hat gerade einen neuen Wunsch in der Wunschliste für das Event <strong>{{ event_name }}</strong> hinzugefügt, das du verfolgst.</p>
+
+    <div class="content">
+        <p><strong>Wunsch:</strong> {{ wish_title }}</p>
+        <p>Besuche die Wunschliste, um weitere Details zu sehen oder selbst etwas hinzuzufügen.</p>
+    </div>
+
+    <p class="footer">
+        Du erhältst diese Nachricht, weil du die Wunschliste des Events abonniert hast.<br>
+        Optatio – Deine Plattform zum Wünschen und Schenken.
+    </p>
+</div>
+</body>
+</html>

@@ -8,6 +8,7 @@ use App\Content\Desire\Data\DesireData;
 use App\Content\DesireList\Data\DesireListData;
 use App\Content\DesireList\DesireListService;
 use App\Content\DesireList\Relation\DesireListRelationService;
+use App\Content\Event\EventType;
 use App\Content\Image\ImageService;
 use App\Content\Priority\Data\PriorityData;
 use App\Content\Priority\PriorityService;
@@ -22,6 +23,7 @@ use App\Entity\Image;
 use App\Entity\Reservation;
 use App\Entity\SecretSantaEvent;
 use App\Entity\User;
+use App\Notification\NotificationService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -41,6 +43,7 @@ class DesireManager
         private readonly ImageService $imageService,
         private readonly EntityManagerInterface $entityManager,
         private readonly DesireListRelationService $desireListRelationService,
+        private readonly NotificationService $notificationService,
     ) {
     }
 
@@ -151,7 +154,7 @@ class DesireManager
         // check if there is already an desireList for this
         $desireList = null;
         $existingList = $this->desireListService->findByUserAndEvent($participant, $event->getFirstRound());
-        if (count($existingList) === 0) {
+        if (count($existingList) === 0 && $event->getSecondRound() !== null) {
             $existingList = $this->desireListService->findByUserAndEvent($participant, $event->getSecondRound());
         }
 
@@ -404,6 +407,33 @@ class DesireManager
 
         $this->storePriority($desireList, $desire);
         $this->entityManager->flush();
+
+        $this->informUserAboutNewDesire($desire);
+    }
+
+    private function informUserAboutNewDesire(Desire $desire): void
+    {
+        if ($desire->isListed()) {
+            foreach ($desire->getDesireLists() as $desireList) {
+                foreach ($desireList->getEvents() as $event) {
+                    foreach ($event->getParticipants() as $participant) {
+                        if ($participant === $desire->getOwner()) {
+                            continue;
+                        }
+
+                        if ($this->accessRoleService->checkDesireListAccess($participant, $desireList, $event)) {
+
+                            $this->notificationService->sendWishlistWishAddedNotification(
+                                $participant,
+                                $event->getName(),
+                                $desire->getName(),
+                                $desire->getOwner()->getFullName()
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private function storePriority(DesireList $desireList, Desire $desire): void

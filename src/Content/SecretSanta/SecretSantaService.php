@@ -98,7 +98,11 @@ class SecretSantaService
                             )
                         );
                         $this->desireListService->update($desireList, $desireListData);
+
+                        $this->addSecretAccessRoleToDesireListOfEvent($participant, $event->getSecondRound());
                     } else {
+                        // What happens if participant has no desireList for round1 cause he was not in round1?
+
                         $this->addSecretAccessRoleToDesireListOfEvent($participant, $event->getSecondRound());
                     }
                 }
